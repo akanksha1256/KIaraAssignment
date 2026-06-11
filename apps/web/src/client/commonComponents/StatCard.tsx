@@ -1,8 +1,8 @@
 "use client";
 
 import { Card, CardContent } from "@/client/commonComponents/Card";
-import type { StatCardProps } from "@/client/views/manager/dashboard/type";
-import { accentMap } from "@/client/views/manager/dashboard/util";
+import type { StatCardProps } from "@/client/views/manager/type";
+import { accentMap } from "@/client/views/manager/util";
 
 export const StatCard = ({
   icon: Icon,

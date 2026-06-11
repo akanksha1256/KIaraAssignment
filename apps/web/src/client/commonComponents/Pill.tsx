@@ -1,7 +1,7 @@
-import type { PropertySummary } from "@/client/stateManagement/property/type";
-import { statusConfig } from "@/client/views/manager/dashboard/util";
+import type { PropertyStatus } from "@/client/stateManagement/property/type";
+import { statusConfig } from "../helpers/utils";
 
-export const Pill = ({ status }: { status: PropertySummary["status"] }) => {
+export const Pill = ({ status }: { status: PropertyStatus }) => {
   const { bg, text, label } = statusConfig[status];
   return (
     <span

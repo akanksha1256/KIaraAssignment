@@ -1,5 +1,5 @@
 import type * as P from "@/platform/types";
-import type { Property, PropertySummary } from "@/client/stateManagement/property/type";
+import type { Property, PropertySummary, UnitDetailItem, PropertyDetailData } from "@/client/stateManagement/property/type";
 import type { Unit }                       from "@/client/stateManagement/unit/type";
 import type { Tenant }                     from "@/client/stateManagement/tenant/type";
 import type { Lease }                      from "@/client/stateManagement/lease/type";
@@ -80,6 +80,19 @@ const mapMonthlyRevenue = (r: P.MonthlyRevenue): MonthlyRevenue => ({
   month:     r.month,
   expected:  r.expected,
   collected: r.collected,
+});
+
+export const mapUnitDetail = (u: P.UnitDetail): UnitDetailItem => ({
+  id:            u.id,
+  label:         u.label,
+  tenant:        u.tenant ? mapTenant(u.tenant) : null,
+  lease:         u.lease  ? mapLease(u.lease)   : null,
+  paymentStatus: u.payment_status,
+});
+
+export const mapPropertyDetail = (d: P.PropertyDetailData): PropertyDetailData => ({
+  property: mapProperty(d.property),
+  units:    d.units.map(mapUnitDetail),
 });
 
 export const mapManagerDashboard = (d: P.ManagerDashboardData): ManagerDashboardData => ({

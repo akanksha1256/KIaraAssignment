@@ -2,6 +2,7 @@ import type * as P from "@/platform/types";
 import {
   mapProperty,
   mapPropertySummary,
+  mapPropertyDetail,
   mapUnit,
   mapTenant,
   mapLease,
@@ -13,6 +14,7 @@ import type { ManagerDashboardData } from "@/client/stateManagement/manager/type
 import type {
   Property,
   PropertySummary,
+  PropertyDetailData,
 } from "@/client/stateManagement/property/type";
 import type { Unit } from "@/client/stateManagement/unit/type";
 import type { Tenant } from "@/client/stateManagement/tenant/type";
@@ -50,6 +52,9 @@ export const api = {
 
   getProperty: async (id: string): Promise<Property> =>
     mapProperty(await request<P.Property>(`/properties/${id}`)),
+
+  getPropertyDetail: async (id: string): Promise<PropertyDetailData> =>
+    mapPropertyDetail(await request<P.PropertyDetailData>(`/properties/${id}`)),
 
   getPropertiesSummary: async (): Promise<PropertySummary[]> =>
     (await request<P.PropertySummary[]>("/properties/summary")).map(

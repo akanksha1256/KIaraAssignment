@@ -24,29 +24,3 @@ export const TABLE_COLS: TableColumn[] = [
   { label: s.propertiesTable.colStatus, align: "left" },
   { label: "", align: "right" },
 ];
-
-export const statusConfig: Record<
-  PropertySummary["status"],
-  { bg: string; text: string; label: string }
-> = {
-  paid: {
-    bg: "bg-success-50",
-    text: "text-success-700",
-    label: s.statusPill.paid,
-  },
-  outstanding: {
-    bg: "bg-warning-50",
-    text: "text-warning-700",
-    label: s.statusPill.outstanding,
-  },
-  overdue: {
-    bg: "bg-danger-50",
-    text: "text-danger-700",
-    label: s.statusPill.overdue,
-  },
-  vacant: {
-    bg: "bg-neutral-100",
-    text: "text-neutral-500",
-    label: s.statusPill.vacant,
-  },
-};

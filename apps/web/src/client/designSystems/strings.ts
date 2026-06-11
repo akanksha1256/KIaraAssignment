@@ -9,6 +9,14 @@ export const strings = {
     tenant: "Tenant",
   },
 
+  statusPill: {
+    allPaid: "All Paid",
+    paid: "Paid",
+    outstanding: "Outstanding",
+    overdue: "Overdue",
+    vacant: "Vacant",
+  },
+
   manager: {
     dashboard: {
       title: "Manager Dashboard",
@@ -61,12 +69,40 @@ export const strings = {
         empty: "No properties",
         emptyDescription: "Add your first property to get started.",
       },
+    },
 
-      statusPill: {
-        paid: "All Paid",
-        outstanding: "Outstanding",
-        overdue: "Overdue",
+    propertyDetail: {
+      backLink: "Back to Dashboard",
+      loading: "Loading property…",
+      error: "Could not load property details.",
+      errorRetry: "Try again",
+      emptyTitle: "Property not found",
+      emptyDescription: "This property does not exist or has been removed.",
+
+      stats: {
+        totalUnits: "Total Units",
+        occupied: "Occupied",
         vacant: "Vacant",
+        monthlyRent: "Monthly Rent",
+        occupancySub: (leased: number, total: number) =>
+          `${leased} of ${total} leased`,
+        vacantSub: (count: number) => `${count} available`,
+        rentSub: "across active leases",
+      },
+
+      unitsTable: {
+        heading: (count: number) => `Units (${count})`,
+        colUnit: "Unit",
+        colTenant: "Tenant",
+        colRent: "Monthly Rent",
+        colLease: "Lease Period",
+        colStatus: "Status",
+        colAction: "",
+        vacant: "Vacant",
+        leasePeriod: (start: string, end: string) => `${start} – ${end}`,
+        viewLink: "View",
+        empty: "No units found",
+        emptyDescription: "This property has no units yet.",
       },
     },
   },

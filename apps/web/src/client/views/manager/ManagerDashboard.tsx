@@ -15,10 +15,10 @@ import { LoadingState } from "@/client/views/LoadingScreen";
 import { strings } from "@/client/designSystems/strings";
 import { ChevronRight } from "lucide-react";
 import { TABLE_COLS } from "./util";
-import { StatusSection } from "../components/StatusSection";
-import { MonthlyRevenueSection } from "../components/MonthlyRevenueSection";
-import { PaymentStatusSection } from "../components/PaymentStatusSection";
-import { Pill } from "../../../commonComponents/Pill";
+import { StatusSection } from "./components/StatusSection";
+import { MonthlyRevenueSection } from "./components/MonthlyRevenueSection";
+import { PaymentStatusSection } from "./components/PaymentStatusSection";
+import { Pill } from "../../commonComponents/Pill";
 import { DataTable } from "@/client/commonComponents/DataTable";
 import type { PropertySummary } from "@/client/stateManagement/property/type";
 

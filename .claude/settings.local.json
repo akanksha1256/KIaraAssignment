@@ -31,7 +31,9 @@
       "Bash(sed -i '' 's/if \\(error\\)/if \\(status === \"failed\"\\)/' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/Dashboard/ManagerDashboard.tsx)",
       "Bash(sed -i '' 's/    properties,$/  } = useAppSelector\\(selectDashboard\\);\\\\n\\\\n  const { properties } = useAppSelector\\(selectPropertiesList\\);/' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/Dashboard/ManagerDashboard.tsx)",
       "Bash(sed -i '' '/^  } = useAppSelector\\(selectDashboard\\);/{ *)",
-      "Bash(git -C /Users/akankshalm/Desktop/KIaraAssignment ls-files)"
+      "Bash(git -C /Users/akankshalm/Desktop/KIaraAssignment ls-files)",
+      "Bash(mkdir -p /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/propertyDetail && mkdir -p /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/manager/properties/\\\\[id\\\\])",
+      "Bash(npx tsc *)"
     ]
   }
 }

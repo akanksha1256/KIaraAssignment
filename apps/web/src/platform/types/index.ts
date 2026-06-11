@@ -93,3 +93,16 @@ export interface ManagerDashboardData {
   monthly_revenue: MonthlyRevenue[];
   properties: PropertySummary[];
 }
+
+export interface UnitDetail {
+  id: string;
+  label: string;
+  tenant: Tenant | null;
+  lease: Lease | null;
+  payment_status: PaymentStatus | "vacant";
+}
+
+export interface PropertyDetailData {
+  property: Property;
+  units: UnitDetail[];
+}
