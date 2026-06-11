@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { ManagerDashboardData } from "@repo/types";
+import type { ManagerDashboardData } from "@/platform/types";
 import { type FetchState, initialFetch } from "../types";
 
 interface ManagerState {

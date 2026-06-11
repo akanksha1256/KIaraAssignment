@@ -1,5 +1,5 @@
 import { createSlice, createAction } from "@reduxjs/toolkit";
-import type { Tenant, Lease, Payment, PaymentMethod } from "@repo/types";
+import type { Tenant, Lease, Payment, PaymentMethod } from "@/platform/types";
 import {
   type FetchState,
   type FetchStateMap,

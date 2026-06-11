@@ -1,4 +1,4 @@
-import type { PropertySummary } from "@repo/types";
+import type { PropertySummary } from "@/platform/types";
 import type { FetchStateWithError } from "../../helpers/type";
 
 export type PropertyState = {

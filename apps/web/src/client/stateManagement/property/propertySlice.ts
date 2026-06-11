@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { PropertySummary } from "@repo/types";
+import type { PropertySummary } from "@/platform/types";
 import { defaultFetchState } from "../../helpers/type";
 import type { PropertyState } from "./type";
 

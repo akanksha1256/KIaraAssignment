@@ -16,13 +16,13 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary:  "bg-brand-600 text-white hover:bg-brand-700",
-        secondary:"bg-neutral-100 text-neutral-800 hover:bg-neutral-200",
-        ghost:    "hover:bg-neutral-100 text-neutral-700",
-        danger:   "bg-danger-500 text-white hover:bg-danger-700",
-        outline:  "border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-800",
+        primary:   "bg-brand-600 text-white hover:bg-brand-700",
+        secondary: "bg-neutral-100 text-neutral-800 hover:bg-neutral-200",
+        ghost:     "hover:bg-neutral-100 text-neutral-700",
+        danger:    "bg-danger-500 text-white hover:bg-danger-700",
+        outline:   "border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-800",
       },
-      size: { sm:"h-8 px-3 text-xs", md:"h-9 px-4", lg:"h-10 px-6", icon:"h-9 w-9" },
+      size: { sm: "h-8 px-3 text-xs", md: "h-9 px-4", lg: "h-10 px-6", icon: "h-9 w-9" },
     },
     defaultVariants: { variant: "primary", size: "md" },
   }

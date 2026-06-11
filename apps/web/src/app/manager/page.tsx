@@ -1,2 +1,2 @@
-import { ManagerDashboard } from "@/app/views/manager/Dashboard/ManagerDashboard";
+import { ManagerDashboard } from "@/client/views/manager/dashboard/ManagerDashboard";
 export default function Page() { return <ManagerDashboard />; }

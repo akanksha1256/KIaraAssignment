@@ -1,4 +1,4 @@
-import type { Tenant, Lease, Payment, PaymentMethod } from "@repo/types";
+import type { Tenant, Lease, Payment, PaymentMethod } from "@/platform/types";
 import type { FetchState, FetchStateMap } from "../types";
 
 export type TenantState = {

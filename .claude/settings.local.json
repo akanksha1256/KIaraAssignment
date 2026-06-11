@@ -13,7 +13,16 @@
       "Bash(curl -s http://localhost:3000/api/manager/dashboard)",
       "Bash(python3 -c ' *)",
       "Bash(kill %1)",
-      "Bash(pnpm --filter web exec tsc --noEmit)"
+      "Bash(pnpm --filter web exec tsc --noEmit)",
+      "Bash(cp -r /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/designSystems /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/designSystems)",
+      "Bash(cp -r /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/helpers /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/helpers)",
+      "Bash(sed -i '' 's|from \"@repo/types\"|from \"@/platform/types\"|g' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/stateManagement/tenant/type.ts /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/stateManagement/tenant/tenantSlice.ts /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/stateManagement/property/type.ts /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/stateManagement/property/propertySlice.ts /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/stateManagement/manager/managerSlice.ts)",
+      "Bash(sed -i '' 's|from \"@repo/data\"|from \"@/client/apiClient/client\"|g' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/stateManagement/property/epics/index.ts /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/stateManagement/manager/epics/index.ts)",
+      "Bash(sed -i '' 's|from \"@/app/stateManagement/|from \"@/client/stateManagement/|g' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/Dashboard/ManagerDashboard.tsx)",
+      "Bash(sed -i '' 's|from \"@repo/ui\"|from \"@/client/uiComponents\"|g' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/Dashboard/ManagerDashboard.tsx)",
+      "Bash(sed -i '' 's|from \"@repo/types\"|from \"@/platform/types\"|g' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/Dashboard/ManagerDashboard.tsx)",
+      "Bash(sed -i '' 's|from \"@/app/commonComponents/Providers\"|from \"@/client/commonComponents/Providers\"|g; s|from \"@/app/commonComponents/Nav\"|from \"@/client/commonComponents/Nav\"|g' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/layout.tsx)",
+      "Bash(sed -i '' 's|from \"@/app/views/manager/Dashboard/ManagerDashboard\"|from \"@/client/views/manager/Dashboard/ManagerDashboard\"|g' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/manager/page.tsx)"
     ]
   }
 }
