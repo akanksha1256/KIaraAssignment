@@ -1,7 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "Bash(xargs cat)"
+      "Bash(xargs cat)",
+      "Bash(mkdir -p /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/api/properties/\\\\[id\\\\]/units)",
+      "Bash(mkdir -p /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/api/properties/\\\\[id\\\\])",
+      "Bash(mkdir -p /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/api/units/\\\\[id\\\\]/lease)",
+      "Bash(mkdir -p /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/api/units/\\\\[id\\\\])",
+      "Bash(mkdir -p /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/api/leases/\\\\[id\\\\]/payments)",
+      "Bash(pnpm install *)",
+      "Bash(pnpm --filter @repo/web exec next build)",
+      "Bash(pnpm --filter @repo/web dev)",
+      "Bash(curl -s http://localhost:3000/api/manager/dashboard)",
+      "Bash(python3 -c ' *)",
+      "Bash(kill %1)"
     ]
   }
 }

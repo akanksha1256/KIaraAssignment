@@ -16,6 +16,10 @@ async function request<T>(
 }
 
 export const api = {
+  // Dashboard
+  getManagerDashboard: () =>
+    request<import("@repo/types").ManagerDashboardData>("/manager/dashboard"),
+
   // Properties
   getProperties: () => request<import("@repo/types").Property[]>("/properties"),
   getProperty: (id: string) =>
