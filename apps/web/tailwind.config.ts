@@ -1,8 +1,8 @@
 import type { Config } from "tailwindcss";
-import tokensPreset from "@repo/design-tokens/tailwind-preset";
+import tailwindPreset from "./src/app/designSystems/tailwindPreset";
 
 const config: Config = {
-  presets: [tokensPreset],
+  presets: [tailwindPreset],
   content: ["./src/**/*.{ts,tsx}", "../../packages/ui/src/**/*.{ts,tsx}"],
   theme: { extend: {} },
   plugins: [],

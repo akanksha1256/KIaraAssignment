@@ -1,12 +1,7 @@
-import { FetchStateWithError } from "../../../../../client/helpers/type";
-
-export interface Property {
-  id: string;
-  name: string;
-  address: string;
-}
+import type { PropertySummary } from "@repo/types";
+import type { FetchStateWithError } from "../../helpers/type";
 
 export type PropertyState = {
   propertyListfetchState: FetchStateWithError;
-  propertiesList: Property[];
+  propertiesList: PropertySummary[];
 };

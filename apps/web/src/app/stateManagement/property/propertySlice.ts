@@ -1,25 +1,32 @@
-import { createSlice } from "@reduxjs/toolkit";
-
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { PropertySummary } from "@repo/types";
+import { defaultFetchState } from "../../helpers/type";
 import type { PropertyState } from "./type";
-import { defaultFetchState } from "../../../../../client/helpers/type";
 
 const initialState: PropertyState = {
   propertyListfetchState: defaultFetchState,
   propertiesList: [],
 };
 
-const managerSlice = createSlice({
-  name: "manager",
+const propertySlice = createSlice({
+  name: "property",
   initialState,
   reducers: {
     fetchPropertiesSummary: (state) => {
-      state.propertyListfetchState.status = "pending";
+      state.propertyListfetchState = { status: "pending", error: null };
     },
-    fetchPropertiesSummarySuccess: (state) => {
-      state.propertyListfetchState.status = "Completed";
+    fetchPropertiesSummarySuccess: (
+      state,
+      action: PayloadAction<PropertySummary[]>,
+    ) => {
+      state.propertyListfetchState = { status: "completed", error: null };
+      state.propertiesList = action.payload;
     },
-    fetchPropertiesSummaryFailure: (state) => {
-      state.propertyListfetchState.status = "Failed";
+    fetchPropertiesSummaryFailure: (state, action: PayloadAction<string>) => {
+      state.propertyListfetchState = {
+        status: "failed",
+        error: action.payload,
+      };
     },
     clearState: (state) => {
       state.propertyListfetchState = defaultFetchState;
@@ -28,9 +35,10 @@ const managerSlice = createSlice({
   },
 });
 
-export const managerReducer = managerSlice.reducer;
+export const propertyReducer = propertySlice.reducer;
 export const {
   fetchPropertiesSummary,
   fetchPropertiesSummarySuccess,
   fetchPropertiesSummaryFailure,
-} = managerSlice.actions;
+  clearState,
+} = propertySlice.actions;
