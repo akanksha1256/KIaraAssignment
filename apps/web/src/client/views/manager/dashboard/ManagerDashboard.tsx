@@ -20,6 +20,7 @@ import {
 } from "@/client/stateManagement/mainFile";
 import { fetchManagerDashboard } from "@/client/stateManagement/manager/managerSlice";
 import { selectDashboard } from "@/client/stateManagement/manager/managerSelectors";
+import { selectPropertiesList } from "@/client/stateManagement/property/propertySelectors";
 import {
   Card,
   CardHeader,
@@ -29,16 +30,17 @@ import {
   ErrorState,
   EmptyState,
 } from "@/client/uiComponents";
-import type { PropertySummary } from "@/platform/types";
+import { strings } from "@/client/designSystems/strings";
+import type { PropertySummary } from "@/client/stateManagement/property/type";
 import {
   Building2,
   DoorOpen,
-  Users,
   DollarSign,
   TrendingUp,
-  AlertTriangle,
   ChevronRight,
 } from "lucide-react";
+
+const s = strings.manager.dashboard;
 
 // ── Colour tokens shared across charts ────────────────────────────────────────
 
@@ -98,14 +100,26 @@ const statusConfig: Record<
   PropertySummary["status"],
   { bg: string; text: string; label: string }
 > = {
-  paid: { bg: "bg-success-50", text: "text-success-700", label: "All Paid" },
+  paid: {
+    bg: "bg-success-50",
+    text: "text-success-700",
+    label: s.statusPill.paid,
+  },
   outstanding: {
     bg: "bg-warning-50",
     text: "text-warning-700",
-    label: "Outstanding",
+    label: s.statusPill.outstanding,
   },
-  overdue: { bg: "bg-danger-50", text: "text-danger-700", label: "Overdue" },
-  vacant: { bg: "bg-neutral-100", text: "text-neutral-500", label: "Vacant" },
+  overdue: {
+    bg: "bg-danger-50",
+    text: "text-danger-700",
+    label: s.statusPill.overdue,
+  },
+  vacant: {
+    bg: "bg-neutral-100",
+    text: "text-neutral-500",
+    label: s.statusPill.vacant,
+  },
 };
 
 function StatusPill({ status }: { status: PropertySummary["status"] }) {
@@ -158,47 +172,40 @@ export function ManagerDashboard() {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const {
-    loading,
-    error,
-    stats,
-    paymentBreakdown,
-    monthlyRevenue,
-    properties,
-  } = useAppSelector(selectDashboard);
+  const { status, error, stats, paymentBreakdown, monthlyRevenue } =
+    useAppSelector(selectDashboard);
+
+  const { properties } = useAppSelector(selectPropertiesList);
 
   useEffect(() => {
     dispatch(fetchManagerDashboard());
   }, [dispatch]);
 
-  if (loading) return <LoadingState message="Loading dashboard…" />;
-  if (error)
+  if (status === "pending") return <LoadingState message={s.loading} />;
+  if (status === "failed")
     return (
       <ErrorState
-        message="Could not load dashboard data."
+        message={s.error}
         onRetry={() => dispatch(fetchManagerDashboard())}
       />
     );
   if (!stats)
-    return (
-      <EmptyState
-        title="No data yet"
-        description="Add properties to see your dashboard."
-      />
-    );
-
-  // ── Prepare chart data ─────────────────────────────────────────────────────
+    return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
   const pieData = paymentBreakdown
     ? [
-        { name: "Paid", value: paymentBreakdown.paid, fill: CHART_COLORS.paid },
         {
-          name: "Outstanding",
+          name: s.paymentChart.paid,
+          value: paymentBreakdown.paid,
+          fill: CHART_COLORS.paid,
+        },
+        {
+          name: s.paymentChart.outstanding,
           value: paymentBreakdown.outstanding,
           fill: CHART_COLORS.outstanding,
         },
         {
-          name: "Overdue",
+          name: s.paymentChart.overdue,
           value: paymentBreakdown.overdue,
           fill: CHART_COLORS.overdue,
         },
@@ -210,63 +217,70 @@ export function ManagerDashboard() {
       ? Math.round((stats.collectedThisMonth / stats.totalMonthlyRent) * 100)
       : 0;
 
+  const TABLE_COLS = [
+    { label: s.propertiesTable.colId, align: "left" },
+    { label: s.propertiesTable.colName, align: "left" },
+    { label: s.propertiesTable.colAddress, align: "left" },
+    { label: s.propertiesTable.colUnits, align: "right" },
+    { label: s.propertiesTable.colRent, align: "right" },
+    { label: s.propertiesTable.colStatus, align: "left" },
+    { label: "", align: "right" },
+  ];
+
   return (
     <div className="space-y-8">
       {/* ── Page header ─────────────────────────────────────────────────────── */}
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900">
-          Manager Dashboard
-        </h1>
-        <p className="mt-1 text-sm text-neutral-500">
-          Overview of your portfolio performance.
-        </p>
+        <h1 className="text-2xl font-bold text-neutral-900">{s.title}</h1>
+        <p className="mt-1 text-sm text-neutral-500">{s.subtitle}</p>
       </div>
 
       {/* ── Stat cards ──────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           icon={Building2}
-          label="Properties"
+          label={s.stats.properties}
           value={String(stats.totalProperties)}
-          sub={`${stats.totalUnits} total units`}
+          sub={s.stats.propertiesSubtitle(stats.totalUnits)}
           accent="brand"
         />
         <StatCard
           icon={DoorOpen}
-          label="Occupancy"
+          label={s.stats.occupancy}
           value={`${stats.occupiedUnits}/${stats.totalUnits}`}
-          sub={`${stats.vacantUnits} vacant`}
+          sub={s.stats.occupancySubtitle(stats.vacantUnits)}
           accent="brand"
         />
         <StatCard
           icon={DollarSign}
-          label="Monthly Rent"
+          label={s.stats.monthlyRent}
           value={`$${stats.totalMonthlyRent.toLocaleString()}`}
-          sub="across active leases"
+          sub={s.stats.monthlyRentSubtitle}
           accent="success"
         />
         <StatCard
           icon={TrendingUp}
-          label="Collection Rate"
+          label={s.stats.collectionRate}
           value={`${collectionRate}%`}
-          sub={`$${stats.collectedThisMonth.toLocaleString()} collected`}
+          sub={s.stats.collectionRateSubtitle(
+            `$${stats.collectedThisMonth.toLocaleString()}`,
+          )}
           accent={collectionRate >= 80 ? "success" : "warning"}
         />
       </div>
 
       {/* ── Charts row ──────────────────────────────────────────────────────── */}
       <div className="grid gap-6 lg:grid-cols-5">
-        {/* Bar chart — Monthly Revenue (3/5 width) */}
         <Card className="lg:col-span-3">
           <CardHeader>
-            <CardTitle>Monthly Revenue</CardTitle>
+            <CardTitle>{s.revenueChart.title}</CardTitle>
             <p className="text-xs text-neutral-400">
-              Expected vs collected over last 6 months
+              {s.revenueChart.subtitle}
             </p>
           </CardHeader>
           <CardContent>
             {monthlyRevenue.length === 0 ? (
-              <EmptyState title="No revenue data" />
+              <EmptyState title={s.revenueChart.empty} />
             ) : (
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart
@@ -294,13 +308,13 @@ export function ManagerDashboard() {
                   />
                   <Bar
                     dataKey="expected"
-                    name="Expected"
+                    name={s.revenueChart.barExpected}
                     fill={CHART_COLORS.expected}
                     radius={[4, 4, 0, 0]}
                   />
                   <Bar
                     dataKey="collected"
-                    name="Collected"
+                    name={s.revenueChart.barCollected}
                     fill={CHART_COLORS.collected}
                     radius={[4, 4, 0, 0]}
                   />
@@ -310,17 +324,16 @@ export function ManagerDashboard() {
           </CardContent>
         </Card>
 
-        {/* Donut chart — Payment status (2/5 width) */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Payment Status</CardTitle>
+            <CardTitle>{s.paymentChart.title}</CardTitle>
             <p className="text-xs text-neutral-400">
-              Breakdown across all leases
+              {s.paymentChart.subtitle}
             </p>
           </CardHeader>
           <CardContent>
             {pieData.length === 0 ? (
-              <EmptyState title="No payment data" />
+              <EmptyState title={s.paymentChart.empty} />
             ) : (
               <ResponsiveContainer width="100%" height={240}>
                 <PieChart>
@@ -356,29 +369,21 @@ export function ManagerDashboard() {
       <div>
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-400">
-            Properties ({properties.length})
+            {s.propertiesTable.heading(properties.length)}
           </h2>
         </div>
 
         {properties.length === 0 ? (
           <EmptyState
-            title="No properties"
-            description="Add your first property to get started."
+            title={s.propertiesTable.empty}
+            description={s.propertiesTable.emptyDescription}
           />
         ) : (
           <Card className="overflow-hidden">
             <table className="min-w-full divide-y divide-neutral-200">
               <thead>
                 <tr className="bg-neutral-50">
-                  {[
-                    { label: "ID", align: "left" },
-                    { label: "Property Name", align: "left" },
-                    { label: "Address", align: "left" },
-                    { label: "Units", align: "right" },
-                    { label: "Monthly Rent", align: "right" },
-                    { label: "Status", align: "left" },
-                    { label: "", align: "right" },
-                  ].map(({ label, align }) => (
+                  {TABLE_COLS.map(({ label, align }) => (
                     <th
                       key={label}
                       className={`px-5 py-3 text-xs font-semibold uppercase tracking-wide text-neutral-400 text-${align}`}
@@ -407,7 +412,7 @@ export function ManagerDashboard() {
                     <td className="whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-600">
                       {p.leasedCount}/{p.unitCount}
                       <span className="ml-1 text-xs text-neutral-400">
-                        occupied
+                        {s.propertiesTable.occupiedSuffix}
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900">
@@ -420,7 +425,8 @@ export function ManagerDashboard() {
                     </td>
                     <td className="whitespace-nowrap px-5 py-4 text-right">
                       <span className="inline-flex items-center gap-1 text-sm text-brand-600">
-                        View <ChevronRight className="h-3.5 w-3.5" />
+                        {s.propertiesTable.viewLink}{" "}
+                        <ChevronRight className="h-3.5 w-3.5" />
                       </span>
                     </td>
                   </tr>

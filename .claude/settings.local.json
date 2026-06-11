@@ -22,7 +22,15 @@
       "Bash(sed -i '' 's|from \"@repo/ui\"|from \"@/client/uiComponents\"|g' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/Dashboard/ManagerDashboard.tsx)",
       "Bash(sed -i '' 's|from \"@repo/types\"|from \"@/platform/types\"|g' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/Dashboard/ManagerDashboard.tsx)",
       "Bash(sed -i '' 's|from \"@/app/commonComponents/Providers\"|from \"@/client/commonComponents/Providers\"|g; s|from \"@/app/commonComponents/Nav\"|from \"@/client/commonComponents/Nav\"|g' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/layout.tsx)",
-      "Bash(sed -i '' 's|from \"@/app/views/manager/Dashboard/ManagerDashboard\"|from \"@/client/views/manager/Dashboard/ManagerDashboard\"|g' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/manager/page.tsx)"
+      "Bash(sed -i '' 's|from \"@/app/views/manager/Dashboard/ManagerDashboard\"|from \"@/client/views/manager/Dashboard/ManagerDashboard\"|g' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/manager/page.tsx)",
+      "Bash(sed -i '' 's|import type { ManagerDashboardData } from \"@/platform/types\";|import type { ManagerDashboardData } from \"./type\";|' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/stateManagement/manager/managerSlice.ts)",
+      "Bash(sed -i '' 's|import type { PropertySummary } from \"@/platform/types\";|import type { PropertySummary } from \"./type\";|' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/stateManagement/property/propertySlice.ts)",
+      "Bash(sed -i '' 's|import type { Tenant, Lease, Payment, PaymentMethod } from \"@/platform/types\";|import type { Tenant } from \"./type\";\\\\nimport type { Lease } from \"../lease/type\";\\\\nimport type { Payment, PaymentMethod } from \"../payment/type\";|' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/stateManagement/tenant/tenantSlice.ts)",
+      "Bash(sed -i '' 's/loading,$/status,/' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/Dashboard/ManagerDashboard.tsx)",
+      "Bash(sed -i '' 's/if \\(loading\\) return/if \\(status === \"pending\"\\) return/' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/Dashboard/ManagerDashboard.tsx)",
+      "Bash(sed -i '' 's/if \\(error\\)/if \\(status === \"failed\"\\)/' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/Dashboard/ManagerDashboard.tsx)",
+      "Bash(sed -i '' 's/    properties,$/  } = useAppSelector\\(selectDashboard\\);\\\\n\\\\n  const { properties } = useAppSelector\\(selectPropertiesList\\);/' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/Dashboard/ManagerDashboard.tsx)",
+      "Bash(sed -i '' '/^  } = useAppSelector\\(selectDashboard\\);/{ *)"
     ]
   }
 }

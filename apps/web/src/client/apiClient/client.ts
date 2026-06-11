@@ -1,3 +1,27 @@
+import type * as P from "@/platform/types";
+import {
+  mapProperty,
+  mapPropertySummary,
+  mapUnit,
+  mapTenant,
+  mapLease,
+  mapPayment,
+  mapPaymentMethod,
+  mapManagerDashboard,
+} from "./mappers";
+import type { ManagerDashboardData } from "@/client/stateManagement/manager/type";
+import type {
+  Property,
+  PropertySummary,
+} from "@/client/stateManagement/property/type";
+import type { Unit } from "@/client/stateManagement/unit/type";
+import type { Tenant } from "@/client/stateManagement/tenant/type";
+import type { Lease } from "@/client/stateManagement/lease/type";
+import type {
+  Payment,
+  PaymentMethod,
+} from "@/client/stateManagement/payment/type";
+
 const BASE = "/api";
 
 async function request<T>(
@@ -15,36 +39,116 @@ async function request<T>(
   return res.json();
 }
 
-import type {
-  Property, PropertySummary, Unit, Tenant, Lease, Payment, PaymentMethod, ManagerDashboardData,
-} from "@/platform/types";
-
 export const api = {
-  getManagerDashboard: () => request<ManagerDashboardData>("/manager/dashboard"),
+  getManagerDashboard: async (): Promise<ManagerDashboardData> =>
+    mapManagerDashboard(
+      await request<P.ManagerDashboardData>("/manager/dashboard"),
+    ),
 
-  getProperties:       () => request<Property[]>("/properties"),
-  getProperty:         (id: string) => request<Property>(`/properties/${id}`),
-  getPropertiesSummary:() => request<PropertySummary[]>("/properties/summary"),
+  getProperties: async (): Promise<Property[]> =>
+    (await request<P.Property[]>("/properties")).map(mapProperty),
 
-  getUnits:            (propertyId: string) => request<Unit[]>(`/properties/${propertyId}/units`),
-  getUnit:             (id: string) => request<Unit>(`/units/${id}`),
+  getProperty: async (id: string): Promise<Property> =>
+    mapProperty(await request<P.Property>(`/properties/${id}`)),
 
-  getTenant:           (id: string) => request<Tenant>(`/tenants/${id}`),
+  getPropertiesSummary: async (): Promise<PropertySummary[]> =>
+    (await request<P.PropertySummary[]>("/properties/summary")).map(
+      mapPropertySummary,
+    ),
 
-  getLease:            (id: string) => request<Lease>(`/leases/${id}`),
-  getLeaseByUnit:      (unitId: string) => request<Lease | null>(`/units/${unitId}/lease`),
-  createLease:         (data: Omit<Lease, "id">) =>
-    request<Lease>("/leases", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }),
-  updateLease:         (id: string, data: Partial<Lease>) =>
-    request<Lease>(`/leases/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }),
+  getUnits: async (propertyId: string): Promise<Unit[]> =>
+    (await request<P.Unit[]>(`/properties/${propertyId}/units`)).map(mapUnit),
 
-  getPayments:         (leaseId: string) => request<Payment[]>(`/leases/${leaseId}/payments`),
-  payRent:             (leaseId: string, data: { periodMonth: string; paymentMethodId: string }, fail?: boolean) =>
-    request<Payment>(`/leases/${leaseId}/pay`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data), fail }),
-  sendReminder:        (leaseId: string, periodMonth: string) =>
-    request<{ success: true }>(`/leases/${leaseId}/remind`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ periodMonth }) }),
+  getUnit: async (id: string): Promise<Unit> =>
+    mapUnit(await request<P.Unit>(`/units/${id}`)),
 
-  getPaymentMethods:   (tenantId: string) => request<PaymentMethod[]>(`/tenants/${tenantId}/payment-methods`),
-  addPaymentMethod:    (tenantId: string, label: string) =>
-    request<PaymentMethod>(`/tenants/${tenantId}/payment-methods`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ label }) }),
+  getTenant: async (id: string): Promise<Tenant> =>
+    mapTenant(await request<P.Tenant>(`/tenants/${id}`)),
+
+  getLease: async (id: string): Promise<Lease> =>
+    mapLease(await request<P.Lease>(`/leases/${id}`)),
+
+  getLeaseByUnit: async (unitId: string): Promise<Lease | null> => {
+    const raw = await request<P.Lease | null>(`/units/${unitId}/lease`);
+    return raw ? mapLease(raw) : null;
+  },
+
+  createLease: async (data: Omit<Lease, "id">): Promise<Lease> =>
+    mapLease(
+      await request<P.Lease>("/leases", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          unit_id: data.unitId,
+          tenant_id: data.tenantId,
+          start_date: data.startDate,
+          end_date: data.endDate,
+          monthly_rent: data.monthlyRent,
+          terms: data.terms,
+        }),
+      }),
+    ),
+
+  updateLease: async (id: string, data: Partial<Lease>): Promise<Lease> =>
+    mapLease(
+      await request<P.Lease>(`/leases/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...(data.unitId && { unit_id: data.unitId }),
+          ...(data.tenantId && { tenant_id: data.tenantId }),
+          ...(data.startDate && { start_date: data.startDate }),
+          ...(data.endDate && { end_date: data.endDate }),
+          ...(data.monthlyRent && { monthly_rent: data.monthlyRent }),
+          ...(data.terms && { terms: data.terms }),
+        }),
+      }),
+    ),
+
+  getPayments: async (leaseId: string): Promise<Payment[]> =>
+    (await request<P.Payment[]>(`/leases/${leaseId}/payments`)).map(mapPayment),
+
+  payRent: async (
+    leaseId: string,
+    data: { periodMonth: string; paymentMethodId: string },
+    fail?: boolean,
+  ): Promise<Payment> =>
+    mapPayment(
+      await request<P.Payment>(`/leases/${leaseId}/pay`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          period_month: data.periodMonth,
+          payment_method_id: data.paymentMethodId,
+        }),
+        fail,
+      }),
+    ),
+
+  sendReminder: (
+    leaseId: string,
+    periodMonth: string,
+  ): Promise<{ success: true }> =>
+    request(`/leases/${leaseId}/remind`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ period_month: periodMonth }),
+    }),
+
+  getPaymentMethods: async (tenantId: string): Promise<PaymentMethod[]> =>
+    (
+      await request<P.PaymentMethod[]>(`/tenants/${tenantId}/payment-methods`)
+    ).map(mapPaymentMethod),
+
+  addPaymentMethod: async (
+    tenantId: string,
+    label: string,
+  ): Promise<PaymentMethod> =>
+    mapPaymentMethod(
+      await request<P.PaymentMethod>(`/tenants/${tenantId}/payment-methods`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ label }),
+      }),
+    ),
 };

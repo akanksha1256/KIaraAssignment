@@ -2,13 +2,20 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/client/commonComponents/Providers";
-import { Nav }       from "@/client/commonComponents/Nav";
+import { Nav } from "@/client/commonComponents/Nav";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = { title: "RentPortal", description: "Rent management portal" };
+export const metadata: Metadata = {
+  title: "RentPortal",
+  description: "Rent management portal",
+};
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body className={inter.className}>

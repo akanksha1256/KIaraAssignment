@@ -1,13 +1,27 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { ManagerDashboardData } from "@/platform/types";
-import { type FetchState, initialFetch } from "../types";
+import type {
+  ManagerDashboardData,
+  DashboardStats,
+  PaymentBreakdown,
+  MonthlyRevenue,
+} from "./type";
+import {
+  defaultFetchState,
+  type FetchStateWithError,
+} from "../../helpers/type";
 
 interface ManagerState {
-  dashboard: FetchState<ManagerDashboardData>;
+  dashboardFetchState: FetchStateWithError;
+  stats: DashboardStats | null;
+  paymentBreakdown: PaymentBreakdown | null;
+  monthlyRevenue: MonthlyRevenue[];
 }
 
 const initialState: ManagerState = {
-  dashboard: initialFetch(),
+  dashboardFetchState: defaultFetchState,
+  stats: null,
+  paymentBreakdown: null,
+  monthlyRevenue: [],
 };
 
 const managerSlice = createSlice({
@@ -15,13 +29,19 @@ const managerSlice = createSlice({
   initialState,
   reducers: {
     fetchManagerDashboard: (state) => {
-      state.dashboard = { data: null, loading: true, error: null };
+      state.dashboardFetchState = { status: "pending", error: null };
     },
-    fetchManagerDashboardSuccess: (state, action: PayloadAction<ManagerDashboardData>) => {
-      state.dashboard = { data: action.payload, loading: false, error: null };
+    fetchManagerDashboardSuccess: (
+      state,
+      action: PayloadAction<ManagerDashboardData>,
+    ) => {
+      state.dashboardFetchState = { status: "completed", error: null };
+      state.stats = action.payload.stats;
+      state.paymentBreakdown = action.payload.paymentBreakdown;
+      state.monthlyRevenue = action.payload.monthlyRevenue;
     },
     fetchManagerDashboardFailure: (state, action: PayloadAction<string>) => {
-      state.dashboard = { data: null, loading: false, error: action.payload };
+      state.dashboardFetchState = { status: "failed", error: action.payload };
     },
   },
 });

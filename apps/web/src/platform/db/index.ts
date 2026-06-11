@@ -1,18 +1,18 @@
 import type { Property, Unit, Tenant, Lease, Payment, PaymentMethod } from "@/platform/types";
 
 const properties: Property[] = [
-  { id: "prop-1", name: "Maple Heights",    address: "123 Maple St, Austin TX 78701" },
-  { id: "prop-2", name: "Riverside Lofts",  address: "456 River Rd, Austin TX 78702" },
+  { id: "prop-1", name: "Maple Heights",   address: "123 Maple St, Austin TX 78701" },
+  { id: "prop-2", name: "Riverside Lofts", address: "456 River Rd, Austin TX 78702" },
 ];
 
 const units: Unit[] = [
-  { id: "unit-1", propertyId: "prop-1", label: "Apt 101" },
-  { id: "unit-2", propertyId: "prop-1", label: "Apt 102" },
-  { id: "unit-3", propertyId: "prop-1", label: "Apt 103" },
-  { id: "unit-4", propertyId: "prop-2", label: "Loft A"  },
-  { id: "unit-5", propertyId: "prop-2", label: "Loft B"  },
-  { id: "unit-6", propertyId: "prop-2", label: "Loft C"  },
-  { id: "unit-7", propertyId: "prop-2", label: "Loft D"  },
+  { id: "unit-1", property_id: "prop-1", label: "Apt 101" },
+  { id: "unit-2", property_id: "prop-1", label: "Apt 102" },
+  { id: "unit-3", property_id: "prop-1", label: "Apt 103" },
+  { id: "unit-4", property_id: "prop-2", label: "Loft A"  },
+  { id: "unit-5", property_id: "prop-2", label: "Loft B"  },
+  { id: "unit-6", property_id: "prop-2", label: "Loft C"  },
+  { id: "unit-7", property_id: "prop-2", label: "Loft D"  },
 ];
 
 const tenants: Tenant[] = [
@@ -24,52 +24,52 @@ const tenants: Tenant[] = [
 ];
 
 const leases: Lease[] = [
-  { id: "lease-1", unitId: "unit-1", tenantId: "tenant-1", startDate: "2024-01-01", endDate: "2024-12-31", monthlyRent: 1800, terms: "12-month lease. No pets. Utilities included. $500 security deposit." },
-  { id: "lease-2", unitId: "unit-2", tenantId: "tenant-2", startDate: "2024-03-01", endDate: "2025-02-28", monthlyRent: 2100, terms: "12-month lease. Pets allowed with deposit. Tenant pays utilities." },
+  { id: "lease-1", unit_id: "unit-1", tenant_id: "tenant-1", start_date: "2024-01-01", end_date: "2024-12-31", monthly_rent: 1800, terms: "12-month lease. No pets. Utilities included. $500 security deposit." },
+  { id: "lease-2", unit_id: "unit-2", tenant_id: "tenant-2", start_date: "2024-03-01", end_date: "2025-02-28", monthly_rent: 2100, terms: "12-month lease. Pets allowed with deposit. Tenant pays utilities." },
   // unit-3 (Apt 103) is vacant — no lease
-  { id: "lease-3", unitId: "unit-4", tenantId: "tenant-3", startDate: "2024-06-01", endDate: "2025-05-31", monthlyRent: 2500, terms: "12-month lease. No smoking. Parking included. $800 security deposit." },
-  { id: "lease-4", unitId: "unit-5", tenantId: "tenant-4", startDate: "2024-02-01", endDate: "2025-01-31", monthlyRent: 2800, terms: "12-month lease. Pets allowed. Rooftop access included. $900 security deposit." },
-  { id: "lease-5", unitId: "unit-6", tenantId: "tenant-5", startDate: "2024-04-01", endDate: "2025-03-31", monthlyRent: 3200, terms: "12-month lease. No subletting. Gym access included. $1,000 security deposit." },
+  { id: "lease-3", unit_id: "unit-4", tenant_id: "tenant-3", start_date: "2024-06-01", end_date: "2025-05-31", monthly_rent: 2500, terms: "12-month lease. No smoking. Parking included. $800 security deposit." },
+  { id: "lease-4", unit_id: "unit-5", tenant_id: "tenant-4", start_date: "2024-02-01", end_date: "2025-01-31", monthly_rent: 2800, terms: "12-month lease. Pets allowed. Rooftop access included. $900 security deposit." },
+  { id: "lease-5", unit_id: "unit-6", tenant_id: "tenant-5", start_date: "2024-04-01", end_date: "2025-03-31", monthly_rent: 3200, terms: "12-month lease. No subletting. Gym access included. $1,000 security deposit." },
   // unit-7 (Loft D) is vacant — no lease
 ];
 
 const payments: Payment[] = [
   // Alice – lease-1
-  { id: "pay-1",  leaseId: "lease-1", periodMonth: "2024-01", amountDue: 1800, amountPaid: 1800, status: "paid",        paidDate: "2024-01-02", method: "Bank Transfer" },
-  { id: "pay-2",  leaseId: "lease-1", periodMonth: "2024-02", amountDue: 1800, amountPaid: 1800, status: "paid",        paidDate: "2024-02-01", method: "Bank Transfer" },
-  { id: "pay-3",  leaseId: "lease-1", periodMonth: "2024-03", amountDue: 1800, amountPaid: 1800, status: "paid",        paidDate: "2024-03-03", method: "Bank Transfer" },
-  { id: "pay-4",  leaseId: "lease-1", periodMonth: "2024-04", amountDue: 1800, amountPaid: 1800, status: "paid",        paidDate: "2024-04-01", method: "Credit Card"   },
-  { id: "pay-5",  leaseId: "lease-1", periodMonth: "2024-05", amountDue: 1800, amountPaid: 1800, status: "paid",        paidDate: "2024-05-01", method: "Bank Transfer" },
-  { id: "pay-6",  leaseId: "lease-1", periodMonth: "2024-06", amountDue: 1800, amountPaid: 0,    status: "overdue",     paidDate: null,         method: null            },
-  { id: "pay-7",  leaseId: "lease-1", periodMonth: "2024-07", amountDue: 1800, amountPaid: 0,    status: "outstanding", paidDate: null,         method: null            },
+  { id: "pay-1",  lease_id: "lease-1", period_month: "2024-01", amount_due: 1800, amount_paid: 1800, status: "paid",        paid_date: "2024-01-02", method: "Bank Transfer" },
+  { id: "pay-2",  lease_id: "lease-1", period_month: "2024-02", amount_due: 1800, amount_paid: 1800, status: "paid",        paid_date: "2024-02-01", method: "Bank Transfer" },
+  { id: "pay-3",  lease_id: "lease-1", period_month: "2024-03", amount_due: 1800, amount_paid: 1800, status: "paid",        paid_date: "2024-03-03", method: "Bank Transfer" },
+  { id: "pay-4",  lease_id: "lease-1", period_month: "2024-04", amount_due: 1800, amount_paid: 1800, status: "paid",        paid_date: "2024-04-01", method: "Credit Card"   },
+  { id: "pay-5",  lease_id: "lease-1", period_month: "2024-05", amount_due: 1800, amount_paid: 1800, status: "paid",        paid_date: "2024-05-01", method: "Bank Transfer" },
+  { id: "pay-6",  lease_id: "lease-1", period_month: "2024-06", amount_due: 1800, amount_paid: 0,    status: "overdue",     paid_date: null,         method: null            },
+  { id: "pay-7",  lease_id: "lease-1", period_month: "2024-07", amount_due: 1800, amount_paid: 0,    status: "outstanding", paid_date: null,         method: null            },
   // Bob – lease-2
-  { id: "pay-8",  leaseId: "lease-2", periodMonth: "2024-03", amountDue: 2100, amountPaid: 2100, status: "paid",        paidDate: "2024-03-01", method: "Credit Card"   },
-  { id: "pay-9",  leaseId: "lease-2", periodMonth: "2024-04", amountDue: 2100, amountPaid: 2100, status: "paid",        paidDate: "2024-04-05", method: "Credit Card"   },
-  { id: "pay-10", leaseId: "lease-2", periodMonth: "2024-05", amountDue: 2100, amountPaid: 2100, status: "paid",        paidDate: "2024-05-02", method: "Credit Card"   },
-  { id: "pay-11", leaseId: "lease-2", periodMonth: "2024-06", amountDue: 2100, amountPaid: 0,    status: "overdue",     paidDate: null,         method: null            },
-  { id: "pay-12", leaseId: "lease-2", periodMonth: "2024-07", amountDue: 2100, amountPaid: 0,    status: "outstanding", paidDate: null,         method: null            },
+  { id: "pay-8",  lease_id: "lease-2", period_month: "2024-03", amount_due: 2100, amount_paid: 2100, status: "paid",        paid_date: "2024-03-01", method: "Credit Card"   },
+  { id: "pay-9",  lease_id: "lease-2", period_month: "2024-04", amount_due: 2100, amount_paid: 2100, status: "paid",        paid_date: "2024-04-05", method: "Credit Card"   },
+  { id: "pay-10", lease_id: "lease-2", period_month: "2024-05", amount_due: 2100, amount_paid: 2100, status: "paid",        paid_date: "2024-05-02", method: "Credit Card"   },
+  { id: "pay-11", lease_id: "lease-2", period_month: "2024-06", amount_due: 2100, amount_paid: 0,    status: "overdue",     paid_date: null,         method: null            },
+  { id: "pay-12", lease_id: "lease-2", period_month: "2024-07", amount_due: 2100, amount_paid: 0,    status: "outstanding", paid_date: null,         method: null            },
   // Carol – lease-3
-  { id: "pay-13", leaseId: "lease-3", periodMonth: "2024-06", amountDue: 2500, amountPaid: 2500, status: "paid",        paidDate: "2024-06-01", method: "Bank Transfer" },
-  { id: "pay-14", leaseId: "lease-3", periodMonth: "2024-07", amountDue: 2500, amountPaid: 0,    status: "outstanding", paidDate: null,         method: null            },
+  { id: "pay-13", lease_id: "lease-3", period_month: "2024-06", amount_due: 2500, amount_paid: 2500, status: "paid",        paid_date: "2024-06-01", method: "Bank Transfer" },
+  { id: "pay-14", lease_id: "lease-3", period_month: "2024-07", amount_due: 2500, amount_paid: 0,    status: "outstanding", paid_date: null,         method: null            },
   // David – lease-4
-  { id: "pay-15", leaseId: "lease-4", periodMonth: "2024-02", amountDue: 2800, amountPaid: 2800, status: "paid",        paidDate: "2024-02-01", method: "Bank Transfer" },
-  { id: "pay-16", leaseId: "lease-4", periodMonth: "2024-03", amountDue: 2800, amountPaid: 2800, status: "paid",        paidDate: "2024-03-02", method: "Bank Transfer" },
-  { id: "pay-17", leaseId: "lease-4", periodMonth: "2024-04", amountDue: 2800, amountPaid: 2800, status: "paid",        paidDate: "2024-04-01", method: "Bank Transfer" },
-  { id: "pay-18", leaseId: "lease-4", periodMonth: "2024-05", amountDue: 2800, amountPaid: 2800, status: "paid",        paidDate: "2024-05-01", method: "Bank Transfer" },
-  { id: "pay-19", leaseId: "lease-4", periodMonth: "2024-06", amountDue: 2800, amountPaid: 2800, status: "paid",        paidDate: "2024-06-01", method: "Bank Transfer" },
-  { id: "pay-20", leaseId: "lease-4", periodMonth: "2024-07", amountDue: 2800, amountPaid: 0,    status: "outstanding", paidDate: null,         method: null            },
+  { id: "pay-15", lease_id: "lease-4", period_month: "2024-02", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-02-01", method: "Bank Transfer" },
+  { id: "pay-16", lease_id: "lease-4", period_month: "2024-03", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-03-02", method: "Bank Transfer" },
+  { id: "pay-17", lease_id: "lease-4", period_month: "2024-04", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-04-01", method: "Bank Transfer" },
+  { id: "pay-18", lease_id: "lease-4", period_month: "2024-05", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-05-01", method: "Bank Transfer" },
+  { id: "pay-19", lease_id: "lease-4", period_month: "2024-06", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-06-01", method: "Bank Transfer" },
+  { id: "pay-20", lease_id: "lease-4", period_month: "2024-07", amount_due: 2800, amount_paid: 0,    status: "outstanding", paid_date: null,         method: null            },
   // Eva – lease-5
-  { id: "pay-21", leaseId: "lease-5", periodMonth: "2024-04", amountDue: 3200, amountPaid: 3200, status: "paid",        paidDate: "2024-04-03", method: "Credit Card"   },
-  { id: "pay-22", leaseId: "lease-5", periodMonth: "2024-05", amountDue: 3200, amountPaid: 3200, status: "paid",        paidDate: "2024-05-01", method: "Credit Card"   },
-  { id: "pay-23", leaseId: "lease-5", periodMonth: "2024-06", amountDue: 3200, amountPaid: 0,    status: "overdue",     paidDate: null,         method: null            },
-  { id: "pay-24", leaseId: "lease-5", periodMonth: "2024-07", amountDue: 3200, amountPaid: 0,    status: "outstanding", paidDate: null,         method: null            },
+  { id: "pay-21", lease_id: "lease-5", period_month: "2024-04", amount_due: 3200, amount_paid: 3200, status: "paid",        paid_date: "2024-04-03", method: "Credit Card"   },
+  { id: "pay-22", lease_id: "lease-5", period_month: "2024-05", amount_due: 3200, amount_paid: 3200, status: "paid",        paid_date: "2024-05-01", method: "Credit Card"   },
+  { id: "pay-23", lease_id: "lease-5", period_month: "2024-06", amount_due: 3200, amount_paid: 0,    status: "overdue",     paid_date: null,         method: null            },
+  { id: "pay-24", lease_id: "lease-5", period_month: "2024-07", amount_due: 3200, amount_paid: 0,    status: "outstanding", paid_date: null,         method: null            },
 ];
 
 const paymentMethods: PaymentMethod[] = [
-  { id: "pm-1", tenantId: "tenant-1", label: "Chase ••••4242"       },
-  { id: "pm-2", tenantId: "tenant-2", label: "Visa ••••1234"        },
-  { id: "pm-3", tenantId: "tenant-4", label: "Amex ••••9876"        },
-  { id: "pm-4", tenantId: "tenant-5", label: "Mastercard ••••5555"  },
+  { id: "pm-1", tenant_id: "tenant-1", label: "Chase ••••4242"      },
+  { id: "pm-2", tenant_id: "tenant-2", label: "Visa ••••1234"       },
+  { id: "pm-3", tenant_id: "tenant-4", label: "Amex ••••9876"       },
+  { id: "pm-4", tenant_id: "tenant-5", label: "Mastercard ••••5555" },
 ];
 
 export const db = {
@@ -86,8 +86,8 @@ export function getCurrentPeriodMonth(): string {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 }
 
-export function isOverdue(periodMonth: string): boolean {
-  const [year, month] = periodMonth.split("-").map(Number);
+export function isOverdue(period_month: string): boolean {
+  const [year, month] = period_month.split("-").map(Number);
   return new Date() > new Date(year, month - 1, 5);
 }
 

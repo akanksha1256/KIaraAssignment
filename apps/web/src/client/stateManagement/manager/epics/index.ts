@@ -1,5 +1,5 @@
 import { combineEpics, type Epic } from "redux-observable";
-import { switchMap, map, catchError } from "rxjs/operators";
+import { switchMap, mergeMap, catchError } from "rxjs/operators";
 import { from, of } from "rxjs";
 import { ofType } from "redux-observable";
 import { api } from "@/client/apiClient/client";
@@ -8,14 +8,26 @@ import {
   fetchManagerDashboardSuccess,
   fetchManagerDashboardFailure,
 } from "../managerSlice";
+import {
+  fetchPropertiesSummarySuccess,
+  fetchPropertiesSummaryFailure,
+} from "../../property/propertySlice";
 
 const fetchDashboardEpic: Epic = (action$) =>
   action$.pipe(
     ofType(fetchManagerDashboard.type),
     switchMap(() =>
       from(api.getManagerDashboard()).pipe(
-        map((data) => fetchManagerDashboardSuccess(data)),
-        catchError((err: Error) => of(fetchManagerDashboardFailure(err.message))),
+        mergeMap((data) => [
+          fetchManagerDashboardSuccess(data),
+          fetchPropertiesSummarySuccess(data.properties),
+        ]),
+        catchError((err: Error) =>
+          of(
+            fetchManagerDashboardFailure(err.message),
+            fetchPropertiesSummaryFailure(err.message),
+          ),
+        ),
       ),
     ),
   );

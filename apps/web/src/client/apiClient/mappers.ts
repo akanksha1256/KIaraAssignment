@@ -1,0 +1,90 @@
+import type * as P from "@/platform/types";
+import type { Property, PropertySummary } from "@/client/stateManagement/property/type";
+import type { Unit }                       from "@/client/stateManagement/unit/type";
+import type { Tenant }                     from "@/client/stateManagement/tenant/type";
+import type { Lease }                      from "@/client/stateManagement/lease/type";
+import type { Payment, PaymentMethod }     from "@/client/stateManagement/payment/type";
+import type { ManagerDashboardData, DashboardStats, PaymentBreakdown, MonthlyRevenue } from "@/client/stateManagement/manager/type";
+
+export const mapProperty = (p: P.Property): Property => ({
+  id:      p.id,
+  name:    p.name,
+  address: p.address,
+});
+
+export const mapUnit = (u: P.Unit): Unit => ({
+  id:         u.id,
+  propertyId: u.property_id,
+  label:      u.label,
+});
+
+export const mapTenant = (t: P.Tenant): Tenant => ({
+  id:      t.id,
+  name:    t.name,
+  contact: t.contact,
+});
+
+export const mapLease = (l: P.Lease): Lease => ({
+  id:          l.id,
+  unitId:      l.unit_id,
+  tenantId:    l.tenant_id,
+  startDate:   l.start_date,
+  endDate:     l.end_date,
+  monthlyRent: l.monthly_rent,
+  terms:       l.terms,
+});
+
+export const mapPayment = (p: P.Payment): Payment => ({
+  id:          p.id,
+  leaseId:     p.lease_id,
+  periodMonth: p.period_month,
+  amountDue:   p.amount_due,
+  amountPaid:  p.amount_paid,
+  status:      p.status,
+  paidDate:    p.paid_date,
+  method:      p.method,
+});
+
+export const mapPaymentMethod = (m: P.PaymentMethod): PaymentMethod => ({
+  id:       m.id,
+  tenantId: m.tenant_id,
+  label:    m.label,
+});
+
+export const mapPropertySummary = (s: P.PropertySummary): PropertySummary => ({
+  id:          s.id,
+  name:        s.name,
+  address:     s.address,
+  unitCount:   s.unit_count,
+  leasedCount: s.leased_count,
+  totalRent:   s.total_rent,
+  status:      s.status,
+});
+
+const mapDashboardStats = (s: P.DashboardStats): DashboardStats => ({
+  totalProperties:    s.total_properties,
+  totalUnits:         s.total_units,
+  occupiedUnits:      s.occupied_units,
+  vacantUnits:        s.vacant_units,
+  totalMonthlyRent:   s.total_monthly_rent,
+  collectedThisMonth: s.collected_this_month,
+});
+
+const mapPaymentBreakdown = (b: P.PaymentBreakdown): PaymentBreakdown => ({
+  paid:        b.paid,
+  outstanding: b.outstanding,
+  overdue:     b.overdue,
+});
+
+const mapMonthlyRevenue = (r: P.MonthlyRevenue): MonthlyRevenue => ({
+  month:     r.month,
+  expected:  r.expected,
+  collected: r.collected,
+});
+
+export const mapManagerDashboard = (d: P.ManagerDashboardData): ManagerDashboardData => ({
+  stats:            mapDashboardStats(d.stats),
+  paymentBreakdown: mapPaymentBreakdown(d.payment_breakdown),
+  monthlyRevenue:   d.monthly_revenue.map(mapMonthlyRevenue),
+  properties:       d.properties.map(mapPropertySummary),
+});

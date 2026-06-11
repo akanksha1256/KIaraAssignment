@@ -1,7 +1,7 @@
 export interface FetchState<T> {
-  data:    T | null;
+  data: T | null;
   loading: boolean;
-  error:   string | null;
+  error: string | null;
 }
 
 export function initialFetch<T>(): FetchState<T> {

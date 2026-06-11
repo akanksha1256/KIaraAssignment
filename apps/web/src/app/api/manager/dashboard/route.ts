@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/platform/db";
 import { withDelay, errorResponse } from "@/platform/utils";
-import type {
-  ManagerDashboardData,
-  PropertySummary,
-  PropertyStatus,
-  MonthlyRevenue,
-} from "@/platform/types";
+import type { ManagerDashboardData, PropertySummary, PropertyStatus, MonthlyRevenue } from "@/platform/types";
 
 export async function GET(req: NextRequest) {
   try {
@@ -14,103 +9,70 @@ export async function GET(req: NextRequest) {
 
     // ── Per-property summary ───────────────────────────────────────────────────
     const properties: PropertySummary[] = db.properties.map((prop) => {
-      const units = db.units.filter((u) => u.propertyId === prop.id);
-      const leases = units.flatMap((u) =>
-        db.leases.filter((l) => l.unitId === u.id),
-      );
-      const payments = leases.flatMap((l) =>
-        db.payments.filter((p) => p.leaseId === l.id),
-      );
+      const units    = db.units.filter((u) => u.property_id === prop.id);
+      const leases   = units.flatMap((u) => db.leases.filter((l) => l.unit_id === u.id));
+      const payments = leases.flatMap((l) => db.payments.filter((p) => p.lease_id === l.id));
 
-      const totalRent = leases.reduce((s, l) => s + l.monthlyRent, 0);
-      const hasOverdue = payments.some((p) => p.status === "overdue");
-      const hasOutstanding = payments.some((p) => p.status === "outstanding");
+      const total_rent        = leases.reduce((s, l) => s + l.monthly_rent, 0);
+      const hasOverdue        = payments.some((p) => p.status === "overdue");
+      const hasOutstanding    = payments.some((p) => p.status === "outstanding");
 
-      const status: PropertyStatus = hasOverdue
-        ? "overdue"
-        : hasOutstanding
-          ? "outstanding"
-          : leases.length === 0
-            ? "vacant"
-            : "paid";
+      const status: PropertyStatus =
+        hasOverdue ? "overdue" :
+        hasOutstanding ? "outstanding" :
+        leases.length === 0 ? "vacant" : "paid";
 
       return {
-        id: prop.id,
-        name: prop.name,
-        address: prop.address,
-        unitCount: units.length,
-        leasedCount: leases.length,
-        totalRent,
-        status,
+        id: prop.id, name: prop.name, address: prop.address,
+        unit_count: units.length, leased_count: leases.length,
+        total_rent, status,
       };
     });
 
     // ── Global stats ──────────────────────────────────────────────────────────
-    const allLeases = db.leases;
+    const allLeases   = db.leases;
     const allPayments = db.payments;
-    const totalUnits = db.units.length;
-    const occupiedUnits = allLeases.length;
+    const total_units    = db.units.length;
+    const occupied_units = allLeases.length;
 
-    const totalMonthlyRent = allLeases.reduce((s, l) => s + l.monthlyRent, 0);
-    const collectedThisMonth = allPayments
+    const total_monthly_rent    = allLeases.reduce((s, l) => s + l.monthly_rent, 0);
+    const collected_this_month  = allPayments
       .filter((p) => p.status === "paid")
-      .reduce((s, p) => s + p.amountPaid, 0);
+      .reduce((s, p) => s + p.amount_paid, 0);
 
     // ── Payment breakdown ─────────────────────────────────────────────────────
-    const paymentBreakdown = {
-      paid: allPayments.filter((p) => p.status === "paid").length,
+    const payment_breakdown = {
+      paid:        allPayments.filter((p) => p.status === "paid").length,
       outstanding: allPayments.filter((p) => p.status === "outstanding").length,
-      overdue: allPayments.filter((p) => p.status === "overdue").length,
+      overdue:     allPayments.filter((p) => p.status === "overdue").length,
     };
 
     // ── Monthly revenue (last 6 months) ───────────────────────────────────────
-    const monthNames = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    const monthlyRevenue: MonthlyRevenue[] = [];
+    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const monthly_revenue: MonthlyRevenue[] = [];
 
-    // Collect distinct months from payments, take last 6
-    const allMonths = [
-      ...new Set(allPayments.map((p) => p.periodMonth)),
-    ].sort();
-    const last6 = allMonths.slice(-6);
+    const allMonths = [...new Set(allPayments.map((p) => p.period_month))].sort();
+    const last6     = allMonths.slice(-6);
 
     for (const ym of last6) {
-      const monthPayments = allPayments.filter((p) => p.periodMonth === ym);
-      const expected = monthPayments.reduce((s, p) => s + p.amountDue, 0);
-      const collected = monthPayments
-        .filter((p) => p.status === "paid")
-        .reduce((s, p) => s + p.amountPaid, 0);
+      const monthPayments = allPayments.filter((p) => p.period_month === ym);
+      const expected  = monthPayments.reduce((s, p) => s + p.amount_due, 0);
+      const collected = monthPayments.filter((p) => p.status === "paid").reduce((s, p) => s + p.amount_paid, 0);
       const [, month] = ym.split("-");
-      monthlyRevenue.push({
-        month: monthNames[Number(month) - 1],
-        expected,
-        collected,
-      });
+      monthly_revenue.push({ month: monthNames[Number(month) - 1], expected, collected });
     }
 
     const data: ManagerDashboardData = {
       stats: {
-        totalProperties: db.properties.length,
-        totalUnits,
-        occupiedUnits,
-        vacantUnits: totalUnits - occupiedUnits,
-        totalMonthlyRent,
-        collectedThisMonth,
+        total_properties:     db.properties.length,
+        total_units,
+        occupied_units,
+        vacant_units:         total_units - occupied_units,
+        total_monthly_rent,
+        collected_this_month,
       },
-      paymentBreakdown,
-      monthlyRevenue,
+      payment_breakdown,
+      monthly_revenue,
       properties,
     };
 
