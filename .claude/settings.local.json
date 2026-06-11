@@ -30,7 +30,8 @@
       "Bash(sed -i '' 's/if \\(loading\\) return/if \\(status === \"pending\"\\) return/' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/Dashboard/ManagerDashboard.tsx)",
       "Bash(sed -i '' 's/if \\(error\\)/if \\(status === \"failed\"\\)/' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/Dashboard/ManagerDashboard.tsx)",
       "Bash(sed -i '' 's/    properties,$/  } = useAppSelector\\(selectDashboard\\);\\\\n\\\\n  const { properties } = useAppSelector\\(selectPropertiesList\\);/' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/Dashboard/ManagerDashboard.tsx)",
-      "Bash(sed -i '' '/^  } = useAppSelector\\(selectDashboard\\);/{ *)"
+      "Bash(sed -i '' '/^  } = useAppSelector\\(selectDashboard\\);/{ *)",
+      "Bash(git -C /Users/akankshalm/Desktop/KIaraAssignment ls-files)"
     ]
   }
 }
