@@ -1,11 +1,12 @@
-import type { Tenant, Lease, Payment, PaymentMethod } from "@repo/types";
-import type { FetchState, FetchStateMap } from "../types";
+import { FetchStateWithError } from "../../helpers/type";
 
-export interface TenantState {
-  detail:         FetchStateMap<Tenant>;
-  lease:          FetchStateMap<Lease>;
-  payments:       FetchStateMap<Payment[]>;
-  paymentMethods: FetchStateMap<PaymentMethod[]>;
-  payRent:        FetchState<Payment>;
-  addMethod:      FetchState<PaymentMethod>;
+export interface Tenant {
+  id: string;
+  name: string;
+  contact: string;
 }
+
+export type TenantState = {
+  tenantFetchState: FetchStateWithError;
+  tenantList: Tenant[];
+};
