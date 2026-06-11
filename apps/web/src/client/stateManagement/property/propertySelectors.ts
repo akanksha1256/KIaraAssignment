@@ -1,4 +1,11 @@
 import type { RootState } from "../mainFile";
+import { defaultFetchState } from "../../helpers/type";
+import type { PropertyDetailEntry } from "./type";
+
+const defaultDetailEntry: PropertyDetailEntry = {
+  fetchState: defaultFetchState,
+  property:   null,
+};
 
 export const selectPropertiesList = (state: RootState) => ({
   status:     state.property.propertyListfetchState.status,
@@ -6,9 +13,8 @@ export const selectPropertiesList = (state: RootState) => ({
   properties: state.property.propertiesList,
 });
 
-export const selectPropertyDetail = (state: RootState) => ({
-  status:   state.property.propertyDetailFetchState.status,
-  error:    state.property.propertyDetailFetchState.error,
-  property: state.property.selectedProperty,
-  units:    state.property.selectedPropertyUnits,
-});
+// Curried so the component passes the id: useAppSelector(selectPropertyDetailById(id))
+export const selectPropertyDetailById =
+  (id: string) =>
+  (state: RootState) =>
+    state.property.propertyDetailById[id] ?? defaultDetailEntry;

@@ -34,10 +34,13 @@ export interface PropertyDetailData {
   units: UnitDetailItem[];
 }
 
+export type PropertyDetailEntry = {
+  fetchState: FetchStateWithError;
+  property: Property | null;
+};
+
 export type PropertyState = {
   propertyListfetchState: FetchStateWithError;
   propertiesList: PropertySummary[];
-  propertyDetailFetchState: FetchStateWithError;
-  selectedProperty: Property | null;
-  selectedPropertyUnits: UnitDetailItem[];
+  propertyDetailById: Record<string, PropertyDetailEntry>;
 };

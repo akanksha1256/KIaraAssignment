@@ -7,7 +7,8 @@ import {
   useAppSelector,
 } from "@/client/stateManagement/mainFile";
 import { fetchPropertyById } from "@/client/stateManagement/property/propertySlice";
-import { selectPropertyDetail } from "@/client/stateManagement/property/propertySelectors";
+import { selectPropertyDetailById } from "@/client/stateManagement/property/propertySelectors";
+import { selectUnitsForProperty } from "@/client/stateManagement/unit/unitSelectors";
 import { LoadingState } from "@/client/views/LoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
@@ -88,8 +89,8 @@ export const PropertyDetail = ({ propertyId }: Props) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const { status, error, property, units } =
-    useAppSelector(selectPropertyDetail);
+  const { fetchState: { status, error }, property } = useAppSelector(selectPropertyDetailById(propertyId));
+  const { units } = useAppSelector(selectUnitsForProperty(propertyId));
 
   useEffect(() => {
     dispatch(fetchPropertyById(propertyId));
