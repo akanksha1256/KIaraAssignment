@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { defaultFetchState } from "../../helpers/type";
+import { defaultFetchState } from "../../../helpers/type";
 import { fetchPropertyById } from "../property/propertySlice";
 import type { UnitDetailItem } from "../property/type";
 import type { UnitState } from "./type";

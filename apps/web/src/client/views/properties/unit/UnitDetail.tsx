@@ -5,13 +5,13 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@/client/stateManagement/mainFile";
-import { fetchPropertyById } from "@/client/stateManagement/property/propertySlice";
+import { fetchPropertyById } from "@/client/stateManagement/managerDashboard/property/propertySlice";
 import {
   fetchTenantPayments,
   managerSendReminder,
   managerMarkPaid,
-} from "@/client/stateManagement/payment/paymentSlice";
-import { selectUnitById } from "@/client/stateManagement/unit/unitSelectors";
+} from "@/client/stateManagement/managerDashboard/payment/paymentSlice";
+import { selectUnitById } from "@/client/stateManagement/managerDashboard/unit/unitSelectors";
 import { LoadingState } from "@/client/views/LoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
@@ -22,7 +22,7 @@ import { MainHeader } from "@/client/commonComponents/MainHeader";
 import { TenantCard } from "@/client/views/tenant/TenantCard";
 import { ManagerLeaseCard } from "@/client/views/lease/ManagerLeaseCard";
 import { useToast } from "@/client/commonComponents/Toast";
-import type { Payment } from "@/client/stateManagement/payment/type";
+import type { Payment } from "@/client/stateManagement/managerDashboard/payment/type";
 import type { RootState } from "@/client/stateManagement/mainFile";
 import { UnitDetailProps } from "../helper";
 import { statusConfig } from "@/client/helpers/utils";

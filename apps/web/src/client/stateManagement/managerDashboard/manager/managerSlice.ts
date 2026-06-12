@@ -8,7 +8,7 @@ import type {
 import {
   defaultFetchState,
   type FetchStateWithError,
-} from "../../helpers/type";
+} from "../../../helpers/type";
 
 interface ManagerState {
   dashboardFetchState: FetchStateWithError;

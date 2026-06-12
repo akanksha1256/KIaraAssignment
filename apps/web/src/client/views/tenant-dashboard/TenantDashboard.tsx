@@ -5,8 +5,8 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@/client/stateManagement/mainFile";
-import { fetchTenantProfile } from "@/client/stateManagement/tenant/tenantSlice";
-import { selectTenantProfile } from "@/client/stateManagement/tenant/tenantSelectors";
+import { fetchTenantDashboard } from "@/client/stateManagement/tenantDashboard/tenantDashboardSlice";
+import { selectTenantDashboard } from "@/client/stateManagement/tenantDashboard/tenantDashboardSelectors";
 import { LoadingState } from "@/client/views/LoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
@@ -26,12 +26,10 @@ interface Props {
 export const TenantDashboard = ({ tenantId }: Props) => {
   const dispatch = useAppDispatch();
 
-  const { status, error, profile } = useAppSelector(
-    selectTenantProfile(tenantId),
-  );
+  const { status, error, data } = useAppSelector(selectTenantDashboard(tenantId));
 
   useEffect(() => {
-    dispatch(fetchTenantProfile(tenantId));
+    dispatch(fetchTenantDashboard(tenantId));
   }, [dispatch, tenantId]);
 
   if (status === "pending") return <LoadingState message={s.loading} />;
@@ -39,19 +37,19 @@ export const TenantDashboard = ({ tenantId }: Props) => {
     return (
       <ErrorState
         message={error}
-        onRetry={() => dispatch(fetchTenantProfile(tenantId))}
+        onRetry={() => dispatch(fetchTenantDashboard(tenantId))}
       />
     );
-  if (!profile)
+  if (!data)
     return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
-  const { tenant, lease, unit, property, payments } = profile;
+  const { tenantName, lease, unit, property, payments } = data;
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-neutral-900">
-          {s.heading(tenant.name)}
+          {s.heading(tenantName)}
         </h1>
       </div>
 

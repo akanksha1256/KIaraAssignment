@@ -6,9 +6,9 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@/client/stateManagement/mainFile";
-import { fetchPropertyById } from "@/client/stateManagement/property/propertySlice";
-import { selectPropertyDetailById } from "@/client/stateManagement/property/propertySelectors";
-import { selectUnitsForProperty } from "@/client/stateManagement/unit/unitSelectors";
+import { fetchPropertyById } from "@/client/stateManagement/managerDashboard/property/propertySlice";
+import { selectPropertyDetailById } from "@/client/stateManagement/managerDashboard/property/propertySelectors";
+import { selectUnitsForProperty } from "@/client/stateManagement/managerDashboard/unit/unitSelectors";
 import { LoadingState } from "@/client/views/LoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
@@ -17,7 +17,7 @@ import { DataTable } from "@/client/commonComponents/DataTable";
 import { strings } from "@/client/designSystems/strings";
 import { ChevronRight } from "lucide-react";
 import { MainHeader } from "@/client/commonComponents/MainHeader";
-import type { UnitDetailItem } from "@/client/stateManagement/property/type";
+import type { UnitDetailItem } from "@/client/stateManagement/managerDashboard/property/type";
 import type { TableCell } from "@/client/commonComponents/DataTable";
 import { statusConfig, formatDate } from "@/client/helpers/utils";
 
@@ -27,8 +27,8 @@ const TABLE_COLS = [
   { label: s.unitsTable.colUnit, align: "left" as const },
   { label: s.unitsTable.colTenant, align: "left" as const },
   { label: s.unitsTable.colRent, align: "right" as const },
-  { label: s.unitsTable.colLease, align: "left" as const },
-  { label: s.unitsTable.colStatus, align: "left" as const },
+  { label: s.unitsTable.colLease, align: "right" as const, className: "w-64" },
+  { label: s.unitsTable.colStatus, align: "right" as const },
   { label: s.unitsTable.colAction, align: "right" as const },
 ];
 
@@ -59,15 +59,17 @@ const getUnitRow = (unit: UnitDetailItem): TableCell[] => {
       ) : (
         <span className="text-neutral-400">—</span>
       ),
-      className: "whitespace-nowrap px-5 py-4 text-sm text-neutral-500",
+      className: "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-500 w-64",
     },
     {
       content: (
-        <span
-          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${bg} ${text}`}
-        >
-          {label}
-        </span>
+        <div className="flex justify-end">
+          <span
+            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${bg} ${text}`}
+          >
+            {label}
+          </span>
+        </div>
       ),
       className: "whitespace-nowrap px-5 py-4",
     },

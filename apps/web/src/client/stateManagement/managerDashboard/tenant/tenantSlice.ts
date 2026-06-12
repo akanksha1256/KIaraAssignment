@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { TenantProfile, TenantState } from "./type";
-import { defaultFetchState } from "../../helpers/type";
+import { defaultFetchState } from "../../../helpers/type";
 
 const initialState: TenantState = {
   tenantDataById: {},

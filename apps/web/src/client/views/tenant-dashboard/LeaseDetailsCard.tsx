@@ -7,7 +7,7 @@ import {
 import { FileText, ExternalLink } from "lucide-react";
 import { strings } from "@/client/designSystems/strings";
 import { formatDate } from "@/client/helpers/utils";
-import type { Lease } from "@/client/stateManagement/lease/type";
+import type { Lease } from "@/client/stateManagement/managerDashboard/lease/type";
 
 const s = strings.tenant.leaseDetails;
 

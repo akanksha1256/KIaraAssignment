@@ -1,4 +1,4 @@
-import type { PropertySummary } from "@/client/stateManagement/property/type";
+import type { PropertySummary } from "@/client/stateManagement/managerDashboard/property/type";
 import { strings } from "@/client/designSystems/strings";
 import type { StatCardProps } from "./type";
 import { Pill } from "../../commonComponents/Pill";
@@ -19,11 +19,11 @@ export const accentMap: Record<
 
 export const TABLE_COLS = [
   { label: s.propertiesTable.colId, align: "left" as const },
-  { label: s.propertiesTable.colName, align: "left" as const },
-  { label: s.propertiesTable.colAddress, align: "left" as const },
+  { label: s.propertiesTable.colName, align: "right" as const },
+  { label: s.propertiesTable.colAddress, align: "right" as const },
   { label: s.propertiesTable.colUnits, align: "right" as const },
   { label: s.propertiesTable.colRent, align: "right" as const },
-  { label: s.propertiesTable.colStatus, align: "left" as const },
+  { label: s.propertiesTable.colStatus, align: "right" as const },
   { label: "", align: "right" as const },
 ];
 
@@ -37,9 +37,9 @@ export const getTableRow = (row: PropertySummary): TableCell[] => {
     {
       content: row.name,
       className:
-        "whitespace-nowrap px-5 py-4 text-sm font-semibold text-neutral-900",
+        "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
     },
-    { content: row.address, className: "px-5 py-4 text-sm text-neutral-500" },
+    { content: row.address, className: "px-5 py-4 text-right text-sm text-neutral-500" },
     {
       content: (
         <>
@@ -60,7 +60,7 @@ export const getTableRow = (row: PropertySummary): TableCell[] => {
     },
     {
       content: <Pill status={row.status} />,
-      className: "whitespace-nowrap px-5 py-4",
+      className: "whitespace-nowrap px-5 py-4 text-right",
     },
     {
       content: (

@@ -6,25 +6,27 @@ import {
   mapUnit,
   mapTenant,
   mapTenantProfile,
+  mapTenantDashboard,
   mapLease,
   mapPayment,
   mapPaymentMethod,
   mapManagerDashboard,
 } from "./mappers";
-import type { ManagerDashboardData } from "@/client/stateManagement/manager/type";
+import type { ManagerDashboardData } from "@/client/stateManagement/managerDashboard/manager/type";
 import type {
   Property,
   PropertySummary,
   PropertyDetailData,
-} from "@/client/stateManagement/property/type";
-import type { TenantProfile } from "@/client/stateManagement/tenant/type";
-import type { Unit } from "@/client/stateManagement/unit/type";
-import type { Tenant } from "@/client/stateManagement/tenant/type";
-import type { Lease } from "@/client/stateManagement/lease/type";
+} from "@/client/stateManagement/managerDashboard/property/type";
+import type { TenantProfile } from "@/client/stateManagement/managerDashboard/tenant/type";
+import type { TenantDashboardData } from "@/client/stateManagement/tenantDashboard/type";
+import type { Unit } from "@/client/stateManagement/managerDashboard/unit/type";
+import type { Tenant } from "@/client/stateManagement/managerDashboard/tenant/type";
+import type { Lease } from "@/client/stateManagement/managerDashboard/lease/type";
 import type {
   Payment,
   PaymentMethod,
-} from "@/client/stateManagement/payment/type";
+} from "@/client/stateManagement/managerDashboard/payment/type";
 
 const BASE = "/api";
 
@@ -74,6 +76,9 @@ export const api = {
 
   getTenantProfile: async (id: string): Promise<TenantProfile> =>
     mapTenantProfile(await request<P.TenantProfileData>(`/tenants/${id}`)),
+
+  getTenantDashboard: async (id: string): Promise<TenantDashboardData> =>
+    mapTenantDashboard(await request<P.TenantProfileData>(`/tenants/${id}`)),
 
   getLease: async (id: string): Promise<Lease> =>
     mapLease(await request<P.Lease>(`/leases/${id}`)),

@@ -1,5 +1,5 @@
-import type { RootState } from "../mainFile";
-import { defaultFetchState } from "../../helpers/type";
+import type { RootState } from "../../mainFile";
+import { defaultFetchState } from "../../../helpers/type";
 import type { PropertyDetailEntry } from "./type";
 
 const defaultDetailEntry: PropertyDetailEntry = {

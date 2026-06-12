@@ -5,8 +5,8 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@/client/stateManagement/mainFile";
-import { fetchTenantProfile } from "@/client/stateManagement/tenant/tenantSlice";
-import { selectTenantProfile } from "@/client/stateManagement/tenant/tenantSelectors";
+import { fetchTenantProfile } from "@/client/stateManagement/managerDashboard/tenant/tenantSlice";
+import { selectTenantProfile } from "@/client/stateManagement/managerDashboard/tenant/tenantSelectors";
 import { LoadingState } from "@/client/views/LoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";

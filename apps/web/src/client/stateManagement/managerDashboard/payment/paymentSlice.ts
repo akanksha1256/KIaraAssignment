@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Payment, PaymentMethod, PaymentSliceState } from "./type";
-import { initialFetch, initialFetchMap } from "../types";
+import { initialFetch, initialFetchMap } from "../../types";
 
 const initialState: PaymentSliceState = {
   paymentsByLeaseId:        initialFetchMap(),

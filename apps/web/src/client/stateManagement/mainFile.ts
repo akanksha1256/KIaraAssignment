@@ -5,34 +5,38 @@ import {
   useSelector,
   type TypedUseSelectorHook,
 } from "react-redux";
-import { managerReducer }  from "./manager/managerSlice";
-import { propertyReducer } from "./property/propertySlice";
-import { tenantReducer }   from "./tenant/tenantSlice";
-import { leaseReducer }    from "./lease/leaseSlice";
-import { paymentReducer }  from "./payment/paymentSlice";
-import { unitReducer }     from "./unit/unitSlice";
-import { managerEpics }    from "./manager/epics";
-import { propertyEpics }   from "./property/epics";
-import { tenantEpics }     from "./tenant/epics";
-import { paymentEpics }    from "./payment/epics";
+import { managerReducer } from "./managerDashboard/manager/managerSlice";
+import { propertyReducer } from "./managerDashboard/property/propertySlice";
+import { tenantReducer } from "./managerDashboard/tenant/tenantSlice";
+import { leaseReducer } from "./managerDashboard/lease/leaseSlice";
+import { paymentReducer } from "./managerDashboard/payment/paymentSlice";
+import { unitReducer } from "./managerDashboard/unit/unitSlice";
+import { tenantDashboardReducer } from "./tenantDashboard/tenantDashboardSlice";
+import { managerEpics } from "./managerDashboard/manager/epics";
+import { propertyEpics } from "./managerDashboard/property/epics";
+import { tenantEpics } from "./managerDashboard/tenant/epics";
+import { paymentEpics } from "./managerDashboard/payment/epics";
+import { tenantDashboardEpics } from "./tenantDashboard/epics";
 
 export const rootEpic = combineEpics(
   managerEpics,
   propertyEpics,
   tenantEpics,
   paymentEpics,
+  tenantDashboardEpics,
 );
 
 const epicMiddleware = createEpicMiddleware();
 
 export const store = configureStore({
   reducer: {
-    manager:  managerReducer,
+    manager: managerReducer,
     property: propertyReducer,
-    tenant:   tenantReducer,
-    lease:    leaseReducer,
-    payment:  paymentReducer,
-    unit:     unitReducer,
+    tenant: tenantReducer,
+    lease: leaseReducer,
+    payment: paymentReducer,
+    unit: unitReducer,
+    tenantDashboard: tenantDashboardReducer,
   },
   middleware: (getDefault) => getDefault().concat(epicMiddleware),
 });

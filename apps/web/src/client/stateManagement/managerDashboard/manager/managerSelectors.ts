@@ -1,4 +1,4 @@
-import type { RootState } from "../mainFile";
+import type { RootState } from "../../mainFile";
 
 export const selectDashboard = (state: RootState) => ({
   status: state.manager.dashboardFetchState.status,

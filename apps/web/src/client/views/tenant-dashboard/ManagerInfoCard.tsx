@@ -6,7 +6,7 @@ import {
 } from "@/client/commonComponents/Card";
 import { User } from "lucide-react";
 import { strings } from "@/client/designSystems/strings";
-import type { Property } from "@/client/stateManagement/property/type";
+import type { Property } from "@/client/stateManagement/managerDashboard/property/type";
 
 const s = strings.tenant.managerInfo;
 

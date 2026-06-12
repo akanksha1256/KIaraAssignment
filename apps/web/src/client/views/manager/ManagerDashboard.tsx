@@ -6,9 +6,9 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@/client/stateManagement/mainFile";
-import { fetchManagerDashboard } from "@/client/stateManagement/manager/managerSlice";
-import { selectDashboard } from "@/client/stateManagement/manager/managerSelectors";
-import { selectPropertiesList } from "@/client/stateManagement/property/propertySelectors";
+import { fetchManagerDashboard } from "@/client/stateManagement/managerDashboard/manager/managerSlice";
+import { selectDashboard } from "@/client/stateManagement/managerDashboard/manager/managerSelectors";
+import { selectPropertiesList } from "@/client/stateManagement/managerDashboard/property/propertySelectors";
 import { EmptyState } from "@/client/views/EmptyScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { LoadingState } from "@/client/views/LoadingScreen";
@@ -20,7 +20,7 @@ import { MonthlyRevenueSection } from "./components/MonthlyRevenueSection";
 import { PaymentStatusSection } from "./components/PaymentStatusSection";
 import { Pill } from "../../commonComponents/Pill";
 import { DataTable } from "@/client/commonComponents/DataTable";
-import type { PropertySummary } from "@/client/stateManagement/property/type";
+import type { PropertySummary } from "@/client/stateManagement/managerDashboard/property/type";
 
 const s = strings.manager.dashboard;
 
@@ -58,9 +58,9 @@ export const ManagerDashboard = () => {
       {
         content: row.name,
         className:
-          "whitespace-nowrap px-5 py-4 text-sm font-semibold text-neutral-900",
+          "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
       },
-      { content: row.address, className: "px-5 py-4 text-sm text-neutral-500" },
+      { content: row.address, className: "px-5 py-4 text-right text-sm text-neutral-500 w-78" },
       {
         content: (
           <>
@@ -80,8 +80,8 @@ export const ManagerDashboard = () => {
           "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
       },
       {
-        content: <Pill status={row.status} />,
-        className: "whitespace-nowrap px-5 py-4",
+        content: <div className="flex justify-end"><Pill status={row.status} /></div>,
+        className: "whitespace-nowrap w-28 px-5 py-4",
       },
       {
         content: (

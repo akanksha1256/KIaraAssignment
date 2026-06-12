@@ -1,4 +1,4 @@
-import type { FetchStateWithError } from "../../helpers/type";
+import type { FetchStateWithError } from "../../../helpers/type";
 import type { UnitDetailItem } from "../property/type";
 
 export type { UnitDetailItem };

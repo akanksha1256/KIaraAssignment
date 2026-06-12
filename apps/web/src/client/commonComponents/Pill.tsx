@@ -1,4 +1,4 @@
-import type { PropertyStatus } from "@/client/stateManagement/property/type";
+import type { PropertyStatus } from "@/client/stateManagement/managerDashboard/property/type";
 import { statusConfig } from "../helpers/utils";
 
 export const Pill = ({ status }: { status: PropertyStatus }) => {

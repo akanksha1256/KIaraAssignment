@@ -1,4 +1,4 @@
-import type { FetchStateWithError } from "../../helpers/type";
+import type { FetchStateWithError } from "../../../helpers/type";
 
 export type KycStatus = "verified" | "pending" | "not_submitted";
 

@@ -1,4 +1,4 @@
-import type { FetchState, FetchStateMap } from "../types";
+import type { FetchState, FetchStateMap } from "../../types";
 
 export type PaymentStatus = "paid" | "outstanding" | "overdue";
 

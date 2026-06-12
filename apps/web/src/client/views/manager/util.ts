@@ -1,4 +1,4 @@
-import type { PropertySummary } from "@/client/stateManagement/property/type";
+import type { PropertySummary } from "@/client/stateManagement/managerDashboard/property/type";
 import { strings } from "@/client/designSystems/strings";
 import type { StatCardProps } from "./type";
 import { TableColumn } from "@/client/commonComponents/DataTable";
@@ -18,9 +18,9 @@ export const accentMap: Record<
 export const TABLE_COLS: TableColumn[] = [
   { label: s.propertiesTable.colId, align: "left" },
   { label: s.propertiesTable.colName, align: "left" },
-  { label: s.propertiesTable.colAddress, align: "left" },
+  { label: s.propertiesTable.colAddress, align: "right", className: "w-78" },
   { label: s.propertiesTable.colUnits, align: "right" },
   { label: s.propertiesTable.colRent, align: "right" },
-  { label: s.propertiesTable.colStatus, align: "left" },
+  { label: s.propertiesTable.colStatus, align: "right", className: "w-28" },
   { label: "", align: "right" },
 ];

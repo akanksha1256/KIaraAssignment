@@ -1,10 +1,11 @@
 import type * as P from "@/platform/types";
-import type { Property, PropertySummary, UnitDetailItem, PropertyDetailData } from "@/client/stateManagement/property/type";
-import type { Unit }                       from "@/client/stateManagement/unit/type";
-import type { Tenant, TenantStanding, TenantProfile } from "@/client/stateManagement/tenant/type";
-import type { Lease }                      from "@/client/stateManagement/lease/type";
-import type { Payment, PaymentMethod }     from "@/client/stateManagement/payment/type";
-import type { ManagerDashboardData, DashboardStats, PaymentBreakdown, MonthlyRevenue } from "@/client/stateManagement/manager/type";
+import type { Property, PropertySummary, UnitDetailItem, PropertyDetailData } from "@/client/stateManagement/managerDashboard/property/type";
+import type { Unit }                       from "@/client/stateManagement/managerDashboard/unit/type";
+import type { Tenant, TenantStanding, TenantProfile } from "@/client/stateManagement/managerDashboard/tenant/type";
+import type { TenantDashboardData } from "@/client/stateManagement/tenantDashboard/type";
+import type { Lease }                      from "@/client/stateManagement/managerDashboard/lease/type";
+import type { Payment, PaymentMethod }     from "@/client/stateManagement/managerDashboard/payment/type";
+import type { ManagerDashboardData, DashboardStats, PaymentBreakdown, MonthlyRevenue } from "@/client/stateManagement/managerDashboard/manager/type";
 
 export const mapProperty = (p: P.Property): Property => ({
   id:             p.id,
@@ -118,6 +119,15 @@ export const mapTenantProfile = (d: P.TenantProfileData): TenantProfile => ({
   property: d.property ? mapProperty(d.property)  : null,
   payments: d.payments.map(mapPayment),
   standing: d.standing ? mapTenantStanding(d.standing) : null,
+});
+
+export const mapTenantDashboard = (d: P.TenantProfileData): TenantDashboardData => ({
+  tenantId:   d.tenant.id,
+  tenantName: d.tenant.name,
+  lease:      d.lease    ? mapLease(d.lease)      : null,
+  unit:       d.unit     ? mapUnit(d.unit)         : null,
+  property:   d.property ? mapProperty(d.property) : null,
+  payments:   d.payments.map(mapPayment),
 });
 
 export const mapManagerDashboard = (d: P.ManagerDashboardData): ManagerDashboardData => ({

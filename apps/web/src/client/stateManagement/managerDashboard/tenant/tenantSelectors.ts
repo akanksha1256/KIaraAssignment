@@ -1,4 +1,4 @@
-import type { RootState } from "../mainFile";
+import type { RootState } from "../../mainFile";
 
 export const selectTenantProfile =
   (id: string) => (state: RootState) => {

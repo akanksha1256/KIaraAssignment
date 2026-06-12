@@ -2,7 +2,7 @@
 
 import { PieChart, Pie, Cell } from "recharts";
 import { colors } from "@/client/designSystems/colors";
-import type { Tenant, TenantStanding } from "@/client/stateManagement/tenant/type";
+import type { Tenant, TenantStanding } from "@/client/stateManagement/managerDashboard/tenant/type";
 
 const scoreColor = (score: number) =>
   score >= 90 ? colors.chart.paid        :

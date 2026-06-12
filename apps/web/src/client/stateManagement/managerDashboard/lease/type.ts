@@ -1,4 +1,4 @@
-import type { FetchStateMap } from "../types";
+import type { FetchStateMap } from "../../types";
 
 export interface Lease {
   id: string;

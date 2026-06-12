@@ -15,7 +15,7 @@ import {
   fetchUnitsForPropertySuccess,
   fetchUnitsForPropertyFailure,
 } from "../../unit/unitSlice";
-import type { RootState } from "../../mainFile";
+import type { RootState } from "../../../mainFile";
 
 const fetchPropertiesSummaryEpic: Epic = (action$) =>
   action$.pipe(

@@ -1,4 +1,4 @@
-import type { FetchStateWithError } from "../../helpers/type";
+import type { FetchStateWithError } from "../../../helpers/type";
 import type { Tenant } from "../tenant/type";
 import type { Lease } from "../lease/type";
 import type { PaymentStatus } from "../payment/type";

@@ -13,7 +13,7 @@ import { EmptyState } from "@/client/views/EmptyScreen";
 import { CommonTooltip } from "@/client/commonComponents/Tooltip";
 import { strings } from "@/client/designSystems/strings";
 import { colors } from "@/client/designSystems/colors";
-import type { MonthlyRevenue } from "@/client/stateManagement/manager/type";
+import type { MonthlyRevenue } from "@/client/stateManagement/managerDashboard/manager/type";
 
 const s = strings.manager.dashboard;
 

@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { PropertySummary, Property, PropertyDetailEntry } from "./type";
-import { defaultFetchState } from "../../helpers/type";
+import { defaultFetchState } from "../../../helpers/type";
 import type { PropertyState } from "./type";
 
 const initialState: PropertyState = {

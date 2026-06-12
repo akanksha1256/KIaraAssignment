@@ -26,13 +26,13 @@ interface DataTableProps {
 export function DataTable({ columns, rows }: DataTableProps) {
   return (
     <Card className="overflow-hidden">
-      <table className="w-full table-fixed divide-y divide-neutral-200">
+      <table className="w-full table-auto divide-y divide-neutral-200">
         <thead>
           <tr className="bg-neutral-50">
             {columns.map(({ label, align = "left", className }) => (
               <th
                 key={label}
-                className={`px-5 py-3 text-xs font-semibold uppercase tracking-wide text-neutral-400 text-${align} ${className ?? ""}`}
+                className={`px-5 py-3 text-xs font-semibold uppercase tracking-wide text-neutral-400 ${align === "right" ? "text-right" : "text-left"} ${className ?? ""}`}
               >
                 {label}
               </th>
