@@ -5,6 +5,7 @@ import {
   mapPropertyDetail,
   mapUnit,
   mapTenant,
+  mapTenantProfile,
   mapLease,
   mapPayment,
   mapPaymentMethod,
@@ -16,6 +17,7 @@ import type {
   PropertySummary,
   PropertyDetailData,
 } from "@/client/stateManagement/property/type";
+import type { TenantProfile } from "@/client/stateManagement/tenant/type";
 import type { Unit } from "@/client/stateManagement/unit/type";
 import type { Tenant } from "@/client/stateManagement/tenant/type";
 import type { Lease } from "@/client/stateManagement/lease/type";
@@ -69,6 +71,9 @@ export const api = {
 
   getTenant: async (id: string): Promise<Tenant> =>
     mapTenant(await request<P.Tenant>(`/tenants/${id}`)),
+
+  getTenantProfile: async (id: string): Promise<TenantProfile> =>
+    mapTenantProfile(await request<P.TenantProfileData>(`/tenants/${id}`)),
 
   getLease: async (id: string): Promise<Lease> =>
     mapLease(await request<P.Lease>(`/leases/${id}`)),

@@ -15,7 +15,8 @@ import { EmptyState } from "@/client/views/EmptyScreen";
 import { StatusSection } from "./StatusSection";
 import { DataTable } from "@/client/commonComponents/DataTable";
 import { strings } from "@/client/designSystems/strings";
-import { ArrowLeft, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { MainHeader } from "@/client/commonComponents/MainHeader";
 import type { UnitDetailItem } from "@/client/stateManagement/property/type";
 import type { TableCell } from "@/client/commonComponents/DataTable";
 import { statusConfig } from "@/client/helpers/utils";
@@ -119,13 +120,7 @@ export const PropertyDetail = ({ propertyId }: Props) => {
 
   return (
     <div className="space-y-8">
-      <button
-        onClick={() => router.back()}
-        className="inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-800 transition-colors"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        {s.backLink}
-      </button>
+      <MainHeader label={s.backLink} />
 
       <div>
         <h1 className="text-2xl font-bold text-neutral-900">{property.name}</h1>

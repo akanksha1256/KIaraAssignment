@@ -16,20 +16,20 @@ const units: Unit[] = [
 ];
 
 const tenants: Tenant[] = [
-  { id: "tenant-1", name: "Alice Johnson", contact: "alice@example.com" },
-  { id: "tenant-2", name: "Bob Martinez",  contact: "bob@example.com"   },
-  { id: "tenant-3", name: "Carol White",   contact: "carol@example.com" },
-  { id: "tenant-4", name: "David Kim",     contact: "david@example.com" },
-  { id: "tenant-5", name: "Eva Rossi",     contact: "eva@example.com"   },
+  { id: "tenant-1", name: "Alice Johnson", contact: "+1 512-555-0101", email: "alice@example.com",  kyc_status: "verified",       kyc_verified_on: "2024-01-15", kyc_document: "/documents/kyc-sample.pdf" },
+  { id: "tenant-2", name: "Bob Martinez",  contact: "+1 512-555-0102", email: "bob@example.com",    kyc_status: "verified",       kyc_verified_on: "2024-03-10", kyc_document: "/documents/kyc-sample.pdf" },
+  { id: "tenant-3", name: "Carol White",   contact: "+1 512-555-0103", email: "carol@example.com",  kyc_status: "pending",        kyc_verified_on: null,         kyc_document: "/documents/kyc-sample.pdf" },
+  { id: "tenant-4", name: "David Kim",     contact: "+1 512-555-0104", email: "david@example.com",  kyc_status: "verified",       kyc_verified_on: "2024-02-20", kyc_document: "/documents/kyc-sample.pdf" },
+  { id: "tenant-5", name: "Eva Rossi",     contact: "+1 512-555-0105", email: "eva@example.com",    kyc_status: "not_submitted",  kyc_verified_on: null,         kyc_document: null                        },
 ];
 
 const leases: Lease[] = [
-  { id: "lease-1", unit_id: "unit-1", tenant_id: "tenant-1", start_date: "2024-01-01", end_date: "2024-12-31", monthly_rent: 1800, terms: "12-month lease. No pets. Utilities included. $500 security deposit." },
-  { id: "lease-2", unit_id: "unit-2", tenant_id: "tenant-2", start_date: "2024-03-01", end_date: "2025-02-28", monthly_rent: 2100, terms: "12-month lease. Pets allowed with deposit. Tenant pays utilities." },
+  { id: "lease-1", unit_id: "unit-1", tenant_id: "tenant-1", start_date: "2024-01-01", end_date: "2024-12-31", monthly_rent: 1800, terms: "12-month lease. No pets. Utilities included. $500 security deposit.",           lease_document: "/documents/lease-sample.pdf" },
+  { id: "lease-2", unit_id: "unit-2", tenant_id: "tenant-2", start_date: "2024-03-01", end_date: "2025-02-28", monthly_rent: 2100, terms: "12-month lease. Pets allowed with deposit. Tenant pays utilities.",              lease_document: "/documents/lease-sample.pdf" },
   // unit-3 (Apt 103) is vacant — no lease
-  { id: "lease-3", unit_id: "unit-4", tenant_id: "tenant-3", start_date: "2024-06-01", end_date: "2025-05-31", monthly_rent: 2500, terms: "12-month lease. No smoking. Parking included. $800 security deposit." },
-  { id: "lease-4", unit_id: "unit-5", tenant_id: "tenant-4", start_date: "2024-02-01", end_date: "2025-01-31", monthly_rent: 2800, terms: "12-month lease. Pets allowed. Rooftop access included. $900 security deposit." },
-  { id: "lease-5", unit_id: "unit-6", tenant_id: "tenant-5", start_date: "2024-04-01", end_date: "2025-03-31", monthly_rent: 3200, terms: "12-month lease. No subletting. Gym access included. $1,000 security deposit." },
+  { id: "lease-3", unit_id: "unit-4", tenant_id: "tenant-3", start_date: "2024-06-01", end_date: "2025-05-31", monthly_rent: 2500, terms: "12-month lease. No smoking. Parking included. $800 security deposit.",           lease_document: "/documents/lease-sample.pdf" },
+  { id: "lease-4", unit_id: "unit-5", tenant_id: "tenant-4", start_date: "2024-02-01", end_date: "2025-01-31", monthly_rent: 2800, terms: "12-month lease. Pets allowed. Rooftop access included. $900 security deposit.",  lease_document: "/documents/lease-sample.pdf" },
+  { id: "lease-5", unit_id: "unit-6", tenant_id: "tenant-5", start_date: "2024-04-01", end_date: "2025-03-31", monthly_rent: 3200, terms: "12-month lease. No subletting. Gym access included. $1,000 security deposit.",  lease_document: "/documents/lease-sample.pdf" },
   // unit-7 (Loft D) is vacant — no lease
 ];
 

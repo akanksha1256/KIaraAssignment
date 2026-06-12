@@ -2,8 +2,9 @@ import * as React from "react";
 import { Card } from "@/client/commonComponents/Card";
 
 export interface TableColumn {
-  label: string;
-  align?: "left" | "right";
+  label:     string;
+  align?:    "left" | "right";
+  className?: string;
 }
 
 export interface TableCell {
@@ -25,13 +26,13 @@ interface DataTableProps {
 export function DataTable({ columns, rows }: DataTableProps) {
   return (
     <Card className="overflow-hidden">
-      <table className="min-w-full divide-y divide-neutral-200">
+      <table className="w-full table-fixed divide-y divide-neutral-200">
         <thead>
           <tr className="bg-neutral-50">
-            {columns.map(({ label, align = "left" }) => (
+            {columns.map(({ label, align = "left", className }) => (
               <th
                 key={label}
-                className={`px-5 py-3 text-xs font-semibold uppercase tracking-wide text-neutral-400 text-${align}`}
+                className={`px-5 py-3 text-xs font-semibold uppercase tracking-wide text-neutral-400 text-${align} ${className ?? ""}`}
               >
                 {label}
               </th>

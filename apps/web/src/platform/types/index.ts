@@ -12,20 +12,27 @@ export interface Unit {
   label: string;
 }
 
+export type KycStatus = "verified" | "pending" | "not_submitted";
+
 export interface Tenant {
-  id: string;
-  name: string;
-  contact: string;
+  id:              string;
+  name:            string;
+  contact:         string;
+  email:           string;
+  kyc_status:      KycStatus;
+  kyc_verified_on: string | null;
+  kyc_document:    string | null;
 }
 
 export interface Lease {
-  id: string;
-  unit_id: string;
-  tenant_id: string;
-  start_date: string;
-  end_date: string;
-  monthly_rent: number;
-  terms: string;
+  id:             string;
+  unit_id:        string;
+  tenant_id:      string;
+  start_date:     string;
+  end_date:       string;
+  monthly_rent:   number;
+  terms:          string;
+  lease_document: string | null;
 }
 
 export type PaymentStatus = "paid" | "outstanding" | "overdue";
@@ -105,4 +112,20 @@ export interface UnitDetail {
 export interface PropertyDetailData {
   property: Property;
   units: UnitDetail[];
+}
+
+export interface TenantStanding {
+  total_payments:   number;
+  on_time_payments: number;
+  score:            number;
+  label:            "Excellent" | "Good" | "Fair" | "Poor";
+}
+
+export interface TenantProfileData {
+  tenant:   Tenant;
+  lease:    Lease    | null;
+  unit:     Unit     | null;
+  property: Property | null;
+  payments: Payment[];
+  standing: TenantStanding | null;
 }

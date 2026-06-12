@@ -1,5 +1,5 @@
 import { createSlice, createAction } from "@reduxjs/toolkit";
-import type { Tenant } from "./type";
+import type { Tenant, TenantProfile } from "./type";
 import type { Lease } from "../lease/type";
 import type { Payment, PaymentMethod } from "../payment/type";
 import {
@@ -10,15 +10,58 @@ import {
 } from "../types";
 import type { TenantState } from "./type";
 
+// ── Tenant profile actions ────────────────────────────────────────────────────
+
+export const fetchTenantProfile = createAction<string>("tenant/fetchProfile");
+export const fetchTenantProfileSuccess = createAction<{ id: string; profile: TenantProfile }>(
+  "tenant/fetchProfileSuccess",
+);
+export const fetchTenantProfileFailure = createAction<{ id: string; error: string }>(
+  "tenant/fetchProfileFailure",
+);
+
+// ── Manager payment actions ───────────────────────────────────────────────────
+
+export const managerSendReminder = createAction<{
+  leaseId: string;
+  periodMonth: string;
+}>("tenant/managerSendReminder");
+export const managerSendReminderSuccess = createAction<{
+  leaseId: string;
+  periodMonth: string;
+}>("tenant/managerSendReminderSuccess");
+export const managerSendReminderFailure = createAction<{
+  leaseId: string;
+  periodMonth: string;
+  error: string;
+}>("tenant/managerSendReminderFailure");
+
+export const managerMarkPaid = createAction<{
+  leaseId: string;
+  periodMonth: string;
+}>("tenant/managerMarkPaid");
+export const managerMarkPaidSuccess = createAction<{
+  leaseId: string;
+  payment: Payment;
+}>("tenant/managerMarkPaidSuccess");
+export const managerMarkPaidFailure = createAction<{
+  leaseId: string;
+  periodMonth: string;
+  error: string;
+}>("tenant/managerMarkPaidFailure");
+
 // ── State ─────────────────────────────────────────────────────────────────────
 
 const initialState: TenantState = {
-  detail: initialFetchMap(),
-  lease: initialFetchMap(),
-  payments: initialFetchMap(),
+  detail:         initialFetchMap(),
+  lease:          initialFetchMap(),
+  payments:       initialFetchMap(),
   paymentMethods: initialFetchMap(),
-  payRent: initialFetch(),
-  addMethod: initialFetch(),
+  payRent:        initialFetch(),
+  addMethod:      initialFetch(),
+  reminderState:  initialFetch(),
+  markPaidState:  initialFetch(),
+  profile:        initialFetchMap(),
 };
 
 // ── Actions ───────────────────────────────────────────────────────────────────
@@ -97,6 +140,18 @@ const tenantSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    // Tenant profile (all-in-one fetch)
+    builder
+      .addCase(fetchTenantProfile, (state, { payload: id }) => {
+        state.profile[id] = { data: null, loading: true, error: null };
+      })
+      .addCase(fetchTenantProfileSuccess, (state, { payload: { id, profile } }) => {
+        state.profile[id] = { data: profile, loading: false, error: null };
+      })
+      .addCase(fetchTenantProfileFailure, (state, { payload: { id, error } }) => {
+        state.profile[id] = { data: null, loading: false, error };
+      });
+
     // Tenant detail
     builder
       .addCase(fetchTenantDetail, (state, { payload: id }) => {
@@ -236,6 +291,54 @@ const tenantSlice = createSlice({
           }
         },
       );
+
+    // Manager: send reminder
+    builder
+      .addCase(managerSendReminder, (state) => {
+        state.reminderState = { data: null, loading: true, error: null };
+      })
+      .addCase(managerSendReminderSuccess, (state, { payload }) => {
+        state.reminderState = { data: payload, loading: false, error: null };
+      })
+      .addCase(managerSendReminderFailure, (state, { payload: { error } }) => {
+        state.reminderState = { data: null, loading: false, error };
+      });
+
+    // Manager: mark as paid (optimistic, same rollback pattern as tenantPayRent)
+    builder
+      .addCase(managerMarkPaid, (state, { payload: { leaseId, periodMonth } }) => {
+        state.markPaidState = { data: null, loading: true, error: null };
+        const list = state.payments[leaseId]?.data;
+        if (list) {
+          const idx = list.findIndex((p) => p.periodMonth === periodMonth);
+          if (idx !== -1) {
+            list[idx] = {
+              ...list[idx],
+              status:      "paid",
+              amountPaid:  list[idx].amountDue,
+              paidDate:    new Date().toISOString().slice(0, 10),
+            };
+          }
+        }
+      })
+      .addCase(managerMarkPaidSuccess, (state, { payload: { leaseId, payment } }) => {
+        state.markPaidState = { data: payment, loading: false, error: null };
+        const list = state.payments[leaseId]?.data;
+        if (list) {
+          const idx = list.findIndex((p) => p.periodMonth === payment.periodMonth);
+          if (idx !== -1) list[idx] = payment;
+        }
+      })
+      .addCase(managerMarkPaidFailure, (state, { payload: { leaseId, periodMonth, error } }) => {
+        state.markPaidState = { data: null, loading: false, error };
+        const list = state.payments[leaseId]?.data;
+        if (list) {
+          const idx = list.findIndex((p) => p.periodMonth === periodMonth);
+          if (idx !== -1) {
+            list[idx] = { ...list[idx], status: "outstanding", amountPaid: 0, paidDate: null };
+          }
+        }
+      });
 
     // Add payment method
     builder

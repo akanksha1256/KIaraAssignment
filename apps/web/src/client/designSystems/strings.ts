@@ -17,6 +17,26 @@ export const strings = {
     vacant: "Vacant",
   },
 
+  paymentTable: {
+    colPeriod: "Period",
+    colDue: "Amount Due",
+    colPaid: "Amount Paid",
+    colDate: "Paid Date",
+    colMethod: "Method",
+    colStatus: "Status",
+    notPaid: "—",
+    statusPill: {
+      paid: "Paid",
+      outstanding: "Outstanding",
+      overdue: "Overdue",
+    },
+    actions: {
+      sendReminder: "Send Reminder",
+      markPaid: "Mark as Paid",
+      markingPaid: "Processing…",
+    },
+  },
+
   manager: {
     dashboard: {
       title: "Manager Dashboard",
@@ -103,6 +123,132 @@ export const strings = {
         viewLink: "View",
         empty: "No units found",
         emptyDescription: "This property has no units yet.",
+      },
+    },
+
+    tenantProfile: {
+      backLink: "Back",
+      loading: "Loading tenant profile…",
+      error: "Could not load tenant profile.",
+      emptyTitle: "Tenant not found",
+      emptyDescription: "This tenant does not exist or has been removed.",
+
+      info: {
+        heading: "Tenant Info",
+        name: "Name",
+        email: "Email",
+        contact: "Contact",
+        kycStatus: "KYC Status",
+        kycVerifiedOn: "Verified On",
+        kycDocument: "KYC Document",
+        kycDocumentLink: "View Document",
+        kycDocumentNone: "Not uploaded",
+        kycStatusLabels: {
+          verified:      "Verified",
+          pending:       "Pending",
+          not_submitted: "Not Submitted",
+        },
+      },
+
+      standing: {
+        heading: "Payment Standing",
+        score: "Score",
+        totalPayments: "Total Payments",
+        onTime: "On Time Payments",
+        noData: "No payment history yet",
+        labelColors: {
+          Excellent: { bg: "bg-success-50", text: "text-success-700" },
+          Good: { bg: "bg-brand-50", text: "text-brand-600" },
+          Fair: { bg: "bg-warning-50", text: "text-warning-700" },
+          Poor: { bg: "bg-danger-50", text: "text-danger-700" },
+        },
+      },
+
+      lease: {
+        heading: "Current Lease",
+        property: "Property",
+        unit: "Unit",
+        monthlyRent: "Monthly Rent",
+        leaseDate: "Lease Date",
+        startDate: "Start Date",
+        endDate: "End Date",
+        terms: "Terms",
+        leaseDocument: "Lease Document",
+        leaseDocumentLink: "View Document",
+        leaseDocumentNone: "Not uploaded",
+        noLease: "No active lease",
+      },
+
+      payments: {
+        heading: (count: number) => `Payment History (${count})`,
+        loadingHistory: "Loading payments…",
+        empty: "No payments recorded",
+        colPeriod: "Period",
+        colDue: "Amount Due",
+        colPaid: "Amount Paid",
+        colDate: "Paid Date",
+        colMethod: "Method",
+        colStatus: "Status",
+        notPaid: "—",
+      },
+
+      statusPill: {
+        paid: "Paid",
+        outstanding: "Outstanding",
+        overdue: "Overdue",
+      },
+    },
+
+    unitDetail: {
+      backLink: "Back to Property",
+      loading: "Loading unit…",
+      error: "Could not load unit details.",
+      emptyTitle: "Unit not found",
+      emptyDescription: "This unit does not exist or has been removed.",
+
+      tenant: {
+        heading: "Tenant",
+        name: "Name",
+        contact: "Contact",
+        noTenant: "No tenant assigned",
+        viewProfile: "View Tenant Profile",
+      },
+
+      lease: {
+        heading: "Lease Details",
+        monthlyRent: "Monthly Rent",
+        startDate: "Start Date",
+        endDate: "End Date",
+        terms: "Terms",
+        leaseDocument: "Lease Document",
+        leaseDocumentLink: "View Document",
+        leaseDocumentNone: "Not uploaded",
+        noLease: "No active lease",
+      },
+
+      payments: {
+        heading: (count: number) => `Payment History (${count})`,
+        loadingHistory: "Loading payments…",
+        empty: "No payments recorded",
+        colPeriod: "Period",
+        colDue: "Amount Due",
+        colPaid: "Amount Paid",
+        colDate: "Paid Date",
+        colMethod: "Method",
+        colStatus: "Status",
+        colActions: "",
+        notPaid: "—",
+        sendReminder: "Send Reminder",
+        markPaid: "Mark as Paid",
+        reminderSent: "Reminder sent",
+        markingPaid: "Processing…",
+      },
+
+      statusPill: {
+        paid: "Paid",
+        outstanding: "Outstanding",
+        overdue: "Overdue",
+        vacant: "Vacant",
       },
     },
   },
