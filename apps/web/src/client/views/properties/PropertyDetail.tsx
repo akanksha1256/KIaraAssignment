@@ -19,7 +19,7 @@ import { ChevronRight } from "lucide-react";
 import { MainHeader } from "@/client/commonComponents/MainHeader";
 import type { UnitDetailItem } from "@/client/stateManagement/property/type";
 import type { TableCell } from "@/client/commonComponents/DataTable";
-import { statusConfig } from "@/client/helpers/utils";
+import { statusConfig, formatDate } from "@/client/helpers/utils";
 
 const s = strings.manager.propertyDetail;
 
@@ -55,7 +55,7 @@ const getUnitRow = (unit: UnitDetailItem): TableCell[] => {
     },
     {
       content: unit.lease ? (
-        s.unitsTable.leasePeriod(unit.lease.startDate, unit.lease.endDate)
+        s.unitsTable.leasePeriod(formatDate(unit.lease.startDate), formatDate(unit.lease.endDate))
       ) : (
         <span className="text-neutral-400">—</span>
       ),

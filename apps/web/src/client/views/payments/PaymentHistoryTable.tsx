@@ -7,6 +7,7 @@ import { LoadingState } from "@/client/views/LoadingScreen";
 import { strings } from "@/client/designSystems/strings";
 import type { Payment } from "@/client/stateManagement/payment/type";
 import type { TableCell } from "@/client/commonComponents/DataTable";
+import { formatDate, formatPeriodMonth } from "@/client/helpers/utils";
 
 const s = strings.paymentTable;
 
@@ -48,7 +49,7 @@ function buildRow(
 
   const baseCells: TableCell[] = [
     {
-      content: payment.periodMonth,
+      content: formatPeriodMonth(payment.periodMonth),
       className:
         "whitespace-nowrap px-5 py-4 text-sm font-mono text-neutral-600",
     },
@@ -66,7 +67,7 @@ function buildRow(
         "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
     },
     {
-      content: payment.paidDate ?? s.notPaid,
+      content: payment.paidDate ? formatDate(payment.paidDate) : s.notPaid,
       className:
         "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-500",
     },

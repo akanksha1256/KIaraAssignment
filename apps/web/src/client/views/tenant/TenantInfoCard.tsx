@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/client/commonComponents/Card";
 import { strings } from "@/client/designSystems/strings";
+import { formatDate } from "@/client/helpers/utils";
 import { colors } from "@/client/designSystems/colors";
 import { User, ExternalLink } from "lucide-react";
 import type {
@@ -79,7 +80,7 @@ export const TenantInfoCard = ({ tenant, standing }: Props) => {
                 </span>
                 {tenant.kycVerifiedOn && (
                   <span className="text-xs text-neutral-400">
-                    {s.kycVerifiedOn}: {tenant.kycVerifiedOn}
+                    {s.kycVerifiedOn}: {formatDate(tenant.kycVerifiedOn)}
                   </span>
                 )}
               </div>

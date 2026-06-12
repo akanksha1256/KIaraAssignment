@@ -7,6 +7,7 @@ import {
 import { strings } from "@/client/designSystems/strings";
 import { FileText, ExternalLink } from "lucide-react";
 import type { Lease } from "@/client/stateManagement/lease/type";
+import { formatDate } from "@/client/helpers/utils";
 
 const s = strings.manager.unitDetail.lease;
 
@@ -32,8 +33,8 @@ export const ManagerLeaseCard = ({ lease }: { lease: Lease | null }) => (
             label={s.monthlyRent}
             value={`$${lease.monthlyRent.toLocaleString()}/mo`}
           />
-          <DetailRow label={s.startDate} value={lease.startDate} />
-          <DetailRow label={s.endDate} value={lease.endDate} />
+          <DetailRow label={s.startDate} value={formatDate(lease.startDate)} />
+          <DetailRow label={s.endDate} value={formatDate(lease.endDate)} />
           <DetailRow label={s.terms} value={lease.terms} />
           <div className="flex justify-between py-3">
             <span className="text-sm text-neutral-500">{s.leaseDocument}</span>

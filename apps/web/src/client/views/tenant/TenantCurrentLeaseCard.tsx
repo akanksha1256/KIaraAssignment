@@ -9,6 +9,7 @@ import { FileText, ExternalLink } from "lucide-react";
 import type { Lease } from "@/client/stateManagement/lease/type";
 import type { Unit } from "@/client/stateManagement/unit/type";
 import type { Property } from "@/client/stateManagement/property/type";
+import { formatDate } from "@/client/helpers/utils";
 
 const s = strings.manager.tenantProfile.lease;
 
@@ -36,7 +37,7 @@ export const TenantCurrentLeaseCard = ({ lease, unit, property }: Props) => (
               label: s.monthlyRent,
               value: `$${lease.monthlyRent.toLocaleString()}/mo`,
             },
-            { label: s.leaseDate, value: `${lease.startDate} – ${lease.endDate}` },
+            { label: s.leaseDate, value: `${formatDate(lease.startDate)} – ${formatDate(lease.endDate)}` },
           ].map(({ label, value }) => (
             <div
               key={label}

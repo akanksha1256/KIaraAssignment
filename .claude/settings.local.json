@@ -33,7 +33,9 @@
       "Bash(sed -i '' '/^  } = useAppSelector\\(selectDashboard\\);/{ *)",
       "Bash(git -C /Users/akankshalm/Desktop/KIaraAssignment ls-files)",
       "Bash(mkdir -p /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/propertyDetail && mkdir -p /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/manager/properties/\\\\[id\\\\])",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(npm install *)",
+      "Bash(pnpm add *)"
     ]
   }
 }
