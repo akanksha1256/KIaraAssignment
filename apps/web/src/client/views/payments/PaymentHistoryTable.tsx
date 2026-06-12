@@ -100,7 +100,7 @@ function buildRow(
           <div className="flex justify-end">
             <button
               onClick={() => tenantActions.onPayRent(payment.periodMonth)}
-              className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700"
+              className="rounded-lg bg-brand-400 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700"
             >
               {tenantActions.payButtonLabel}
             </button>
