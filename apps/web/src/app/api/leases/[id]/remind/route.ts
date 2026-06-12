@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/platform/db";
 import { withDelay, errorResponse } from "@/platform/utils";
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     await withDelay(req);
     const { period_month } = await req.json();

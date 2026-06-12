@@ -1,21 +1,12 @@
 "use client";
 
 import { PieChart, Pie, Cell } from "recharts";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui";
+import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui";
 import { strings } from "@repo/tokens";
 import { formatDate } from "@repo/ui";
 import { colors } from "@repo/tokens";
 import { User, ExternalLink } from "lucide-react";
-import type {
-  Tenant,
-  KycStatus,
-  TenantStanding,
-} from "@repo/data";
+import type { Tenant, KycStatus, TenantStanding } from "@repo/data";
 
 const s = strings.manager.tenantProfile.info;
 const ss = strings.manager.tenantProfile.standing;
@@ -35,13 +26,7 @@ const scoreColor = (score: number): string =>
         ? colors.chart.outstanding
         : colors.chart.overdue;
 
-const Row = ({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) => (
+const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div className="flex items-center justify-between py-2 border-b border-neutral-100 last:border-0">
     <span className="text-sm text-neutral-500">{label}</span>
     <span className="text-sm font-medium text-neutral-900">{children}</span>
@@ -109,10 +94,7 @@ export const TenantInfoCard = ({ tenant, standing }: Props) => {
                 <div className="relative">
                   <PieChart width={110} height={110}>
                     <Pie
-                      data={[
-                        { value: standing.score },
-                        { value: 100 - standing.score },
-                      ]}
+                      data={[{ value: standing.score }, { value: 100 - standing.score }]}
                       cx={50}
                       cy={50}
                       innerRadius={34}
@@ -127,12 +109,8 @@ export const TenantInfoCard = ({ tenant, standing }: Props) => {
                     </Pie>
                   </PieChart>
                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-sm font-bold text-neutral-900">
-                      {standing.label}
-                    </span>
-                    <span className="text-xs text-neutral-400">
-                      {standing.score}%
-                    </span>
+                    <span className="text-sm font-bold text-neutral-900">{standing.label}</span>
+                    <span className="text-xs text-neutral-400">{standing.score}%</span>
                   </div>
                 </div>
                 <p className="mt-1 text-xs text-neutral-500">

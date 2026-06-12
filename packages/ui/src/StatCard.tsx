@@ -4,13 +4,7 @@ import { Card, CardContent } from "./Card";
 import type { StatCardProps } from "./statCard.types";
 import { accentMap } from "./statCard.types";
 
-export const StatCard = ({
-  icon: Icon,
-  label,
-  value,
-  sub,
-  accent,
-}: StatCardProps) => {
+export const StatCard = ({ icon: Icon, label, value, sub, accent }: StatCardProps) => {
   const { bg, text } = accentMap[accent];
   return (
     <Card>
@@ -23,9 +17,7 @@ export const StatCard = ({
           </div>
           <div>
             <p className="text-sm text-neutral-500">{label}</p>
-            <p className="text-2xl font-bold text-neutral-900 leading-tight">
-              {value}
-            </p>
+            <p className="text-2xl font-bold text-neutral-900 leading-tight">{value}</p>
             {sub && <p className="mt-0.5 text-xs text-neutral-400">{sub}</p>}
           </div>
         </div>

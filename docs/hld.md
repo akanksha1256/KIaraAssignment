@@ -55,18 +55,18 @@ The application is built as a pnpm + Turborepo monorepo. The Next.js app is a th
 
 ## 3. Tech Stack
 
-| Layer | Technology | Reason |
-|---|---|---|
-| Framework | Next.js 14 (App Router) | Server components for thin pages, file-based routing, co-located API routes |
-| Language | TypeScript | End-to-end type safety across wire format, mappers, and UI |
-| Styling | Tailwind CSS v3 + design token preset | Utility-first with a single semantic color/spacing token source (`@repo/tokens`) |
-| Data fetching | TanStack Query v5 | Declarative async state, automatic caching, `staleTime` deduplication, and first-class optimistic mutation support |
-| Component library | shadcn/ui | Accessible primitives (`@base-ui/react`) + `class-variance-authority` for variant composition; variants mapped to project token classes |
-| Toast | Sonner | shadcn's recommended toast solution — `<Toaster />` in `Providers`, imperative `toast()` / `toast.error()` at call sites |
-| Charts | Recharts | Composable, React-native charting for revenue and payment status |
-| Icons | Lucide React | Consistent icon set, also used for the shadcn-style `Spinner` (`Loader2 + animate-spin`) |
-| Mock backend | Next.js route handlers + in-memory store | No real DB needed; artificial delay and forced-failure flags for testability |
-| Build | Turborepo + pnpm workspaces | Monorepo task orchestration; packages ship TypeScript source via `transpilePackages` |
+| Layer             | Technology                               | Reason                                                                                                                                  |
+| ----------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework         | Next.js 14 (App Router)                  | Server components for thin pages, file-based routing, co-located API routes                                                             |
+| Language          | TypeScript                               | End-to-end type safety across wire format, mappers, and UI                                                                              |
+| Styling           | Tailwind CSS v3 + design token preset    | Utility-first with a single semantic color/spacing token source (`@repo/tokens`)                                                        |
+| Data fetching     | TanStack Query v5                        | Declarative async state, automatic caching, `staleTime` deduplication, and first-class optimistic mutation support                      |
+| Component library | shadcn/ui                                | Accessible primitives (`@base-ui/react`) + `class-variance-authority` for variant composition; variants mapped to project token classes |
+| Toast             | Sonner                                   | shadcn's recommended toast solution — `<Toaster />` in `Providers`, imperative `toast()` / `toast.error()` at call sites                |
+| Charts            | Recharts                                 | Composable, React-native charting for revenue and payment status                                                                        |
+| Icons             | Lucide React                             | Consistent icon set, also used for the shadcn-style `Spinner` (`Loader2 + animate-spin`)                                                |
+| Mock backend      | Next.js route handlers + in-memory store | No real DB needed; artificial delay and forced-failure flags for testability                                                            |
+| Build             | Turborepo + pnpm workspaces              | Monorepo task orchestration; packages ship TypeScript source via `transpilePackages`                                                    |
 
 ---
 
@@ -253,14 +253,14 @@ Tenant Dashboard (/tenant)
 
 TanStack Query uses structured array keys for cache targeting and invalidation:
 
-| Key | Description |
-|---|---|
-| `["manager", "dashboard"]` | Manager dashboard (stats, charts, property list) |
-| `["property", "detail", propertyId]` | Property detail + units |
-| `["tenant", "profile", tenantId]` | Tenant profile (manager view — KYC, standing, payments) |
-| `["tenant", "dashboard", tenantId]` | Tenant dashboard (lease, property, payments — tenant view) |
-| `["payments", leaseId]` | Payment list for a lease (manager unit detail view) |
-| `["paymentMethods", tenantId]` | Saved payment methods for a tenant |
+| Key                                  | Description                                                |
+| ------------------------------------ | ---------------------------------------------------------- |
+| `["manager", "dashboard"]`           | Manager dashboard (stats, charts, property list)           |
+| `["property", "detail", propertyId]` | Property detail + units                                    |
+| `["tenant", "profile", tenantId]`    | Tenant profile (manager view — KYC, standing, payments)    |
+| `["tenant", "dashboard", tenantId]`  | Tenant dashboard (lease, property, payments — tenant view) |
+| `["payments", leaseId]`              | Payment list for a lease (manager unit detail view)        |
+| `["paymentMethods", tenantId]`       | Saved payment methods for a tenant                         |
 
 **staleTime defaults:** reads use `staleTime: 5 * 60 * 1000` (5 min) so revisiting a page within the window returns cached data instantly. Payment methods use 10 min. Payments have no staleTime (always fresh).
 
@@ -276,13 +276,13 @@ All requests go through `withDelay()` which adds an 800ms artificial delay. Any 
 
 Several fields returned by the API are derived at query time rather than stored:
 
-| Field | Derived How |
-|---|---|
-| `PropertySummary.status` | Worst payment status across all units (`overdue > outstanding > vacant > paid`) |
-| `PropertySummary.total_rent` | Sum of `monthly_rent` across active leases |
-| `TenantStanding` | `on_time_payments / total_payments × 100` → score → label (Excellent/Good/Fair/Poor) |
-| `DashboardStats.collection_rate` | `collected_this_month / total_monthly_rent × 100` |
-| `MonthlyRevenue` | Aggregated from payments, last 6 distinct `period_month` values in DB |
+| Field                            | Derived How                                                                          |
+| -------------------------------- | ------------------------------------------------------------------------------------ |
+| `PropertySummary.status`         | Worst payment status across all units (`overdue > outstanding > vacant > paid`)      |
+| `PropertySummary.total_rent`     | Sum of `monthly_rent` across active leases                                           |
+| `TenantStanding`                 | `on_time_payments / total_payments × 100` → score → label (Excellent/Good/Fair/Poor) |
+| `DashboardStats.collection_rate` | `collected_this_month / total_monthly_rent × 100`                                    |
+| `MonthlyRevenue`                 | Aggregated from payments, last 6 distinct `period_month` values in DB                |
 
 ---
 
@@ -320,33 +320,33 @@ All pages are thin Next.js server components that simply render their correspond
 
 ## 11. What Was Built vs. Brief Requirements
 
-| Requirement | Status | Notes |
-|---|---|---|
-| Manager: list properties and units | ✅ | Dashboard → Property → Unit drill-down |
-| Manager: see rent status across leases | ✅ | Status pills, payment history table |
-| Manager: send payment reminder | ✅ | Mocked API, 24h disable, Sonner toast feedback |
-| Manager: view payment history | ✅ | Per-unit payment table |
-| Manager: tenant detail with standing score | ✅ | On-time payment %, donut chart |
-| Tenant: see lease and terms | ✅ | Lease Details card |
-| Tenant: see payment history | ✅ | Payment history table |
-| Tenant: pay current month's rent | ✅ | Payment method picker + mocked pay flow, optimistic update |
-| Optimistic updates | ✅ | Mark as Paid and Pay Rent with rollback on failure |
-| Loading / error / empty states | ✅ | All views covered |
-| Mock delay + forced failure | ✅ | `?fail=true` on any API route |
-| Two-sided navigation | ✅ | `/manager` and `/tenant` routes |
-| TanStack Query | ✅ | All data fetching via `useQuery` / `useMutation` hooks in `@repo/data` |
-| Monorepo packages | ✅ | `packages/tokens`, `packages/ui`, `packages/data` |
-| shadcn/ui | ✅ | Button (cva + @base-ui/react), Sonner toast |
+| Requirement                                | Status | Notes                                                                  |
+| ------------------------------------------ | ------ | ---------------------------------------------------------------------- |
+| Manager: list properties and units         | ✅     | Dashboard → Property → Unit drill-down                                 |
+| Manager: see rent status across leases     | ✅     | Status pills, payment history table                                    |
+| Manager: send payment reminder             | ✅     | Mocked API, 24h disable, Sonner toast feedback                         |
+| Manager: view payment history              | ✅     | Per-unit payment table                                                 |
+| Manager: tenant detail with standing score | ✅     | On-time payment %, donut chart                                         |
+| Tenant: see lease and terms                | ✅     | Lease Details card                                                     |
+| Tenant: see payment history                | ✅     | Payment history table                                                  |
+| Tenant: pay current month's rent           | ✅     | Payment method picker + mocked pay flow, optimistic update             |
+| Optimistic updates                         | ✅     | Mark as Paid and Pay Rent with rollback on failure                     |
+| Loading / error / empty states             | ✅     | All views covered                                                      |
+| Mock delay + forced failure                | ✅     | `?fail=true` on any API route                                          |
+| Two-sided navigation                       | ✅     | `/manager` and `/tenant` routes                                        |
+| TanStack Query                             | ✅     | All data fetching via `useQuery` / `useMutation` hooks in `@repo/data` |
+| Monorepo packages                          | ✅     | `packages/tokens`, `packages/ui`, `packages/data`                      |
+| shadcn/ui                                  | ✅     | Button (cva + @base-ui/react), Sonner toast                            |
 
 ---
 
 ## 12. Known Trade-offs & What Would Be Done With More Time
 
-| Area | Current State | With More Time |
-|---|---|---|
-| Authentication | None — views are separated by route only | JWT-based auth with role-based routing |
-| Real-time / sync | Not implemented | WebSocket or SSE for multi-tab sync |
-| Test coverage | None | Unit tests for hooks/mappers in `@repo/data`, integration tests via MSW, E2E for critical flows |
-| Pagination | All data loaded at once | Cursor-based pagination with TanStack Query's `useInfiniteQuery` |
-| Create / Edit flows | Not implemented | Forms to create properties, units, leases |
-| Optimistic rollback UX | Silent (no "undo" affordance) | Show inline error banner on the affected row with retry |
+| Area                   | Current State                            | With More Time                                                                                  |
+| ---------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Authentication         | None — views are separated by route only | JWT-based auth with role-based routing                                                          |
+| Real-time / sync       | Not implemented                          | WebSocket or SSE for multi-tab sync                                                             |
+| Test coverage          | None                                     | Unit tests for hooks/mappers in `@repo/data`, integration tests via MSW, E2E for critical flows |
+| Pagination             | All data loaded at once                  | Cursor-based pagination with TanStack Query's `useInfiniteQuery`                                |
+| Create / Edit flows    | Not implemented                          | Forms to create properties, units, leases                                                       |
+| Optimistic rollback UX | Silent (no "undo" affordance)            | Show inline error banner on the affected row with retry                                         |

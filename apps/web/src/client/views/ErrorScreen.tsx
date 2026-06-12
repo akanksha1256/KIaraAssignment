@@ -27,10 +27,7 @@ export function ErrorState({
         <p className="mt-1 text-sm text-neutral-400">{message}</p>
       </div>
       {onRetry && (
-        <button
-          onClick={onRetry}
-          className="text-sm text-brand-600 hover:underline"
-        >
+        <button onClick={onRetry} className="text-sm text-brand-600 hover:underline">
           Try again
         </button>
       )}

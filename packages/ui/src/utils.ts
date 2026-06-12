@@ -22,10 +22,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const statusConfig: Record<
-  PropertyStatus,
-  { bg: string; text: string; label: string }
-> = {
+export const statusConfig: Record<PropertyStatus, { bg: string; text: string; label: string }> = {
   paid: {
     bg: "bg-success-50",
     text: "text-success-700",

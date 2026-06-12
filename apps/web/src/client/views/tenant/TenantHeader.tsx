@@ -5,12 +5,21 @@ import { colors } from "@repo/tokens";
 import type { Tenant, TenantStanding } from "@repo/data";
 
 const scoreColor = (score: number) =>
-  score >= 90 ? colors.chart.paid        :
-  score >= 70 ? colors.chart.collected   :
-  score >= 50 ? colors.chart.outstanding : colors.chart.overdue;
+  score >= 90
+    ? colors.chart.paid
+    : score >= 70
+      ? colors.chart.collected
+      : score >= 50
+        ? colors.chart.outstanding
+        : colors.chart.overdue;
 
 const initials = (name: string) =>
-  name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+  name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
 interface Props {
   tenant: Tenant;
@@ -32,10 +41,7 @@ export const TenantHeader = ({ tenant, standing }: Props) => (
       <div className="relative flex items-center justify-center">
         <PieChart width={110} height={110}>
           <Pie
-            data={[
-              { value: standing.score },
-              { value: 100 - standing.score },
-            ]}
+            data={[{ value: standing.score }, { value: 100 - standing.score }]}
             cx={50}
             cy={50}
             innerRadius={34}

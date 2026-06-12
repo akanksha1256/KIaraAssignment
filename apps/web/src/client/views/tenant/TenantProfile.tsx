@@ -22,14 +22,8 @@ export const TenantProfile = ({ tenantId }: Props) => {
 
   if (isLoading) return <LoadingState message={s.loading} />;
   if (isError)
-    return (
-      <ErrorState
-        message={(error as Error)?.message ?? s.error}
-        onRetry={() => refetch()}
-      />
-    );
-  if (!profile)
-    return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
+    return <ErrorState message={(error as Error)?.message ?? s.error} onRetry={() => refetch()} />;
+  if (!profile) return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
   const { tenant, lease, unit, property, payments, standing } = profile;
 

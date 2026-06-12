@@ -16,7 +16,13 @@ export function useMarkPaid(leaseId: string) {
       queryClient.setQueryData<Payment[]>(paymentsKey(leaseId), (old = []) =>
         old.map((p) =>
           p.periodMonth === periodMonth
-            ? { ...p, status: "paid", amountPaid: p.amountDue, paidDate: new Date().toISOString(), method: "Directly to Manager" }
+            ? {
+                ...p,
+                status: "paid",
+                amountPaid: p.amountDue,
+                paidDate: new Date().toISOString(),
+                method: "Directly to Manager",
+              }
             : p,
         ),
       );

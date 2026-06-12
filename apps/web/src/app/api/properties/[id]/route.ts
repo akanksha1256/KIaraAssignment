@@ -3,10 +3,7 @@ import { db } from "@/platform/db";
 import { withDelay, errorResponse } from "@/platform/utils";
 import type { PropertyDetailData, UnitDetail, PaymentStatus } from "@/platform/types";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     await withDelay(req);
 
@@ -18,13 +15,13 @@ export async function GET(
     const units: UnitDetail[] = db.units
       .filter((u) => u.property_id === property.id)
       .map((u) => {
-        const lease  = db.leases.find((l) => l.unit_id === u.id) ?? null;
-        const tenant = lease ? db.tenants.find((t) => t.id === lease.tenant_id) ?? null : null;
+        const lease = db.leases.find((l) => l.unit_id === u.id) ?? null;
+        const tenant = lease ? (db.tenants.find((t) => t.id === lease.tenant_id) ?? null) : null;
 
         let payment_status: PaymentStatus | "vacant" = "vacant";
         if (lease) {
           const payments = db.payments.filter((p) => p.lease_id === lease.id);
-          if (payments.some((p) => p.status === "overdue"))      payment_status = "overdue";
+          if (payments.some((p) => p.status === "overdue")) payment_status = "overdue";
           else if (payments.some((p) => p.status === "outstanding")) payment_status = "outstanding";
           else payment_status = "paid";
         }

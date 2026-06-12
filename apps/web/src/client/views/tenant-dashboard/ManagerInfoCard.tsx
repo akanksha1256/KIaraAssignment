@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui";
+import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui";
 import { User } from "lucide-react";
 import { strings } from "@repo/tokens";
 import type { Property } from "@repo/data";

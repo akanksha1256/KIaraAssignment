@@ -7,17 +7,20 @@ import type { TableCell } from "@repo/ui";
 const s = strings.manager.dashboard;
 
 const STATUS_SORT: Record<string, number> = {
-  overdue: 0, outstanding: 1, allPaid: 2, vacant: 3,
+  overdue: 0,
+  outstanding: 1,
+  allPaid: 2,
+  vacant: 3,
 };
 
 export const TABLE_COLS = [
-  { label: s.propertiesTable.colId,      align: "left"  as const },
-  { label: s.propertiesTable.colName,    align: "right" as const },
+  { label: s.propertiesTable.colId, align: "left" as const },
+  { label: s.propertiesTable.colName, align: "right" as const },
   { label: s.propertiesTable.colAddress, align: "right" as const },
-  { label: s.propertiesTable.colUnits,   align: "right" as const },
-  { label: s.propertiesTable.colRent,    align: "right" as const },
-  { label: s.propertiesTable.colStatus,  align: "right" as const, sortable: true },
-  { label: "",                           align: "right" as const },
+  { label: s.propertiesTable.colUnits, align: "right" as const },
+  { label: s.propertiesTable.colRent, align: "right" as const },
+  { label: s.propertiesTable.colStatus, align: "right" as const, sortable: true },
+  { label: "", align: "right" as const },
 ];
 
 export const getTableRow = (row: PropertySummary): TableCell[] => {
@@ -38,9 +41,7 @@ export const getTableRow = (row: PropertySummary): TableCell[] => {
       content: (
         <>
           {row.leasedCount}/{row.unitCount}
-          <span className="ml-1 text-xs text-neutral-400">
-            {s.propertiesTable.occupiedSuffix}
-          </span>
+          <span className="ml-1 text-xs text-neutral-400">{s.propertiesTable.occupiedSuffix}</span>
         </>
       ),
       className: "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-600",

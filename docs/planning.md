@@ -5,6 +5,7 @@
 A two-sided rent management portal covering the full read + action surface required by the brief:
 
 **Manager side (`/manager`)**
+
 - Dashboard with portfolio stats, monthly revenue bar chart (expected vs collected, last 6 months), and a payment-status donut chart
 - Property list → property detail → unit detail drill-down
 - Per-unit payment history table with:
@@ -13,22 +14,26 @@ A two-sided rent management portal covering the full read + action surface requi
 - Tenant profile view with KYC status, on-time payment standing score, current lease card, and read-only payment history
 
 **Tenant side (`/tenant`)**
+
 - Dashboard with property details, manager contact card, lease terms card, and payment history
 - **Pay Rent** modal with saved payment method picker, add-new-method flow, optimistic update, and rollback on failure
 
 **Infrastructure**
+
 - In-memory mock backend (Next.js API routes, `withDelay()`, `?fail=true` forced-failure flag)
 - TanStack Query v5 for all data fetching — declarative caching, stale-time deduplication, and first-class optimistic mutations
 - Three-guard loading pattern (loading / error / empty) on every data-fetching view
 - snake_case ↔ camelCase boundary enforced at `mappers.ts` — only file that touches platform types
 
 **Monorepo package split (`packages/`)**
+
 - `packages/tokens` — design system primitives: `colors.ts`, `fonts.ts`, `spaces.ts`, `strings.ts`, and a `tailwindPreset.js` consumed by `apps/web/tailwind.config.ts`. Single source of truth for all copy and color tokens across the workspace.
 - `packages/data` — all async logic: camelCase client types (`types/index.ts`), API client (`apiClient/client.ts`), snake_case wire types (`wireTypes.ts`, internal only), mappers, and every TanStack Query hook. Any app in the workspace can import `@repo/data` to get fully-typed hooks without knowing about the Next.js API layer.
 - `packages/ui` — all shared components (DataTable, Pill, StatCard, Card, Button, Spinner, Toast, Nav, LoadingState, ErrorState, EmptyState) plus utilities (`cn`, `formatDate`, `formatPeriodMonth`, `statusConfig`). Consumed by `apps/web` via `transpilePackages` — no build step required.
 - `apps/web` is now a thin Next.js shell: route handlers, page server components, and view components that import from the three packages above.
 
 **shadcn/ui integration**
+
 - shadcn installed (`components.json` at `apps/web/`).
 - `Button` rebuilt using the shadcn pattern: `@base-ui/react/button` as the accessible primitive, `class-variance-authority` for variant composition, variants remapped to project token classes (`brand-*`, `neutral-*`, `danger-*`) to stay compatible with Tailwind v3. All interactive buttons across the app (`PayRentModal`, `UnitDetail`) use this component.
 - Toast system replaced with **Sonner** (shadcn's recommended toast solution) — `<Toaster />` lives in `Providers`, call sites use `toast()` / `toast.error()` from `sonner` directly (no `useToast` context needed).

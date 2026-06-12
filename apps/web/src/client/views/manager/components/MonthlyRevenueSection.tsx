@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui";
 import { EmptyState } from "@/client/views/EmptyScreen";
 import { CommonTooltip } from "@repo/ui";
@@ -48,10 +41,7 @@ export function MonthlyRevenueSection({ monthlyRevenue }: { monthlyRevenue: Mont
                 tickLine={false}
                 width={48}
               />
-              <Tooltip
-                content={<CommonTooltip />}
-                cursor={{ fill: "#f1f5f9" }}
-              />
+              <Tooltip content={<CommonTooltip />} cursor={{ fill: "#f1f5f9" }} />
               <Bar
                 dataKey="expected"
                 name={s.revenueChart.barExpected}

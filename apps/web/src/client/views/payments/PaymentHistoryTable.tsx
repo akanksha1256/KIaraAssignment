@@ -62,31 +62,23 @@ function buildRow(
   const baseCells: TableCell[] = [
     {
       content: formatPeriodMonth(payment.periodMonth),
-      className:
-        "whitespace-nowrap px-5 py-4 text-sm font-mono text-neutral-600",
+      className: "whitespace-nowrap px-5 py-4 text-sm font-mono text-neutral-600",
     },
     {
       content: `$${payment.amountDue.toLocaleString()}`,
-      className:
-        "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-700",
+      className: "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-700",
     },
     {
-      content:
-        payment.amountPaid > 0
-          ? `$${payment.amountPaid.toLocaleString()}`
-          : s.notPaid,
-      className:
-        "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
+      content: payment.amountPaid > 0 ? `$${payment.amountPaid.toLocaleString()}` : s.notPaid,
+      className: "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
     },
     {
       content: payment.paidDate ? formatDate(payment.paidDate) : s.notPaid,
-      className:
-        "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-500",
+      className: "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-500",
     },
     {
       content: payment.method ?? s.notPaid,
-      className:
-        "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-500",
+      className: "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-500",
     },
     statusCell,
   ];
@@ -113,19 +105,13 @@ function buildRow(
 
   if (!actions) return baseCells;
 
-  const isThisRowProcessing =
-    actions.processingPeriodMonth === payment.periodMonth;
-  const isThisRowSendingReminder =
-    actions.sendingReminderPeriodMonth === payment.periodMonth;
+  const isThisRowProcessing = actions.processingPeriodMonth === payment.periodMonth;
+  const isThisRowSendingReminder = actions.sendingReminderPeriodMonth === payment.periodMonth;
   const anyRowProcessing =
-    actions.processingPeriodMonth !== null ||
-    actions.sendingReminderPeriodMonth !== null;
+    actions.processingPeriodMonth !== null || actions.sendingReminderPeriodMonth !== null;
 
-  const remindedAt = payment.lastRemindedOn
-    ? dayjs.utc(payment.lastRemindedOn)
-    : null;
-  const reminderWithin24h =
-    remindedAt !== null && dayjs.utc().diff(remindedAt, "hour") < 24;
+  const remindedAt = payment.lastRemindedOn ? dayjs.utc(payment.lastRemindedOn) : null;
+  const reminderWithin24h = remindedAt !== null && dayjs.utc().diff(remindedAt, "hour") < 24;
 
   const reminderSublabel = reminderWithin24h
     ? `${s.actions.lastReminderSent} ${remindedAt!.local().format("D MMM YYYY, h:mm A")}`
@@ -163,18 +149,10 @@ function buildRow(
   ];
 }
 
-export function PaymentHistoryTable({
-  payments,
-  loading,
-  empty,
-  actions,
-  tenantActions,
-}: Props) {
+export function PaymentHistoryTable({ payments, loading, empty, actions, tenantActions }: Props) {
   if (loading) return <LoadingState message="Loading payments…" />;
   if (payments.length === 0)
-    return (
-      <EmptyState title={empty ?? "No payments recorded"} description="" />
-    );
+    return <EmptyState title={empty ?? "No payments recorded"} description="" />;
 
   const hasActions = !!actions;
   const hasTenantActions = !!tenantActions;
@@ -212,9 +190,7 @@ export function PaymentHistoryTable({
       align: "right" as const,
       className: hasExtraCol ? "w-[16%]" : "w-[15%]",
     },
-    ...(hasExtraCol
-      ? [{ label: "", align: "right" as const, className: "w-[7%]" }]
-      : []),
+    ...(hasExtraCol ? [{ label: "", align: "right" as const, className: "w-[7%]" }] : []),
   ];
 
   return (

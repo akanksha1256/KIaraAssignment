@@ -1,11 +1,11 @@
 // Platform types — snake_case to match API/DB wire format
 
 export interface Property {
-  id:              string;
-  name:            string;
-  address:         string;
-  manager_name:    string;
-  manager_email:   string;
+  id: string;
+  name: string;
+  address: string;
+  manager_name: string;
+  manager_email: string;
   manager_contact: string;
 }
 
@@ -18,23 +18,23 @@ export interface Unit {
 export type KycStatus = "verified" | "pending" | "not_submitted";
 
 export interface Tenant {
-  id:              string;
-  name:            string;
-  contact:         string;
-  email:           string;
-  kyc_status:      KycStatus;
+  id: string;
+  name: string;
+  contact: string;
+  email: string;
+  kyc_status: KycStatus;
   kyc_verified_on: string | null;
-  kyc_document:    string | null;
+  kyc_document: string | null;
 }
 
 export interface Lease {
-  id:             string;
-  unit_id:        string;
-  tenant_id:      string;
-  start_date:     string;
-  end_date:       string;
-  monthly_rent:   number;
-  terms:          string;
+  id: string;
+  unit_id: string;
+  tenant_id: string;
+  start_date: string;
+  end_date: string;
+  monthly_rent: number;
+  terms: string;
   lease_document: string | null;
 }
 
@@ -119,16 +119,16 @@ export interface PropertyDetailData {
 }
 
 export interface TenantStanding {
-  total_payments:   number;
+  total_payments: number;
   on_time_payments: number;
-  score:            number;
-  label:            "Excellent" | "Good" | "Fair" | "Poor";
+  score: number;
+  label: "Excellent" | "Good" | "Fair" | "Poor";
 }
 
 export interface TenantProfileData {
-  tenant:   Tenant;
-  lease:    Lease    | null;
-  unit:     Unit     | null;
+  tenant: Tenant;
+  lease: Lease | null;
+  unit: Unit | null;
   property: Property | null;
   payments: Payment[];
   standing: TenantStanding | null;

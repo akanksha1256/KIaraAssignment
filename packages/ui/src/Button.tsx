@@ -11,8 +11,7 @@ const buttonVariants = cva(
       variant: {
         default: "bg-brand-600 text-white hover:bg-brand-700",
         secondary: "bg-neutral-100 text-neutral-800 hover:bg-neutral-200",
-        outline:
-          "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50",
+        outline: "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50",
         ghost: "text-neutral-700 hover:bg-neutral-100",
         destructive: "bg-danger-500 text-white hover:bg-danger-700",
         link: "text-brand-600 underline-offset-4 hover:underline",
@@ -31,8 +30,7 @@ const buttonVariants = cva(
   },
 );
 
-export type ButtonProps = ButtonPrimitive.Props &
-  VariantProps<typeof buttonVariants>;
+export type ButtonProps = ButtonPrimitive.Props & VariantProps<typeof buttonVariants>;
 
 export function Button({
   className,

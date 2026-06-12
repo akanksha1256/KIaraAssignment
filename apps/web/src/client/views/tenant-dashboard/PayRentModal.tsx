@@ -22,12 +22,10 @@ export function PayRentModal({ tenantId, leaseId, periodMonth, amountDue, onClos
   const { showToast } = useToast();
 
   const { data: methods = [], isLoading: methodsLoading } = usePaymentMethods(tenantId);
-  const payRent     = usePayRent(tenantId, leaseId);
-  const addMethod   = useAddPaymentMethod(tenantId);
+  const payRent = usePayRent(tenantId, leaseId);
+  const addMethod = useAddPaymentMethod(tenantId);
 
-  const [selectedMethodId, setSelectedMethodId] = useState<string>(
-    () => methods[0]?.id ?? "",
-  );
+  const [selectedMethodId, setSelectedMethodId] = useState<string>(() => methods[0]?.id ?? "");
   const [newLabel, setNewLabel] = useState("");
 
   // keep selectedMethodId in sync when methods first load
@@ -134,18 +132,10 @@ export function PayRentModal({ tenantId, leaseId, periodMonth, amountDue, onClos
 
         {/* Actions */}
         <div className="flex justify-end gap-3">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            disabled={anyLoading}
-          >
+          <Button variant="outline" onClick={onClose} disabled={anyLoading}>
             {s.cancel}
           </Button>
-          <Button
-            variant="default"
-            onClick={handlePay}
-            disabled={!selectedMethodId || anyLoading}
-          >
+          <Button variant="default" onClick={handlePay} disabled={!selectedMethodId || anyLoading}>
             {payRent.isPending ? s.payLoading : s.payButton}
           </Button>
         </div>

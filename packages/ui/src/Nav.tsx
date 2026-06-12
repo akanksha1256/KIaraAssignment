@@ -15,12 +15,18 @@ export function Nav() {
     <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white/80 backdrop-blur-sm">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 font-semibold text-neutral-900">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-600 text-white text-xs font-bold">R</div>
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-600 text-white text-xs font-bold">
+            R
+          </div>
           RentPortal
         </Link>
         <nav className="flex items-center gap-1 rounded-lg bg-neutral-100 p-1">
-          <Link href="/manager" className={navClass(pathname.startsWith("/manager"))}>Manager</Link>
-          <Link href="/tenant"  className={navClass(pathname.startsWith("/tenant"))}>Tenant</Link>
+          <Link href="/manager" className={navClass(pathname.startsWith("/manager"))}>
+            Manager
+          </Link>
+          <Link href="/tenant" className={navClass(pathname.startsWith("/tenant"))}>
+            Tenant
+          </Link>
         </nav>
       </div>
     </header>

@@ -35,8 +35,7 @@ export const strings = {
       lastReminderSent: "Last sent:",
       markPaid: "Mark as Paid",
       markingPaid: "Processing…",
-      reminderToast: (tenantName: string) =>
-        `Reminder sent to ${tenantName} for overdue rent.`,
+      reminderToast: (tenantName: string) => `Reminder sent to ${tenantName} for overdue rent.`,
     },
   },
 
@@ -107,8 +106,7 @@ export const strings = {
         occupied: "Occupied",
         vacant: "Vacant",
         monthlyRent: "Monthly Rent",
-        occupancySub: (leased: number, total: number) =>
-          `${leased} of ${total} leased`,
+        occupancySub: (leased: number, total: number) => `${leased} of ${total} leased`,
         vacantSub: (count: number) => `${count} available`,
         rentSub: "across active leases",
       },

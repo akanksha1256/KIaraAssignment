@@ -10,12 +10,8 @@ export function useSendReminder(leaseId: string) {
       api.sendReminder(leaseId, periodMonth),
 
     onSuccess: (updatedPayment) => {
-      queryClient.setQueryData(
-        paymentsKey(leaseId),
-        (old: typeof updatedPayment[] = []) =>
-          old.map((p) =>
-            p.periodMonth === updatedPayment.periodMonth ? updatedPayment : p,
-          ),
+      queryClient.setQueryData(paymentsKey(leaseId), (old: (typeof updatedPayment)[] = []) =>
+        old.map((p) => (p.periodMonth === updatedPayment.periodMonth ? updatedPayment : p)),
       );
     },
   });

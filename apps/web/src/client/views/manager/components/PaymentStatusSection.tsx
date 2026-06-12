@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui";
 import { EmptyState } from "@/client/views/EmptyScreen";
 import { strings } from "@repo/tokens";
@@ -28,7 +21,11 @@ const PieTooltip = ({ active, payload }: any) => {
   );
 };
 
-export function PaymentStatusSection({ paymentBreakdown }: { paymentBreakdown: PaymentBreakdown | null }) {
+export function PaymentStatusSection({
+  paymentBreakdown,
+}: {
+  paymentBreakdown: PaymentBreakdown | null;
+}) {
   const total = paymentBreakdown
     ? paymentBreakdown.paid + paymentBreakdown.outstanding + paymentBreakdown.overdue
     : 0;
@@ -36,8 +33,16 @@ export function PaymentStatusSection({ paymentBreakdown }: { paymentBreakdown: P
   const pieData = paymentBreakdown
     ? [
         { name: s.paymentChart.paid, value: paymentBreakdown.paid, fill: colors.chart.paid },
-        { name: s.paymentChart.outstanding, value: paymentBreakdown.outstanding, fill: colors.chart.outstanding },
-        { name: s.paymentChart.overdue, value: paymentBreakdown.overdue, fill: colors.chart.overdue },
+        {
+          name: s.paymentChart.outstanding,
+          value: paymentBreakdown.outstanding,
+          fill: colors.chart.outstanding,
+        },
+        {
+          name: s.paymentChart.overdue,
+          value: paymentBreakdown.overdue,
+          fill: colors.chart.overdue,
+        },
       ].filter((d) => d.value > 0)
     : [];
 
@@ -71,9 +76,7 @@ export function PaymentStatusSection({ paymentBreakdown }: { paymentBreakdown: P
                 <Legend
                   iconType="circle"
                   iconSize={8}
-                  formatter={(value) => (
-                    <span className="text-xs text-neutral-600">{value}</span>
-                  )}
+                  formatter={(value) => <span className="text-xs text-neutral-600">{value}</span>}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -82,7 +85,9 @@ export function PaymentStatusSection({ paymentBreakdown }: { paymentBreakdown: P
               {pieData.map(({ name, value, fill }) => (
                 <div key={name} className="flex flex-col items-center gap-0.5 px-2">
                   <span className="text-lg font-bold text-neutral-900">{value}</span>
-                  <span className="text-xs font-medium" style={{ color: fill }}>{name}</span>
+                  <span className="text-xs font-medium" style={{ color: fill }}>
+                    {name}
+                  </span>
                   <span className="text-xs text-neutral-400">
                     {total > 0 ? Math.round((value / total) * 100) : 0}% of total
                   </span>

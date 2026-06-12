@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui";
+import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui";
 import { FileText, ExternalLink } from "lucide-react";
 import { strings } from "@repo/tokens";
 import { formatDate } from "@repo/ui";
@@ -34,10 +29,15 @@ export const LeaseDetailsCard = ({ lease }: Props) => (
       {lease ? (
         <>
           <Row label={s.monthlyRent} value={`$${lease.monthlyRent.toLocaleString()}/mo`} />
-          <Row label={s.leasePeriod} value={`${formatDate(lease.startDate)} – ${formatDate(lease.endDate)}`} />
+          <Row
+            label={s.leasePeriod}
+            value={`${formatDate(lease.startDate)} – ${formatDate(lease.endDate)}`}
+          />
           <div className="flex gap-4 py-2.5 border-b border-neutral-100">
             <span className="shrink-0 text-sm text-neutral-500">{s.terms}</span>
-            <span className="ml-auto text-right text-sm font-medium text-neutral-900">{lease.terms}</span>
+            <span className="ml-auto text-right text-sm font-medium text-neutral-900">
+              {lease.terms}
+            </span>
           </div>
           <div className="flex justify-between py-2.5">
             <span className="text-sm text-neutral-500">{s.leaseDocument}</span>
@@ -52,9 +52,7 @@ export const LeaseDetailsCard = ({ lease }: Props) => (
                 <ExternalLink className="h-3 w-3" />
               </a>
             ) : (
-              <span className="text-sm font-medium text-neutral-400">
-                {s.leaseDocumentNone}
-              </span>
+              <span className="text-sm font-medium text-neutral-400">{s.leaseDocumentNone}</span>
             )}
           </div>
         </>

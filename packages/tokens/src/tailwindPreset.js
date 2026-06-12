@@ -4,7 +4,7 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          50:  "#f0f4ff",
+          50: "#f0f4ff",
           100: "#e0e9ff",
           200: "#c0d2fe",
           300: "#93b0fd",
@@ -17,23 +17,23 @@ module.exports = {
           950: "#161a5e",
         },
         success: {
-          50:  "#f0fdf4",
+          50: "#f0fdf4",
           500: "#22c55e",
           700: "#15803d",
         },
         warning: {
-          50:  "#fffbeb",
+          50: "#fffbeb",
           500: "#f59e0b",
           700: "#b45309",
         },
         danger: {
-          50:  "#fef2f2",
+          50: "#fef2f2",
           500: "#ef4444",
           700: "#b91c1c",
         },
         neutral: {
-          0:   "#ffffff",
-          50:  "#f8fafc",
+          0: "#ffffff",
+          50: "#f8fafc",
           100: "#f1f5f9",
           200: "#e2e8f0",
           300: "#cbd5e1",

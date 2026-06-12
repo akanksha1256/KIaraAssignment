@@ -18,19 +18,19 @@ import { useToast } from "@repo/ui";
 import { UnitDetailProps } from "../helper";
 import { statusConfig } from "@repo/ui";
 
-const s  = strings.manager.unitDetail;
+const s = strings.manager.unitDetail;
 const st = strings.paymentTable;
 
 export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
   const { showToast } = useToast();
 
   const { data, isLoading, isError, error, refetch } = usePropertyDetail(propertyId);
-  const unit    = data?.units.find((u) => u.id === unitId) ?? null;
+  const unit = data?.units.find((u) => u.id === unitId) ?? null;
   const leaseId = unit?.lease?.id;
 
   const { data: payments = [], isLoading: paymentsLoading } = usePayments(leaseId);
 
-  const [processingPeriodMonth, setProcessingPeriodMonth]         = useState<string | null>(null);
+  const [processingPeriodMonth, setProcessingPeriodMonth] = useState<string | null>(null);
   const [sendingReminderPeriodMonth, setSendingReminderPeriodMonth] = useState<string | null>(null);
 
   const markPaid = useMarkPaid(leaseId ?? "");
@@ -38,14 +38,8 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
 
   if (isLoading) return <LoadingState message={s.loading} />;
   if (isError)
-    return (
-      <ErrorState
-        message={(error as Error)?.message ?? s.error}
-        onRetry={() => refetch()}
-      />
-    );
-  if (!unit)
-    return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
+    return <ErrorState message={(error as Error)?.message ?? s.error} onRetry={() => refetch()} />;
+  if (!unit) return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
   const { bg, text } = statusConfig[unit.paymentStatus];
   const tenantName = unit.tenant?.name ?? "Tenant";
@@ -94,7 +88,9 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
 
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-neutral-900">{unit.label}</h1>
-        <span className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold ${bg} ${text}`}>
+        <span
+          className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold ${bg} ${text}`}
+        >
           {s.statusPill[unit.paymentStatus]}
         </span>
       </div>
@@ -121,8 +117,8 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
             loading={paymentsLoading}
             empty={s.payments.empty}
             actions={{
-              onReminder:                handleSendReminder,
-              onMarkPaid:                handleMarkPaid,
+              onReminder: handleSendReminder,
+              onMarkPaid: handleMarkPaid,
               processingPeriodMonth,
               sendingReminderPeriodMonth,
             }}

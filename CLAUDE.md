@@ -7,6 +7,7 @@ This file guides Claude in all sessions for this project. Follow every rule here
 ## Project Overview
 
 A two-sided rent management portal:
+
 - **Manager view** at `/manager` — property/unit/lease/tenant management, payment actions
 - **Tenant view** at `/tenant` — read-only dashboard + pay rent (tenant-1 / Alice Johnson by default)
 
@@ -22,14 +23,13 @@ Every async read is a `useQuery` hook, every write is a `useMutation` hook. Ther
 
 ```ts
 // Query key factory — always export so mutations can reference it
-export const propertyDetailKey = (id: string) =>
-  ["property", "detail", id] as const;
+export const propertyDetailKey = (id: string) => ["property", "detail", id] as const;
 
 export function usePropertyDetail(propertyId: string) {
   return useQuery({
     queryKey: propertyDetailKey(propertyId),
     queryFn: () => api.getPropertyDetail(propertyId),
-    staleTime: 5 * 60 * 1000,   // 5 min — prevents re-fetch on tab revisit
+    staleTime: 5 * 60 * 1000, // 5 min — prevents re-fetch on tab revisit
     enabled: !!propertyId,
   });
 }
@@ -42,8 +42,7 @@ export function useMarkPaid(leaseId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ periodMonth }) =>
-      api.payRent(leaseId, { periodMonth, paymentMethodId: "" }),
+    mutationFn: ({ periodMonth }) => api.payRent(leaseId, { periodMonth, paymentMethodId: "" }),
 
     onMutate: async ({ periodMonth }) => {
       await queryClient.cancelQueries({ queryKey: paymentsKey(leaseId) });
@@ -81,24 +80,27 @@ const [processingPeriodMonth, setProcessingPeriodMonth] = useState<string | null
 
 const handleMarkPaid = (periodMonth: string) => {
   setProcessingPeriodMonth(periodMonth);
-  markPaid.mutate({ periodMonth }, {
-    onSuccess: () => showToast("Payment marked as paid successfully."),
-    onError: (err) => showToast(err.message, "error"),
-    onSettled: () => setProcessingPeriodMonth(null),
-  });
+  markPaid.mutate(
+    { periodMonth },
+    {
+      onSuccess: () => showToast("Payment marked as paid successfully."),
+      onError: (err) => showToast(err.message, "error"),
+      onSettled: () => setProcessingPeriodMonth(null),
+    },
+  );
 };
 ```
 
 ### Query key conventions
 
-| Key | What it covers |
-|---|---|
-| `["manager", "dashboard"]` | Manager dashboard (stats, charts, property list) |
-| `["property", "detail", id]` | Property + all units |
-| `["tenant", "profile", id]` | Tenant profile (manager view) |
-| `["tenant", "dashboard", id]` | Tenant dashboard (tenant view — lease + payments) |
-| `["payments", leaseId]` | Payment list for a lease |
-| `["paymentMethods", tenantId]` | Saved payment methods |
+| Key                            | What it covers                                    |
+| ------------------------------ | ------------------------------------------------- |
+| `["manager", "dashboard"]`     | Manager dashboard (stats, charts, property list)  |
+| `["property", "detail", id]`   | Property + all units                              |
+| `["tenant", "profile", id]`    | Tenant profile (manager view)                     |
+| `["tenant", "dashboard", id]`  | Tenant dashboard (tenant view — lease + payments) |
+| `["payments", leaseId]`        | Payment list for a lease                          |
+| `["paymentMethods", tenantId]` | Saved payment methods                             |
 
 ---
 
@@ -148,8 +150,8 @@ Store and return: `"2024-01-15T00:00:00.000Z"`. Never store display strings or J
 Format for display using the shared helpers:
 
 ```ts
-formatDate("2024-01-15T00:00:00.000Z")  // → "15 Jan 2024"
-formatPeriodMonth("2024-06")             // → "Jun 2024"
+formatDate("2024-01-15T00:00:00.000Z"); // → "15 Jan 2024"
+formatPeriodMonth("2024-06"); // → "Jun 2024"
 ```
 
 ### New payment records always include `last_reminded_on: null`
@@ -166,8 +168,9 @@ Any route that creates a payment must include this field.
 const { data, isLoading, isError, error, refetch } = useSomeQuery(id);
 
 if (isLoading) return <LoadingState message={s.loading} />;
-if (isError)   return <ErrorState message={(error as Error)?.message ?? s.error} onRetry={() => refetch()} />;
-if (!data)     return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
+if (isError)
+  return <ErrorState message={(error as Error)?.message ?? s.error} onRetry={() => refetch()} />;
+if (!data) return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 // render content
 ```
 
@@ -215,7 +218,9 @@ The `DataTable` component uses `table-auto` (not `table-fixed`) so `w-*` classes
 `<Pill>` uses `inline-flex` internally. To right-align it inside a `<td>`, wrap it:
 
 ```tsx
-content: <div className="flex justify-end"><Pill status={row.status} /></div>
+content: <div className="flex justify-end">
+  <Pill status={row.status} />
+</div>;
 ```
 
 `text-right` on the `<td>` does not move `inline-flex` children.

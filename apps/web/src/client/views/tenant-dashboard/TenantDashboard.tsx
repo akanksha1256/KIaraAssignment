@@ -31,22 +31,19 @@ export const TenantDashboard = ({ tenantId }: Props) => {
         onRetry={() => refetch()}
       />
     );
-  if (!data)
-    return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
+  if (!data) return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
   const { dashboard, payments } = data;
   const { tenantName, lease, unit, property } = dashboard;
 
   const pendingPayment = payingPeriodMonth
-    ? payments.find((p) => p.periodMonth === payingPeriodMonth) ?? null
+    ? (payments.find((p) => p.periodMonth === payingPeriodMonth) ?? null)
     : null;
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900">
-          {s.heading(tenantName)}
-        </h1>
+        <h1 className="text-2xl font-bold text-neutral-900">{s.heading(tenantName)}</h1>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">

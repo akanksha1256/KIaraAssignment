@@ -1,10 +1,5 @@
 import { useRouter } from "next/navigation";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui";
+import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui";
 import { strings } from "@repo/tokens";
 import { User, ExternalLink } from "lucide-react";
 import type { Tenant } from "@repo/data";

@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui";
+import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui";
 import { strings } from "@repo/tokens";
 import { FileText, ExternalLink } from "lucide-react";
 import type { Lease } from "@repo/data";
@@ -37,16 +32,17 @@ export const TenantCurrentLeaseCard = ({ lease, unit, property }: Props) => (
               label: s.monthlyRent,
               value: `$${lease.monthlyRent.toLocaleString()}/mo`,
             },
-            { label: s.leaseDate, value: `${formatDate(lease.startDate)} – ${formatDate(lease.endDate)}` },
+            {
+              label: s.leaseDate,
+              value: `${formatDate(lease.startDate)} – ${formatDate(lease.endDate)}`,
+            },
           ].map(({ label, value }) => (
             <div
               key={label}
               className="flex justify-between py-2.5 border-b border-neutral-100 last:border-0"
             >
               <span className="text-sm text-neutral-500">{label}</span>
-              <span className="text-sm font-medium text-neutral-900">
-                {value}
-              </span>
+              <span className="text-sm font-medium text-neutral-900">{value}</span>
             </div>
           ))}
           <div className="flex justify-between py-2.5">
@@ -62,9 +58,7 @@ export const TenantCurrentLeaseCard = ({ lease, unit, property }: Props) => (
                 <ExternalLink className="h-3 w-3" />
               </a>
             ) : (
-              <span className="text-sm font-medium text-neutral-400">
-                {s.leaseDocumentNone}
-              </span>
+              <span className="text-sm font-medium text-neutral-400">{s.leaseDocumentNone}</span>
             )}
           </div>
         </>

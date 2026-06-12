@@ -38,9 +38,7 @@ export function StatusSection({ stats }: { stats: DashboardStats }) {
         icon={TrendingUp}
         label={s.stats.collectionRate}
         value={`${collectionRate}%`}
-        sub={s.stats.collectionRateSubtitle(
-          `$${stats.collectedThisMonth.toLocaleString()}`,
-        )}
+        sub={s.stats.collectionRateSubtitle(`$${stats.collectedThisMonth.toLocaleString()}`)}
         accent={collectionRate >= 80 ? "success" : "warning"}
       />
     </div>

@@ -5,9 +5,7 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center gap-8 py-24 text-center">
       <div>
-        <h1 className="text-3xl font-bold text-neutral-900">
-          {strings.app.name}
-        </h1>
+        <h1 className="text-3xl font-bold text-neutral-900">{strings.app.name}</h1>
         <p className="mt-2 text-neutral-500">{strings.app.tagline}</p>
       </div>
       <div className="flex gap-4">

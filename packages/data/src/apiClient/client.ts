@@ -14,27 +14,17 @@ import {
   mapManagerDashboard,
 } from "./mappers";
 import type { ManagerDashboardData } from "../types";
-import type {
-  Property,
-  PropertySummary,
-  PropertyDetailData,
-} from "../types";
+import type { Property, PropertySummary, PropertyDetailData } from "../types";
 import type { TenantProfile } from "../types";
 import type { TenantDashboardData } from "../types";
 import type { Unit } from "../types";
 import type { Tenant } from "../types";
 import type { Lease } from "../types";
-import type {
-  Payment,
-  PaymentMethod,
-} from "../types";
+import type { Payment, PaymentMethod } from "../types";
 
 const BASE = "/api";
 
-async function request<T>(
-  path: string,
-  options?: RequestInit & { fail?: boolean },
-): Promise<T> {
+async function request<T>(path: string, options?: RequestInit & { fail?: boolean }): Promise<T> {
   const url = new URL(BASE + path, window.location.origin);
   if (options?.fail) url.searchParams.set("fail", "true");
 
@@ -48,9 +38,7 @@ async function request<T>(
 
 export const api = {
   getManagerDashboard: async (): Promise<ManagerDashboardData> =>
-    mapManagerDashboard(
-      await request<P.ManagerDashboardData>("/manager/dashboard"),
-    ),
+    mapManagerDashboard(await request<P.ManagerDashboardData>("/manager/dashboard")),
 
   getProperties: async (): Promise<Property[]> =>
     (await request<P.Property[]>("/properties")).map(mapProperty),
@@ -62,15 +50,12 @@ export const api = {
     mapPropertyDetail(await request<P.PropertyDetailData>(`/properties/${id}`)),
 
   getPropertiesSummary: async (): Promise<PropertySummary[]> =>
-    (await request<P.PropertySummary[]>("/properties/summary")).map(
-      mapPropertySummary,
-    ),
+    (await request<P.PropertySummary[]>("/properties/summary")).map(mapPropertySummary),
 
   getUnits: async (propertyId: string): Promise<Unit[]> =>
     (await request<P.Unit[]>(`/properties/${propertyId}/units`)).map(mapUnit),
 
-  getUnit: async (id: string): Promise<Unit> =>
-    mapUnit(await request<P.Unit>(`/units/${id}`)),
+  getUnit: async (id: string): Promise<Unit> => mapUnit(await request<P.Unit>(`/units/${id}`)),
 
   getTenant: async (id: string): Promise<Tenant> =>
     mapTenant(await request<P.Tenant>(`/tenants/${id}`)),
@@ -85,8 +70,7 @@ export const api = {
     return { dashboard: mapTenantDashboard(raw), payments: mapTenantDashboardPayments(raw) };
   },
 
-  getLease: async (id: string): Promise<Lease> =>
-    mapLease(await request<P.Lease>(`/leases/${id}`)),
+  getLease: async (id: string): Promise<Lease> => mapLease(await request<P.Lease>(`/leases/${id}`)),
 
   getLeaseByUnit: async (unitId: string): Promise<Lease | null> => {
     const raw = await request<P.Lease | null>(`/units/${unitId}/lease`);
@@ -145,10 +129,7 @@ export const api = {
       }),
     ),
 
-  sendReminder: async (
-    leaseId: string,
-    periodMonth: string,
-  ): Promise<Payment> =>
+  sendReminder: async (leaseId: string, periodMonth: string): Promise<Payment> =>
     mapPayment(
       await request<P.Payment>(`/leases/${leaseId}/remind`, {
         method: "POST",
@@ -158,14 +139,11 @@ export const api = {
     ),
 
   getPaymentMethods: async (tenantId: string): Promise<PaymentMethod[]> =>
-    (
-      await request<P.PaymentMethod[]>(`/tenants/${tenantId}/payment-methods`)
-    ).map(mapPaymentMethod),
+    (await request<P.PaymentMethod[]>(`/tenants/${tenantId}/payment-methods`)).map(
+      mapPaymentMethod,
+    ),
 
-  addPaymentMethod: async (
-    tenantId: string,
-    label: string,
-  ): Promise<PaymentMethod> =>
+  addPaymentMethod: async (tenantId: string, label: string): Promise<PaymentMethod> =>
     mapPaymentMethod(
       await request<P.PaymentMethod>(`/tenants/${tenantId}/payment-methods`, {
         method: "POST",

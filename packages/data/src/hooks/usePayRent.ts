@@ -6,7 +6,7 @@ import type { Payment } from "../types";
 
 interface QueryData {
   dashboard: TenantDashboardData;
-  payments:  Payment[];
+  payments: Payment[];
 }
 
 export function usePayRent(tenantId: string, leaseId: string) {
@@ -31,7 +31,12 @@ export function usePayRent(tenantId: string, leaseId: string) {
           ...old,
           payments: old.payments.map((p) =>
             p.periodMonth === periodMonth
-              ? { ...p, status: "paid", amountPaid: p.amountDue, paidDate: new Date().toISOString() }
+              ? {
+                  ...p,
+                  status: "paid",
+                  amountPaid: p.amountDue,
+                  paidDate: new Date().toISOString(),
+                }
               : p,
           ),
         };

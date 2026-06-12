@@ -23,14 +23,8 @@ export const ManagerDashboard = () => {
 
   if (isLoading) return <LoadingState message={s.loading} />;
   if (isError)
-    return (
-      <ErrorState
-        message={(error as Error)?.message ?? s.error}
-        onRetry={() => refetch()}
-      />
-    );
-  if (!data)
-    return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
+    return <ErrorState message={(error as Error)?.message ?? s.error} onRetry={() => refetch()} />;
+  if (!data) return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
   const { stats, paymentBreakdown, monthlyRevenue, properties } = data;
 
@@ -48,9 +42,7 @@ export const ManagerDashboard = () => {
       content: (
         <>
           {row.leasedCount}/{row.unitCount}
-          <span className="ml-1 text-xs text-neutral-400">
-            {s.propertiesTable.occupiedSuffix}
-          </span>
+          <span className="ml-1 text-xs text-neutral-400">{s.propertiesTable.occupiedSuffix}</span>
         </>
       ),
       className: "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-600",
@@ -60,8 +52,15 @@ export const ManagerDashboard = () => {
       className: "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
     },
     {
-      content: <div className="flex justify-end"><Pill status={row.status} /></div>,
-      sortValue: ({ overdue: 0, outstanding: 1, allPaid: 2, vacant: 3 } as Record<string, number>)[row.status] ?? 99,
+      content: (
+        <div className="flex justify-end">
+          <Pill status={row.status} />
+        </div>
+      ),
+      sortValue:
+        ({ overdue: 0, outstanding: 1, allPaid: 2, vacant: 3 } as Record<string, number>)[
+          row.status
+        ] ?? 99,
       className: "whitespace-nowrap w-28 px-5 py-4",
     },
     {

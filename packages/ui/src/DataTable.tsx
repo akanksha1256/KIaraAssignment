@@ -6,27 +6,27 @@ import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 import { Card } from "./Card";
 
 export interface TableColumn {
-  label:      string;
-  align?:     "left" | "right";
+  label: string;
+  align?: "left" | "right";
   className?: string;
-  sortable?:  boolean;
+  sortable?: boolean;
 }
 
 export interface TableCell {
-  content:    React.ReactNode;
+  content: React.ReactNode;
   className?: string;
   sortValue?: string | number;
 }
 
 export interface TableRow {
-  key:      string;
+  key: string;
   onClick?: () => void;
-  cells:    TableCell[];
+  cells: TableCell[];
 }
 
 interface DataTableProps {
   columns: TableColumn[];
-  rows:    TableRow[];
+  rows: TableRow[];
 }
 
 type SortDir = "asc" | "desc";
@@ -72,7 +72,9 @@ export function DataTable({ columns, rows }: DataTableProps) {
                   ${className ?? ""}`}
               >
                 {sortable ? (
-                  <span className={`inline-flex items-center gap-1 ${align === "right" ? "flex-row-reverse" : ""}`}>
+                  <span
+                    className={`inline-flex items-center gap-1 ${align === "right" ? "flex-row-reverse" : ""}`}
+                  >
                     {label}
                     {sortCol === i ? (
                       sortDir === "asc" ? (
@@ -97,9 +99,7 @@ export function DataTable({ columns, rows }: DataTableProps) {
               key={key}
               onClick={onClick}
               className={
-                onClick
-                  ? "cursor-pointer transition-colors hover:bg-neutral-50"
-                  : undefined
+                onClick ? "cursor-pointer transition-colors hover:bg-neutral-50" : undefined
               }
             >
               {cells.map((cell, i) => (

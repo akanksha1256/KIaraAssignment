@@ -15,12 +15,8 @@ export async function GET(req: NextRequest) {
     // ── Per-property summary ───────────────────────────────────────────────────
     const properties: PropertySummary[] = db.properties.map((prop) => {
       const units = db.units.filter((u) => u.property_id === prop.id);
-      const leases = units.flatMap((u) =>
-        db.leases.filter((l) => l.unit_id === u.id),
-      );
-      const payments = leases.flatMap((l) =>
-        db.payments.filter((p) => p.lease_id === l.id),
-      );
+      const leases = units.flatMap((u) => db.leases.filter((l) => l.unit_id === u.id));
+      const payments = leases.flatMap((l) => db.payments.filter((p) => p.lease_id === l.id));
 
       const total_rent = leases.reduce((s, l) => s + l.monthly_rent, 0);
       const hasOverdue = payments.some((p) => p.status === "overdue");
@@ -51,10 +47,7 @@ export async function GET(req: NextRequest) {
     const total_units = db.units.length;
     const occupied_units = allLeases.length;
 
-    const total_monthly_rent = allLeases.reduce(
-      (s, l) => s + l.monthly_rent,
-      0,
-    );
+    const total_monthly_rent = allLeases.reduce((s, l) => s + l.monthly_rent, 0);
     const collected_this_month = allPayments
       .filter((p) => p.status === "paid")
       .reduce((s, p) => s + p.amount_paid, 0);
@@ -83,9 +76,7 @@ export async function GET(req: NextRequest) {
     ];
     const monthly_revenue: MonthlyRevenue[] = [];
 
-    const allMonths = [
-      ...new Set(allPayments.map((p) => p.period_month)),
-    ].sort();
+    const allMonths = [...new Set(allPayments.map((p) => p.period_month))].sort();
     const last6 = allMonths.slice(-6);
 
     for (const ym of last6) {

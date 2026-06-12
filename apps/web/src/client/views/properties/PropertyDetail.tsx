@@ -33,9 +33,7 @@ const getUnitRow = (unit: UnitDetailItem): TableCell[] => {
       className: "whitespace-nowrap px-5 py-4 text-sm font-semibold text-neutral-900",
     },
     {
-      content: unit.tenant?.name ?? (
-        <span className="text-neutral-400">{s.unitsTable.vacant}</span>
-      ),
+      content: unit.tenant?.name ?? <span className="text-neutral-400">{s.unitsTable.vacant}</span>,
       className: "px-5 py-4 text-sm text-neutral-700",
     },
     {
@@ -53,7 +51,9 @@ const getUnitRow = (unit: UnitDetailItem): TableCell[] => {
     {
       content: (
         <div className="flex justify-end">
-          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${bg} ${text}`}>
+          <span
+            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${bg} ${text}`}
+          >
             {label}
           </span>
         </div>
@@ -81,20 +81,14 @@ export const PropertyDetail = ({ propertyId }: Props) => {
 
   if (isLoading) return <LoadingState message={s.loading} />;
   if (isError)
-    return (
-      <ErrorState
-        message={(error as Error)?.message ?? s.error}
-        onRetry={() => refetch()}
-      />
-    );
-  if (!data)
-    return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
+    return <ErrorState message={(error as Error)?.message ?? s.error} onRetry={() => refetch()} />;
+  if (!data) return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
   const { property, units } = data;
-  const totalUnits    = units.length;
+  const totalUnits = units.length;
   const occupiedUnits = units.filter((u) => u.paymentStatus !== "vacant").length;
-  const vacantUnits   = totalUnits - occupiedUnits;
-  const totalRent     = units.reduce((sum, u) => sum + (u.lease?.monthlyRent ?? 0), 0);
+  const vacantUnits = totalUnits - occupiedUnits;
+  const totalRent = units.reduce((sum, u) => sum + (u.lease?.monthlyRent ?? 0), 0);
 
   return (
     <div className="space-y-8">

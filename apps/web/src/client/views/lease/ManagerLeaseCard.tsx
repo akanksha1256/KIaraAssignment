@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui";
+import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui";
 import { strings } from "@repo/tokens";
 import { FileText, ExternalLink } from "lucide-react";
 import type { Lease } from "@repo/data";
@@ -29,10 +24,7 @@ export const ManagerLeaseCard = ({ lease }: { lease: Lease | null }) => (
     <CardContent>
       {lease ? (
         <>
-          <DetailRow
-            label={s.monthlyRent}
-            value={`$${lease.monthlyRent.toLocaleString()}/mo`}
-          />
+          <DetailRow label={s.monthlyRent} value={`$${lease.monthlyRent.toLocaleString()}/mo`} />
           <DetailRow
             label={s.leasePeriod}
             value={`${formatDate(lease.startDate)} – ${formatDate(lease.endDate)}`}

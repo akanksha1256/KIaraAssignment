@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useRef,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useRef, useState } from "react";
 import { CheckCircle, XCircle, X } from "lucide-react";
 
 export type ToastVariant = "success" | "error";
@@ -27,17 +21,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const counter = useRef(0);
 
-  const showToast = useCallback(
-    (message: string, variant: ToastVariant = "success") => {
-      const id = ++counter.current;
-      setToasts((prev) => [...prev, { id, message, variant }]);
-      setTimeout(
-        () => setToasts((prev) => prev.filter((t) => t.id !== id)),
-        4000,
-      );
-    },
-    [],
-  );
+  const showToast = useCallback((message: string, variant: ToastVariant = "success") => {
+    const id = ++counter.current;
+    setToasts((prev) => [...prev, { id, message, variant }]);
+    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 4000);
+  }, []);
 
   return (
     <ToastContext.Provider value={{ showToast }}>
@@ -47,9 +35,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           <ToastItem
             key={toast.id}
             toast={toast}
-            onDismiss={() =>
-              setToasts((prev) => prev.filter((t) => t.id !== toast.id))
-            }
+            onDismiss={() => setToasts((prev) => prev.filter((t) => t.id !== toast.id))}
           />
         ))}
       </div>
@@ -57,13 +43,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ToastItem({
-  toast,
-  onDismiss,
-}: {
-  toast: Toast;
-  onDismiss: () => void;
-}) {
+function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }) {
   const isSuccess = toast.variant === "success";
   return (
     <div

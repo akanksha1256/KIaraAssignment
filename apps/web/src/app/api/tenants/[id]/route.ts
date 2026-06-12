@@ -3,10 +3,7 @@ import { db } from "@/platform/db";
 import { withDelay, errorResponse } from "@/platform/utils";
 import type { TenantProfileData, TenantStanding } from "@/platform/types";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     await withDelay(req);
 
@@ -15,19 +12,17 @@ export async function GET(
       return NextResponse.json({ message: "Tenant not found" }, { status: 404 });
     }
 
-    const lease    = db.leases.find((l) => l.tenant_id === tenant.id) ?? null;
-    const unit     = lease ? (db.units.find((u) => u.id === lease.unit_id) ?? null) : null;
-    const property = unit  ? (db.properties.find((p) => p.id === unit.property_id) ?? null) : null;
+    const lease = db.leases.find((l) => l.tenant_id === tenant.id) ?? null;
+    const unit = lease ? (db.units.find((u) => u.id === lease.unit_id) ?? null) : null;
+    const property = unit ? (db.properties.find((p) => p.id === unit.property_id) ?? null) : null;
     const payments = lease ? db.payments.filter((p) => p.lease_id === lease.id) : [];
 
     let standing: TenantStanding | null = null;
     if (payments.length > 0) {
-      const onTime  = payments.filter((p) => p.status === "paid").length;
-      const score   = Math.round((onTime / payments.length) * 100);
-      const label   =
-        score >= 90 ? "Excellent" :
-        score >= 70 ? "Good"      :
-        score >= 50 ? "Fair"      : "Poor";
+      const onTime = payments.filter((p) => p.status === "paid").length;
+      const score = Math.round((onTime / payments.length) * 100);
+      const label =
+        score >= 90 ? "Excellent" : score >= 70 ? "Good" : score >= 50 ? "Fair" : "Poor";
       standing = { total_payments: payments.length, on_time_payments: onTime, score, label };
     }
 

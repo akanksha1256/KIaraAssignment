@@ -144,33 +144,33 @@ ManagerDashboardData { stats, paymentBreakdown, monthlyRevenue, properties }
 ```ts
 // ✅ In view components and hooks
 import type { Payment, Lease } from "@repo/data";
-import { strings, colors }    from "@repo/tokens";
-import { Button, DataTable }  from "@repo/ui";
+import { strings, colors } from "@repo/tokens";
+import { Button, DataTable } from "@repo/ui";
 
 // ✅ In API route handlers (server only)
-import type { RawPayment }    from "@/platform/types";
+import type { RawPayment } from "@/platform/types";
 
 // ❌ Never
-import type { Payment }       from "@/platform/types";  // wrong layer
-import type { Payment }       from "../../types";        // relative cross-boundary
+import type { Payment } from "@/platform/types"; // wrong layer
+import type { Payment } from "../../types"; // relative cross-boundary
 ```
 
 ---
 
 ## 3. API Routes
 
-| Method | Path | Description | Returns |
-|---|---|---|---|
-| GET | `/api/manager/dashboard` | Portfolio-level overview | `ManagerDashboardData` |
-| GET | `/api/properties/[id]` | Property header + all units | `PropertyDetailData` |
-| GET | `/api/tenants/[id]` | Tenant dashboard (tenant view) | `{ dashboard: TenantDashboardData, payments: Payment[] }` |
-| GET | `/api/tenants/[id]/profile` | Tenant profile (manager view) | `TenantProfile` |
-| GET | `/api/tenants/[id]/payment-methods` | Saved payment methods | `PaymentMethod[]` |
-| POST | `/api/tenants/[id]/payment-methods` | Add a new payment method | `PaymentMethod` |
-| GET | `/api/leases/[id]/payments` | Payment history for a lease | `Payment[]` |
-| POST | `/api/leases/[id]/pay` | Mark payment as paid | `Payment` |
-| POST | `/api/leases/[id]/remind` | Send payment reminder | `Payment` (with updated `lastRemindedOn`) |
-| GET | `/api/units/[id]` | Unit detail | `Unit` |
+| Method | Path                                | Description                    | Returns                                                   |
+| ------ | ----------------------------------- | ------------------------------ | --------------------------------------------------------- |
+| GET    | `/api/manager/dashboard`            | Portfolio-level overview       | `ManagerDashboardData`                                    |
+| GET    | `/api/properties/[id]`              | Property header + all units    | `PropertyDetailData`                                      |
+| GET    | `/api/tenants/[id]`                 | Tenant dashboard (tenant view) | `{ dashboard: TenantDashboardData, payments: Payment[] }` |
+| GET    | `/api/tenants/[id]/profile`         | Tenant profile (manager view)  | `TenantProfile`                                           |
+| GET    | `/api/tenants/[id]/payment-methods` | Saved payment methods          | `PaymentMethod[]`                                         |
+| POST   | `/api/tenants/[id]/payment-methods` | Add a new payment method       | `PaymentMethod`                                           |
+| GET    | `/api/leases/[id]/payments`         | Payment history for a lease    | `Payment[]`                                               |
+| POST   | `/api/leases/[id]/pay`              | Mark payment as paid           | `Payment`                                                 |
+| POST   | `/api/leases/[id]/remind`           | Send payment reminder          | `Payment` (with updated `lastRemindedOn`)                 |
+| GET    | `/api/units/[id]`                   | Unit detail                    | `Unit`                                                    |
 
 ### Shared Route Convention
 
@@ -197,8 +197,7 @@ All async data operations live in `packages/data`. There is no global state stor
 
 ```ts
 // packages/data/src/hooks/usePropertyDetail.ts
-export const propertyDetailKey = (id: string) =>
-  ["property", "detail", id] as const;
+export const propertyDetailKey = (id: string) => ["property", "detail", id] as const;
 
 export function usePropertyDetail(propertyId: string) {
   return useQuery({
@@ -218,8 +217,7 @@ export function useMarkPaid(leaseId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ periodMonth }) =>
-      api.payRent(leaseId, { periodMonth, paymentMethodId: "" }),
+    mutationFn: ({ periodMonth }) => api.payRent(leaseId, { periodMonth, paymentMethodId: "" }),
 
     onMutate: async ({ periodMonth }) => {
       await queryClient.cancelQueries({ queryKey: paymentsKey(leaseId) });
@@ -248,18 +246,18 @@ export function useMarkPaid(leaseId: string) {
 
 ### All Hooks Summary
 
-| Hook | Type | Query Key | Description |
-|---|---|---|---|
-| `useManagerDashboard` | query | `["manager", "dashboard"]` | Stats, charts, property list |
-| `usePropertyDetail(id)` | query | `["property", "detail", id]` | Property + all units |
-| `useTenantProfile(id)` | query | `["tenant", "profile", id]` | Profile + standing (manager view) |
-| `useTenantDashboard(id)` | query | `["tenant", "dashboard", id]` | Lease, property, payments (tenant view) |
-| `usePayments(leaseId)` | query | `["payments", leaseId]` | Payment history list |
-| `usePaymentMethods(tenantId)` | query | `["paymentMethods", tenantId]` | Saved payment methods |
-| `useMarkPaid(leaseId)` | mutation | invalidates `["payments", leaseId]` | Optimistic mark-paid |
-| `usePayRent(tenantId, leaseId)` | mutation | optimistic on `["tenant", "dashboard", tenantId]` | Tenant pay rent |
-| `useSendReminder(leaseId)` | mutation | patches `["payments", leaseId]` cache | Send email reminder |
-| `useAddPaymentMethod(tenantId)` | mutation | appends to `["paymentMethods", tenantId]` | Add payment method |
+| Hook                            | Type     | Query Key                                         | Description                             |
+| ------------------------------- | -------- | ------------------------------------------------- | --------------------------------------- |
+| `useManagerDashboard`           | query    | `["manager", "dashboard"]`                        | Stats, charts, property list            |
+| `usePropertyDetail(id)`         | query    | `["property", "detail", id]`                      | Property + all units                    |
+| `useTenantProfile(id)`          | query    | `["tenant", "profile", id]`                       | Profile + standing (manager view)       |
+| `useTenantDashboard(id)`        | query    | `["tenant", "dashboard", id]`                     | Lease, property, payments (tenant view) |
+| `usePayments(leaseId)`          | query    | `["payments", leaseId]`                           | Payment history list                    |
+| `usePaymentMethods(tenantId)`   | query    | `["paymentMethods", tenantId]`                    | Saved payment methods                   |
+| `useMarkPaid(leaseId)`          | mutation | invalidates `["payments", leaseId]`               | Optimistic mark-paid                    |
+| `usePayRent(tenantId, leaseId)` | mutation | optimistic on `["tenant", "dashboard", tenantId]` | Tenant pay rent                         |
+| `useSendReminder(leaseId)`      | mutation | patches `["payments", leaseId]` cache             | Send email reminder                     |
+| `useAddPaymentMethod(tenantId)` | mutation | appends to `["paymentMethods", tenantId]`         | Add payment method                      |
 
 ---
 
@@ -293,14 +291,14 @@ The only file that imports from `wireTypes.ts`. Every mapper follows:
 ```ts
 export function mapPayment(raw: RawPayment): Payment {
   return {
-    id:             raw.id,
-    leaseId:        raw.lease_id,
-    periodMonth:    raw.period_month,
-    amountDue:      raw.amount_due,
-    amountPaid:     raw.amount_paid ?? 0,
-    status:         raw.status,
-    paidDate:       raw.paid_date ?? null,
-    method:         raw.method ?? null,
+    id: raw.id,
+    leaseId: raw.lease_id,
+    periodMonth: raw.period_month,
+    amountDue: raw.amount_due,
+    amountPaid: raw.amount_paid ?? 0,
+    status: raw.status,
+    paidDate: raw.paid_date ?? null,
+    method: raw.method ?? null,
     lastRemindedOn: raw.last_reminded_on ?? null,
   };
 }
@@ -315,28 +313,25 @@ export function mapPayment(raw: RawPayment): Payment {
 `Button` uses `@base-ui/react/button` as the accessible primitive and `class-variance-authority` for variant composition. Variants are mapped to project token classes so no CSS variables are required (Tailwind v3 compatible):
 
 ```ts
-const buttonVariants = cva(
-  "inline-flex ... focus-visible:ring-brand-500 disabled:opacity-50",
-  {
-    variants: {
-      variant: {
-        default:     "bg-brand-600 text-white hover:bg-brand-700",
-        secondary:   "bg-neutral-100 text-neutral-800 hover:bg-neutral-200",
-        outline:     "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50",
-        ghost:       "text-neutral-700 hover:bg-neutral-100",
-        destructive: "bg-danger-500 text-white hover:bg-danger-700",
-        link:        "text-brand-600 underline-offset-4 hover:underline",
-      },
-      size: {
-        default: "h-9 px-4",
-        sm:      "h-8 px-3 text-xs",
-        lg:      "h-10 px-6",
-        icon:    "h-9 w-9",
-      },
+const buttonVariants = cva("inline-flex ... focus-visible:ring-brand-500 disabled:opacity-50", {
+  variants: {
+    variant: {
+      default: "bg-brand-600 text-white hover:bg-brand-700",
+      secondary: "bg-neutral-100 text-neutral-800 hover:bg-neutral-200",
+      outline: "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50",
+      ghost: "text-neutral-700 hover:bg-neutral-100",
+      destructive: "bg-danger-500 text-white hover:bg-danger-700",
+      link: "text-brand-600 underline-offset-4 hover:underline",
     },
-    defaultVariants: { variant: "default", size: "default" },
+    size: {
+      default: "h-9 px-4",
+      sm: "h-8 px-3 text-xs",
+      lg: "h-10 px-6",
+      icon: "h-9 w-9",
+    },
   },
-);
+  defaultVariants: { variant: "default", size: "default" },
+});
 ```
 
 ### Toast — Sonner
@@ -387,8 +382,9 @@ Every data-fetching view component follows this exact structure before rendering
 const { data, isLoading, isError, error, refetch } = useSomeQuery(id);
 
 if (isLoading) return <LoadingState message={s.loading} />;
-if (isError)   return <ErrorState message={(error as Error)?.message ?? s.error} onRetry={() => refetch()} />;
-if (!data)     return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
+if (isError)
+  return <ErrorState message={(error as Error)?.message ?? s.error} onRetry={() => refetch()} />;
+if (!data) return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
 // render content using `data`
 ```
@@ -410,14 +406,14 @@ export const PropertyDetail = ({ propertyId }: Props) => {
 
 ### View Map
 
-| View Component | Route | Hook(s) Used |
-|---|---|---|
-| `ManagerDashboard` | `/manager` | `useManagerDashboard` |
-| `PropertyDetail` | `/manager/properties/[id]` | `usePropertyDetail` |
-| `UnitDetail` | `/manager/properties/[id]/units/[unitId]` | `usePropertyDetail`, `usePayments`, `useMarkPaid`, `useSendReminder` |
-| `TenantProfile` | `/manager/tenants/[id]` | `useTenantProfile` |
-| `TenantDashboard` | `/tenant` | `useTenantDashboard` |
-| `PayRentModal` | modal inside `/tenant` | `usePaymentMethods`, `usePayRent`, `useAddPaymentMethod` |
+| View Component     | Route                                     | Hook(s) Used                                                         |
+| ------------------ | ----------------------------------------- | -------------------------------------------------------------------- |
+| `ManagerDashboard` | `/manager`                                | `useManagerDashboard`                                                |
+| `PropertyDetail`   | `/manager/properties/[id]`                | `usePropertyDetail`                                                  |
+| `UnitDetail`       | `/manager/properties/[id]/units/[unitId]` | `usePropertyDetail`, `usePayments`, `useMarkPaid`, `useSendReminder` |
+| `TenantProfile`    | `/manager/tenants/[id]`                   | `useTenantProfile`                                                   |
+| `TenantDashboard`  | `/tenant`                                 | `useTenantDashboard`                                                 |
+| `PayRentModal`     | modal inside `/tenant`                    | `usePaymentMethods`, `usePayRent`, `useAddPaymentMethod`             |
 
 ---
 
@@ -430,11 +426,14 @@ const [processingPeriodMonth, setProcessingPeriodMonth] = useState<string | null
 
 const handleMarkPaid = (periodMonth: string) => {
   setProcessingPeriodMonth(periodMonth);
-  markPaid.mutate({ periodMonth }, {
-    onSuccess: () => toast("Payment marked as paid successfully."),
-    onError: (err) => toast.error((err as Error).message),
-    onSettled: () => setProcessingPeriodMonth(null),
-  });
+  markPaid.mutate(
+    { periodMonth },
+    {
+      onSuccess: () => toast("Payment marked as paid successfully."),
+      onError: (err) => toast.error((err as Error).message),
+      onSettled: () => setProcessingPeriodMonth(null),
+    },
+  );
 };
 
 // In render:
@@ -468,6 +467,7 @@ export const strings = {
 ```
 
 Components access their copy as:
+
 ```ts
 const s = strings.manager.unitDetail;
 // then: s.loading, s.emptyTitle, etc.

@@ -33,13 +33,13 @@ pnpm dev
 
 The app will be available at **http://localhost:3000**.
 
-| Route | Description |
-|---|---|
-| `/manager` | Manager dashboard — portfolio overview, properties table |
-| `/manager/properties/[id]` | Property detail — units list |
-| `/manager/properties/[id]/units/[unitId]` | Unit detail — tenant, lease, payment history |
-| `/manager/tenants/[id]` | Tenant profile — KYC, payment standing, history |
-| `/tenant` | Tenant view — read-only dashboard (defaults to Alice Johnson / tenant-1) |
+| Route                                     | Description                                                              |
+| ----------------------------------------- | ------------------------------------------------------------------------ |
+| `/manager`                                | Manager dashboard — portfolio overview, properties table                 |
+| `/manager/properties/[id]`                | Property detail — units list                                             |
+| `/manager/properties/[id]/units/[unitId]` | Unit detail — tenant, lease, payment history                             |
+| `/manager/tenants/[id]`                   | Tenant profile — KYC, payment standing, history                          |
+| `/tenant`                                 | Tenant view — read-only dashboard (defaults to Alice Johnson / tenant-1) |
 
 ---
 
@@ -111,16 +111,16 @@ curl "http://localhost:3000/api/leases/lease-1/payments?fail=true"
 
 ### API routes reference
 
-| Method | Route | Description |
-|---|---|---|
-| `GET` | `/api/manager/dashboard` | Portfolio stats, revenue chart, payment breakdown, property list |
-| `GET` | `/api/properties/[id]` | Property detail + units summary |
-| `GET` | `/api/tenants/[id]` | Tenant profile, KYC, payment standing |
-| `GET` | `/api/leases/[id]/payments` | Payment history for a lease |
-| `POST` | `/api/leases/[id]/pay` | Mark a period as paid |
-| `POST` | `/api/leases/[id]/remind` | Send a payment reminder |
-| `GET` | `/api/tenants/[id]/payment-methods` | Saved payment methods for a tenant |
-| `POST` | `/api/tenants/[id]/payment-methods` | Add a new payment method |
+| Method | Route                               | Description                                                      |
+| ------ | ----------------------------------- | ---------------------------------------------------------------- |
+| `GET`  | `/api/manager/dashboard`            | Portfolio stats, revenue chart, payment breakdown, property list |
+| `GET`  | `/api/properties/[id]`              | Property detail + units summary                                  |
+| `GET`  | `/api/tenants/[id]`                 | Tenant profile, KYC, payment standing                            |
+| `GET`  | `/api/leases/[id]/payments`         | Payment history for a lease                                      |
+| `POST` | `/api/leases/[id]/pay`              | Mark a period as paid                                            |
+| `POST` | `/api/leases/[id]/remind`           | Send a payment reminder                                          |
+| `GET`  | `/api/tenants/[id]/payment-methods` | Saved payment methods for a tenant                               |
+| `POST` | `/api/tenants/[id]/payment-methods` | Add a new payment method                                         |
 
 ---
 

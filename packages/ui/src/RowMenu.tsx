@@ -102,14 +102,10 @@ export function RowMenu({ items }: Props) {
                 <span className="flex flex-col items-start">
                   <span className="flex items-center gap-2">
                     {item.label}
-                    {item.loading && (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin opacity-60" />
-                    )}
+                    {item.loading && <Loader2 className="h-3.5 w-3.5 animate-spin opacity-60" />}
                   </span>
                   {item.sublabel && (
-                    <span className="text-xs font-normal opacity-70">
-                      {item.sublabel}
-                    </span>
+                    <span className="text-xs font-normal opacity-70">{item.sublabel}</span>
                   )}
                 </span>
               </button>
