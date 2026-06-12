@@ -48,7 +48,24 @@
       "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); print\\('status:', p['status'], '| method:', p['method'], '| paid_date:', p['paid_date']\\)\")",
       "Bash(xargs sed -i '' 's|from \"../../helpers/type\"|from \"../../../helpers/type\"|g')",
       "Bash(sed -i '' 's|from \"../../mainFile\"|from \"../../../mainFile\"|g' /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/stateManagement/managerDashboard/property/epics/index.ts)",
-      "Bash(xargs sed -i '' -e 's|@/client/stateManagement/property/|@/client/stateManagement/managerDashboard/property/|g' -e 's|@/client/stateManagement/tenant/|@/client/stateManagement/managerDashboard/tenant/|g' -e 's|@/client/stateManagement/unit/|@/client/stateManagement/managerDashboard/unit/|g' -e 's|@/client/stateManagement/lease/|@/client/stateManagement/managerDashboard/lease/|g' -e 's|@/client/stateManagement/payment/|@/client/stateManagement/managerDashboard/payment/|g' -e 's|@/client/stateManagement/manager/|@/client/stateManagement/managerDashboard/manager/|g')"
+      "Bash(xargs sed -i '' -e 's|@/client/stateManagement/property/|@/client/stateManagement/managerDashboard/property/|g' -e 's|@/client/stateManagement/tenant/|@/client/stateManagement/managerDashboard/tenant/|g' -e 's|@/client/stateManagement/unit/|@/client/stateManagement/managerDashboard/unit/|g' -e 's|@/client/stateManagement/lease/|@/client/stateManagement/managerDashboard/lease/|g' -e 's|@/client/stateManagement/payment/|@/client/stateManagement/managerDashboard/payment/|g' -e 's|@/client/stateManagement/manager/|@/client/stateManagement/managerDashboard/manager/|g')",
+      "Skill(run)",
+      "Skill(run:*)",
+      "Bash(pnpm dev *)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(curl -s http://localhost:49314/manager)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:49314/manager)",
+      "Bash(lsof -ti:49314)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3003/manager)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:50921/manager)",
+      "Bash(curl -s http://localhost:3003/manager)",
+      "Bash(curl -s -I http://localhost:3003/manager)",
+      "Bash(curl -s http://localhost:3003/)",
+      "Bash(awk '{print $NF}')",
+      "Bash(curl -s \"http://localhost:3003/api/manager/dashboard\")",
+      "Bash(curl -s \"http://localhost:3003/api/tenants/tenant-1\")",
+      "Bash(python3 -m json.tool)",
+      "Bash(xargs ls -la)"
     ]
   }
 }

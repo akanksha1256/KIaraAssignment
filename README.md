@@ -1,6 +1,6 @@
 # RentPortal
 
-A two-sided rent management portal built with Next.js 14, Redux Toolkit + Redux-Observable, Tailwind CSS, and Recharts.
+A two-sided rent management portal built with Next.js 14, TanStack Query, Tailwind CSS, and Recharts.
 
 ---
 

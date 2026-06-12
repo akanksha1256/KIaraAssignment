@@ -5,7 +5,7 @@
 The Rent Management Portal is a two-sided web application serving two distinct user personas over a single shared data model:
 
 - **Property Manager** — oversees properties, units, leases, tenants, and rent collection
-- **Tenant** — views their own lease, property details, and payment history
+- **Tenant** — views their own lease, property details, payment history, and can pay rent
 
 The application is built as a Next.js monorepo with an in-memory mock backend. There is no authentication — the manager view and tenant view are separated by route namespace (`/manager` vs `/tenant`).
 
@@ -23,9 +23,8 @@ The application is built as a Next.js monorepo with an in-memory mock backend. T
 │   └────────┬──────────┘       └──────────────┬────────────────┘ │
 │            │                                  │                  │
 │   ┌────────▼──────────────────────────────────▼────────────────┐ │
-│   │               Redux Store (redux-observable)               │ │
-│   │   manager | property | tenant | unit | lease | payment     │ │
-│   │   tenantDashboard                                          │ │
+│   │           TanStack Query (QueryClientProvider)             │ │
+│   │   useQuery hooks · useMutation hooks · query cache         │ │
 │   └────────────────────────────┬───────────────────────────────┘ │
 │                                │                                  │
 │   ┌────────────────────────────▼───────────────────────────────┐ │
@@ -39,6 +38,7 @@ The application is built as a Next.js monorepo with an in-memory mock backend. T
 │              /api/manager/dashboard                               │
 │              /api/properties/[id]                                 │
 │              /api/tenants/[id]                                    │
+│              /api/tenants/[id]/payment-methods                    │
 │              /api/leases/[id]/payments                            │
 │              /api/leases/[id]/pay                                 │
 │              /api/leases/[id]/remind                              │
@@ -60,8 +60,7 @@ The application is built as a Next.js monorepo with an in-memory mock backend. T
 | Framework | Next.js 14 (App Router) | Server components for thin pages, file-based routing, co-located API routes |
 | Language | TypeScript | End-to-end type safety across wire format, mappers, and UI |
 | Styling | Tailwind CSS + design tokens | Utility-first with a single semantic color/spacing token source |
-| State | Redux Toolkit + Redux-Observable | Predictable global state; epics for async side-effects with cancellation/composition |
-| Async pattern | RxJS epics (`mergeMap`, `catchError`) | Handles concurrent fetches cleanly; naturally supports optimistic rollback |
+| Data fetching | TanStack Query v5 | Declarative async state, automatic caching, `staleTime`-based deduplication, and first-class optimistic mutation support |
 | Charts | Recharts | Composable, React-native charting for revenue and payment status |
 | Icons | Lucide React | Consistent icon set |
 | Mock backend | Next.js route handlers + in-memory store | No real DB needed; artificial delay and forced-failure flags for testability |
@@ -76,8 +75,8 @@ The application is built as a Next.js monorepo with an in-memory mock backend. T
 │                        Application                          │
 │                                                             │
 │  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐     │
-│  │  App Router  │   │    Views     │   │  State Mgmt  │     │
-│  │  (pages)     │   │  (features)  │   │  (Redux)     │     │
+│  │  App Router  │   │    Views     │   │    Hooks     │     │
+│  │  (pages)     │   │  (features)  │   │  (TanStack)  │     │
 │  └──────┬───────┘   └──────┬───────┘   └──────┬───────┘     │
 │         │                  │                   │            │
 │  ┌──────▼───────────────────▼───────────────────▼─────────┐ │
@@ -136,7 +135,7 @@ Manager Dashboard (/manager)
 
 ### Tenant Side (`/tenant`)
 
-The tenant has a read-only view of their own context. Currently scoped to Alice Johnson (tenant-1) — switchable by changing the `tenantId` prop on `TenantDashboard`.
+The tenant has a read-only view of their own context plus the ability to pay outstanding rent. Currently scoped to Alice Johnson (tenant-1).
 
 ```
 Tenant Dashboard (/tenant)
@@ -144,7 +143,12 @@ Tenant Dashboard (/tenant)
 ├── Property Details card  (property name, address, unit)
 ├── Property Manager card  (manager name, email, contact)
 ├── Lease Details card     (monthly rent, lease period, terms, document)
-└── Payment History table  (read-only, no actions)
+└── Payment History table
+    └── "Pay Rent" button on outstanding/overdue rows
+        └── PayRentModal
+            ├── Select saved payment method
+            ├── Add new payment method
+            └── Pay (optimistic update + toast)
 ```
 
 ---
@@ -154,48 +158,75 @@ Tenant Dashboard (/tenant)
 ### Read Flow (e.g. loading a unit detail)
 
 ```
-1. Component mounts
-   → dispatch(fetchPropertyById(propertyId))
+1. Component renders
+   → usePropertyDetail(propertyId) — TanStack useQuery
 
-2. Redux slice sets status = "pending"
+2. On first call: status = "pending"
    → component renders <LoadingState />
 
-3. Epic picks up the action
-   → calls api.getPropertyById(id)
-   → api layer fetches /api/properties/[id]
+3. TanStack Query calls api.getPropertyDetail(id)
+   → fetches /api/properties/[id]
    → response passes through mappers (snake_case → camelCase)
+   → result stored in query cache under key ["property", "detail", id]
 
-4. On success: dispatch(fetchPropertyByIdSuccess({ id, data }))
-   → slice sets status = "completed", stores data
+4. On success: isLoading = false, data = PropertyDetailData
    → component renders content
+   → subsequent calls within staleTime (5 min) return cached data instantly
 
-5. On failure: dispatch(fetchPropertyByIdFailure({ id, error }))
-   → slice sets status = "failed", stores error message
-   → component renders <ErrorState onRetry={…} />
+5. On failure: isError = true, error = Error
+   → component renders <ErrorState onRetry={refetch} />
 ```
 
 ### Write Flow — Mark as Paid (optimistic update)
 
 ```
-1. Manager clicks "Mark as Paid" on a payment row
-   → processingPeriodMonth = periodMonth (per-row loading state)
-   → dispatch(managerMarkPaid({ leaseId, periodMonth }))
+1. Manager clicks "Mark as Paid"
+   → setProcessingPeriodMonth(periodMonth)
+   → markPaid.mutate({ periodMonth })
 
-2. Slice applies optimistic update immediately
-   → payment.status = "paid", payment.paid_date = now, payment.method = "Directly to Manager"
-   → previousPayments snapshot saved for rollback
+2. useMutation onMutate:
+   → cancel in-flight queries for ["payments", leaseId]
+   → snapshot previous data
+   → apply optimistic update in cache: payment.status = "paid"
 
-3. Epic calls POST /api/leases/[id]/pay
+3. Calls POST /api/leases/[id]/pay
 
-4a. On success: dispatch(managerMarkPaidSuccess(updatedPayment))
-    → slice replaces optimistic data with server response
-    → useEffect detects success → showToast("Payment marked as paid successfully.")
-    → processingPeriodMonth = null
+4a. On success:
+    → onSettled: invalidate ["payments", leaseId] → refetch
+    → onSuccess callback: showToast("Payment marked as paid successfully.")
+    → setProcessingPeriodMonth(null)
 
-4b. On failure: dispatch(managerMarkPaidFailure(error))
-    → slice restores previousPayments snapshot (rollback)
-    → useEffect detects failure → showToast(error, "error")
-    → processingPeriodMonth = null
+4b. On error:
+    → onError: restore previous data snapshot (rollback)
+    → onError callback: showToast(error.message, "error")
+    → setProcessingPeriodMonth(null)
+```
+
+### Tenant Pay Rent Flow
+
+```
+1. Tenant clicks "Pay Rent" on an outstanding/overdue row
+   → setPayingPeriodMonth(periodMonth) → PayRentModal opens
+
+2. Modal loads payment methods: usePaymentMethods(tenantId)
+   → GET /api/tenants/[id]/payment-methods (cached under ["paymentMethods", tenantId])
+
+3. Tenant selects a method (or adds a new one via useAddPaymentMethod)
+   → POST /api/tenants/[id]/payment-methods
+   → new method appended to ["paymentMethods", tenantId] cache
+
+4. Tenant clicks "Pay Now"
+   → usePayRent.mutate({ periodMonth, paymentMethodId })
+   → onMutate: optimistically update payment status in ["tenant", "dashboard", tenantId] cache
+   → POST /api/leases/[id]/pay
+
+5a. On success:
+    → onSettled: invalidate ["tenant", "dashboard", tenantId]
+    → showToast("Rent paid successfully.") → modal closes
+
+5b. On error:
+    → onError: restore cache snapshot (rollback)
+    → showToast("Payment failed: <message>", "error")
 ```
 
 ### Reminder Flow
@@ -203,41 +234,34 @@ Tenant Dashboard (/tenant)
 ```
 1. Manager clicks "Send Reminder"
    → sendingReminderPeriodMonth = periodMonth
-   → dispatch(managerSendReminder({ leaseId, periodMonth }))
+   → sendReminder.mutate({ periodMonth })
 
-2. Epic calls POST /api/leases/[id]/remind
+2. POST /api/leases/[id]/remind
    → API sets payment.last_reminded_on = new Date().toISOString()
    → Returns updated payment
 
 3. On success:
-   → Slice updates payment in paymentsByLeaseId with new last_reminded_on
-   → Button becomes disabled; sublabel shows "Last sent: <date time>"
-   → Disabled for 24 hours (checked via dayjs.utc().diff(remindedAt, "hour") < 24)
-   → Toast: "Reminder sent to <tenantName> for overdue rent."
+   → onSuccess: patch ["payments", leaseId] cache with updated payment
+   → Button disabled for 24 hours; sublabel shows "Last sent: date time"
+   → showToast("Reminder sent to <tenantName>.")
 ```
 
 ---
 
-## 7. State Namespace Design
+## 7. Query Key Strategy
 
-The Redux store is split into two namespaces to keep manager and tenant concerns fully decoupled:
+TanStack Query uses structured array keys for cache targeting and invalidation:
 
-### `managerDashboard/`
-Handles everything the manager sees and acts on:
-- `manager` — dashboard stats, revenue, payment breakdown
-- `property` — property list + per-property detail (cached by ID)
-- `unit` — unit detail (cached by property+unit ID)
-- `tenant` — tenant profiles (cached by ID) — includes KYC, standing score
-- `lease` — lease records (cached by ID)
-- `payment` — payments per lease, payment methods, mutation states (markPaid, reminder, payRent, addMethod)
+| Key | Description |
+|---|---|
+| `["manager", "dashboard"]` | Manager dashboard (stats, charts, property list) |
+| `["property", "detail", propertyId]` | Property detail + units |
+| `["tenant", "profile", tenantId]` | Tenant profile (manager view — KYC, standing, payments) |
+| `["tenant", "dashboard", tenantId]` | Tenant dashboard (lease, property, payments — tenant view) |
+| `["payments", leaseId]` | Payment list for a lease (manager unit detail view) |
+| `["paymentMethods", tenantId]` | Saved payment methods for a tenant |
 
-### `tenantDashboard/`
-Handles what the tenant sees — a deliberately minimal shape:
-- Contains only: `tenantName`, `lease`, `unit`, `property`, `payments`
-- No KYC, no standing score, no payment methods — not needed in this view
-- Separate API method and mapper from the manager's tenant fetch, even though both call the same endpoint
-
-This separation means: changes to the manager's view of a tenant (e.g. adding more fields) cannot accidentally break the tenant's dashboard, and vice versa.
+**staleTime defaults:** reads use `staleTime: 5 * 60 * 1000` (5 min) so revisiting a page within the window returns cached data instantly. Payment methods use 10 min. Payments have no staleTime (always fresh).
 
 ---
 
@@ -303,12 +327,13 @@ All pages are thin Next.js server components that simply render their correspond
 | Manager: view payment history | ✅ | Per-unit payment table |
 | Manager: tenant detail with standing score | ✅ | On-time payment %, donut chart |
 | Tenant: see lease and terms | ✅ | Lease Details card |
-| Tenant: see payment history | ✅ | Read-only payment table |
-| Tenant: pay current month's rent | 🔲 | Not yet implemented (payment method + pay flow) |
-| Optimistic updates | ✅ | Mark as Paid with rollback on failure |
+| Tenant: see payment history | ✅ | Payment history table |
+| Tenant: pay current month's rent | ✅ | Payment method picker + mocked pay flow, optimistic update |
+| Optimistic updates | ✅ | Mark as Paid and Pay Rent with rollback on failure |
 | Loading / error / empty states | ✅ | All views covered |
 | Mock delay + forced failure | ✅ | `?fail=true` on any API route |
 | Two-sided navigation | ✅ | `/manager` and `/tenant` routes |
+| TanStack Query | ✅ | All data fetching via `useQuery` / `useMutation` hooks |
 
 ---
 
@@ -317,9 +342,9 @@ All pages are thin Next.js server components that simply render their correspond
 | Area | Current State | With More Time |
 |---|---|---|
 | Authentication | None — views are separated by route only | JWT-based auth with role-based routing |
-| Tenant pay-rent flow | Not implemented | Add payment method form + mocked pay action with optimistic update |
-| Monorepo packages | Design tokens and components are inside the app | Extract into `packages/ui`, `packages/tokens`, `packages/state` as the brief requires |
-| Real-time / sync | Not implemented | WebSocket or SSE for multi-tab sync; persisted mutation queue for offline tolerance |
-| Test coverage | None | Unit tests for reducers/mappers, integration tests for epics, E2E for critical flows |
-| Pagination | All data loaded at once | Cursor-based pagination on payment history and unit lists |
+| Monorepo packages | Design tokens and components are inside the app | Extract into `packages/ui`, `packages/tokens` as the brief requires |
+| Real-time / sync | Not implemented | WebSocket or SSE for multi-tab sync |
+| Test coverage | None | Unit tests for hooks/mappers, integration tests via MSW, E2E for critical flows |
+| Pagination | All data loaded at once | Cursor-based pagination with TanStack Query's `useInfiniteQuery` |
 | Create / Edit flows | Not implemented | Forms to create properties, units, leases |
+| Optimistic rollback UX | Silent (no "undo" affordance) | Show inline error banner on the affected row with retry |
