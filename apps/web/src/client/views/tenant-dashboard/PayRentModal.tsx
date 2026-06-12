@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePaymentMethods } from "@repo/data";
 import { usePayRent } from "@repo/data";
 import { useAddPaymentMethod } from "@repo/data";
@@ -28,10 +28,11 @@ export function PayRentModal({ tenantId, leaseId, periodMonth, amountDue, onClos
   const [selectedMethodId, setSelectedMethodId] = useState<string>(() => methods[0]?.id ?? "");
   const [newLabel, setNewLabel] = useState("");
 
-  // keep selectedMethodId in sync when methods first load
-  if (methods.length > 0 && !selectedMethodId) {
-    setSelectedMethodId(methods[0].id);
-  }
+  useEffect(() => {
+    if (methods.length > 0 && !selectedMethodId) {
+      setSelectedMethodId(methods[0].id);
+    }
+  }, [methods, selectedMethodId]);
 
   const handleAddMethod = () => {
     if (!newLabel.trim()) return;
