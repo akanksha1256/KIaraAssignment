@@ -19,7 +19,7 @@ const DetailRow = ({ label, value }: { label: string; value: string }) => (
 );
 
 export const ManagerLeaseCard = ({ lease }: { lease: Lease | null }) => (
-  <Card>
+  <Card className="h-full">
     <CardHeader>
       <CardTitle className="flex items-center gap-2 text-base">
         <FileText className="h-4 w-4 text-neutral-400" />
@@ -33,8 +33,10 @@ export const ManagerLeaseCard = ({ lease }: { lease: Lease | null }) => (
             label={s.monthlyRent}
             value={`$${lease.monthlyRent.toLocaleString()}/mo`}
           />
-          <DetailRow label={s.startDate} value={formatDate(lease.startDate)} />
-          <DetailRow label={s.endDate} value={formatDate(lease.endDate)} />
+          <DetailRow
+            label={s.leasePeriod}
+            value={`${formatDate(lease.startDate)} – ${formatDate(lease.endDate)}`}
+          />
           <DetailRow label={s.terms} value={lease.terms} />
           <div className="flex justify-between py-3">
             <span className="text-sm text-neutral-500">{s.leaseDocument}</span>

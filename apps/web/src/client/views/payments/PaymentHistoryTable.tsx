@@ -85,15 +85,11 @@ function buildRow(
     payment.status === "paid"
       ? []
       : [
-          ...(payment.status === "overdue"
-            ? [
-                {
-                  label: s.actions.sendReminder,
-                  onClick: () => actions.onReminder(payment.periodMonth),
-                  disabled: actions.isProcessing,
-                },
-              ]
-            : []),
+          {
+            label: s.actions.sendReminder,
+            onClick: () => actions.onReminder(payment.periodMonth),
+            disabled: actions.isProcessing,
+          },
           {
             label: s.actions.markPaid,
             onClick: () => actions.onMarkPaid(payment.periodMonth),

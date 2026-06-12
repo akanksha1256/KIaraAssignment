@@ -82,9 +82,13 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
         </span>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <TenantCard tenant={unit.tenant} />
-        <ManagerLeaseCard lease={unit.lease} />
+      <div className="flex items-stretch gap-6">
+        <div className="w-[35%]">
+          <TenantCard tenant={unit.tenant} />
+        </div>
+        <div className="w-[65%]">
+          <ManagerLeaseCard lease={unit.lease} />
+        </div>
       </div>
 
       {leaseId && (

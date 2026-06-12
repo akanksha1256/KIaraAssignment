@@ -22,7 +22,7 @@ export const TenantCard = ({ tenant }: { tenant: Tenant | null }) => {
   const router = useRouter();
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           <User className="h-4 w-4 text-neutral-400" />

@@ -217,11 +217,10 @@ export const strings = {
       lease: {
         heading: "Lease Details",
         monthlyRent: "Monthly Rent",
-        startDate: "Start Date",
-        endDate: "End Date",
+        leasePeriod: "Lease Period",
         terms: "Terms",
         leaseDocument: "Lease Document",
-        leaseDocumentLink: "View Document",
+        leaseDocumentLink: "View Lease Document",
         leaseDocumentNone: "Not uploaded",
         noLease: "No active lease",
       },
