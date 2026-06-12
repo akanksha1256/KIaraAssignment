@@ -8,12 +8,14 @@
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,css,md}\" --ignore-path .gitignore",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,css,md}\" --ignore-path .gitignore"
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,css,md}\" --ignore-path .gitignore",
+    "test": "vitest run"
   },
   "devDependencies": {
+    "@types/node": "^20.0.0",
+    "prettier": "^3.3.0",
     "turbo": "^2.0.0",
     "typescript": "^5.4.0",
-    "@types/node": "^20.0.0",
-    "prettier": "^3.3.0"
+    "vitest": "^4.1.8"
   }
 }
