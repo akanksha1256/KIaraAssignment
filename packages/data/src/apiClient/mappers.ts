@@ -1,4 +1,4 @@
-import type * as P from "../wireTypes";
+import type * as P from "@repo/platform-types";
 import type { Property, PropertySummary, UnitDetailItem, PropertyDetailData } from "../types";
 import type { Unit } from "../types";
 import type { Tenant, TenantStanding, TenantProfile } from "../types";

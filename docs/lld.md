@@ -33,15 +33,18 @@ KIaraAssignment/
 │       │   │
 │       │   └── platform/                         Server-only — never imported by client code
 │       │       ├── db/index.ts                   In-memory data store
-│       │       ├── types/index.ts                snake_case wire-format types
+│       │       ├── types/index.ts                Re-exports @repo/platform-types (snake_case)
 │       │       └── utils.ts                      withDelay, errorResponse, generateId
 │       │
-│       ├── next.config.mjs                       transpilePackages: [@repo/tokens, @repo/ui, @repo/data]
+│       ├── next.config.mjs                       transpilePackages: [@repo/tokens, @repo/ui, @repo/data, @repo/platform-types]
 │       ├── tailwind.config.ts                    imports tailwindPreset from @repo/tokens
-│       ├── components.json                       shadcn config (style: base-nova, aliases → @repo/ui)
 │       └── tsconfig.json
 │
 ├── packages/
+│   ├── platform-types/
+│   │   └── src/
+│   │       └── index.ts                          Canonical snake_case wire-format types
+│   │
 │   ├── tokens/
 │   │   └── src/
 │   │       ├── index.ts                          Barrel: colors, fonts, spaces, strings
@@ -55,7 +58,6 @@ KIaraAssignment/
 │   │   └── src/
 │   │       ├── index.ts                          Barrel: types, api, all hooks
 │   │       ├── types/index.ts                    camelCase domain types (single source of truth)
-│   │       ├── wireTypes.ts                      snake_case wire types (internal — not exported)
 │   │       ├── apiClient/
 │   │       │   ├── client.ts                     Typed async fetch methods
 │   │       │   └── mappers.ts                    snake_case → camelCase (only conversion point)
@@ -76,16 +78,16 @@ KIaraAssignment/
 │           ├── index.ts                          Barrel: all components + utilities
 │           ├── Button.tsx                        shadcn-style (cva + @base-ui/react/button)
 │           ├── Card.tsx
-│           ├── DataTable.tsx                     "use client" — uses useState/useMemo
+│           ├── DataTable.tsx                     "use client" — sortable table primitive
 │           ├── MainHeader.tsx
 │           ├── Nav.tsx
 │           ├── Pill.tsx
 │           ├── Providers.tsx                     QueryClientProvider + <Toaster /> (Sonner)
-│           ├── RowMenu.tsx
+│           ├── RowMenu.tsx                       Portal-based action dropdown
 │           ├── Spinner.tsx                       Loader2 + animate-spin (lucide-react)
 │           ├── StatCard.tsx
 │           ├── statCard.types.ts                 AccentType, StatCardProps, accentMap
-│           ├── Toast.tsx                         Sonner <Toaster /> wrapper
+│           ├── Toast.tsx                         useToast hook + Sonner <Toaster /> wrapper
 │           ├── Tooltip.tsx
 │           └── utils.ts                          cn, formatDate, formatPeriodMonth, statusConfig
 │
@@ -100,32 +102,35 @@ KIaraAssignment/
 ### Three-Layer Type Model
 
 ```
-Platform Layer                      @repo/data                         @repo/ui / views
-apps/web/src/platform/              packages/data/src/                 packages/ui/src/
-  types/index.ts        →             wireTypes.ts  (internal)
-  (snake_case)                        mappers.ts    (converts)     →   types/index.ts
-                                                                        (camelCase — exported)
-        ↑                                   ↑                               ↑
-  Only API route              Only client.ts and                  Used by hooks, views,
-  handlers touch              mappers.ts import                   and components
-  this layer                  wireTypes.ts
+@repo/platform-types              @repo/data                         @repo/ui / views
+packages/platform-types/src/      packages/data/src/                 packages/ui/src/
+  index.ts                          apiClient/
+  (snake_case canonical)              client.ts   (imports P.*)
+                                      mappers.ts  (converts)     →   types/index.ts
+        ↑                                                              (camelCase — exported)
+  apps/web re-exports via               ↑                               ↑
+  platform/types/index.ts       Only client.ts and                 Used by hooks, views,
+  API routes import              mappers.ts import                  and components
+  from @repo/platform-types      from @repo/platform-types
 ```
+
+`apps/web/src/platform/types/index.ts` is a thin `export type * from "@repo/platform-types"` — it exists only so API route handlers can use the `@/platform/types` alias without a full package path. The canonical definitions live in `@repo/platform-types`.
 
 ### Key Domain Types (camelCase — `packages/data/src/types/index.ts`)
 
 ```ts
 // Core entities
-Property        { id, name, address, type, yearBuilt }
-Unit            { id, propertyId, label, bedrooms, bathrooms, sqft }
-Tenant          { id, userId, leaseId, unitId, kycStatus }
-Lease           { id, unitId, tenantId, monthlyRent, startDate, endDate, terms, documentUrl }
+Property        { id, name, address, managerName, managerEmail, managerContact }
+Unit            { id, propertyId, label }
+Tenant          { id, name, contact, email, kycStatus, kycVerifiedOn, kycDocument }
+Lease           { id, unitId, tenantId, monthlyRent, startDate, endDate, terms, leaseDocument }
 
 // Composite / view-level
-PropertySummary    { id, name, address, unitCount, leasedCount, totalRent, status }
-UnitDetailItem     { id, label, paymentStatus, tenant?, lease? }
-PropertyDetailData { property: Property, units: UnitDetailItem[] }
-TenantProfile      { tenant, lease, unit, property, payments, standing }
-TenantDashboardData { tenantName, lease, unit, property, manager }
+PropertySummary     { id, name, address, unitCount, leasedCount, totalRent, status }
+UnitDetailItem      { id, label, paymentStatus, tenant?, lease? }
+PropertyDetailData  { property: Property, units: UnitDetailItem[] }
+TenantProfile       { tenant, lease, unit, property, payments, standing }
+TenantDashboardData { tenantName, lease, unit, property }
 
 // Payment
 Payment        { id, leaseId, periodMonth, amountDue, amountPaid, status, paidDate?, method?, lastRemindedOn? }
@@ -133,9 +138,9 @@ PaymentMethod  { id, tenantId, label }
 PaymentStatus  "paid" | "outstanding" | "overdue"
 
 // Dashboard aggregates
-DashboardStats     { totalProperties, occupiedUnits, totalUnits, monthlyRent, collectionRate }
-PaymentBreakdown   { paid, outstanding, overdue }
-MonthlyRevenue     { month: string, expected: number, collected: number }
+DashboardStats       { totalProperties, occupiedUnits, totalUnits, totalMonthlyRent, collectedThisMonth }
+PaymentBreakdown     { paid, outstanding, overdue }
+MonthlyRevenue       { month: string, expected: number, collected: number }
 ManagerDashboardData { stats, paymentBreakdown, monthlyRevenue, properties }
 ```
 
@@ -148,11 +153,13 @@ import { strings, colors } from "@repo/tokens";
 import { Button, DataTable } from "@repo/ui";
 
 // ✅ In API route handlers (server only)
-import type { RawPayment } from "@/platform/types";
+import type { Payment } from "@repo/platform-types";
+// or via the app alias:
+import type { Payment } from "@/platform/types";
 
 // ❌ Never
-import type { Payment } from "@/platform/types"; // wrong layer
-import type { Payment } from "../../types"; // relative cross-boundary
+import type { Payment } from "@/platform/types"; // in components, views, or hooks
+import type { Payment } from "../../types";        // relative cross-boundary import
 ```
 
 ---
@@ -244,6 +251,8 @@ export function useMarkPaid(leaseId: string) {
 }
 ```
 
+Always use `onSettled` (not `onSuccess`) for `invalidateQueries` — it fires for both success and error, keeping the cache consistent even after rollback.
+
 ### All Hooks Summary
 
 | Hook                            | Type     | Query Key                                         | Description                             |
@@ -254,8 +263,8 @@ export function useMarkPaid(leaseId: string) {
 | `useTenantDashboard(id)`        | query    | `["tenant", "dashboard", id]`                     | Lease, property, payments (tenant view) |
 | `usePayments(leaseId)`          | query    | `["payments", leaseId]`                           | Payment history list                    |
 | `usePaymentMethods(tenantId)`   | query    | `["paymentMethods", tenantId]`                    | Saved payment methods                   |
-| `useMarkPaid(leaseId)`          | mutation | invalidates `["payments", leaseId]`               | Optimistic mark-paid                    |
-| `usePayRent(tenantId, leaseId)` | mutation | optimistic on `["tenant", "dashboard", tenantId]` | Tenant pay rent                         |
+| `useMarkPaid(leaseId)`          | mutation | optimistic on `["payments", leaseId]`             | Manager mark-paid with rollback         |
+| `usePayRent(tenantId, leaseId)` | mutation | optimistic on `["tenant", "dashboard", tenantId]` | Tenant pay rent with rollback           |
 | `useSendReminder(leaseId)`      | mutation | patches `["payments", leaseId]` cache             | Send email reminder                     |
 | `useAddPaymentMethod(tenantId)` | mutation | appends to `["paymentMethods", tenantId]`         | Add payment method                      |
 
@@ -286,10 +295,12 @@ export const api = {
 
 ### mappers.ts — Conversion Boundary
 
-The only file that imports from `wireTypes.ts`. Every mapper follows:
+The only file that imports snake_case types from `@repo/platform-types`. Every mapper follows:
 
 ```ts
-export function mapPayment(raw: RawPayment): Payment {
+import type * as P from "@repo/platform-types";
+
+export function mapPayment(raw: P.Payment): Payment {
   return {
     id: raw.id,
     leaseId: raw.lease_id,
@@ -306,53 +317,109 @@ export function mapPayment(raw: RawPayment): Payment {
 
 ---
 
-## 6. UI Components (`packages/ui/src/`)
+## 6. UI Component API (`packages/ui/src/`)
+
+### DataTable
+
+`DataTable` is a generic sortable table. Callers construct `TableColumn[]` and `TableRow[]` and pass them as props — no render-prop or children API.
+
+```ts
+// Column definition
+interface TableColumn {
+  label: string;
+  align?: "left" | "right";  // defaults to "left"
+  className?: string;         // e.g. "w-48" — works because table uses table-auto, not table-fixed
+  sortable?: boolean;
+}
+
+// Cell definition
+interface TableCell {
+  content: React.ReactNode;  // any JSX
+  className?: string;        // overrides td padding/alignment if needed
+  sortValue?: string | number; // used for client-side sort; falls back to content string if omitted
+}
+
+// Row definition
+interface TableRow {
+  key: string;
+  onClick?: () => void;  // makes the row clickable (cursor-pointer, hover highlight)
+  cells: TableCell[];    // must align with columns array length
+}
+```
+
+`w-*` column widths only take effect because the table uses `table-auto`. Switching to `table-fixed` breaks explicit widths — don't change it.
+
+To right-align a `<Pill>` (which is `inline-flex`) inside a cell, wrap it in a flex container — `text-right` on the `<td>` has no effect on `inline-flex` children:
+
+```tsx
+// ✅
+content: <div className="flex justify-end"><Pill status={row.status} /></div>
+
+// ❌ text-right on the column align has no effect on inline-flex
+```
+
+### RowMenu
+
+`RowMenu` renders a portal-based dropdown anchored to a trigger button. Because it mounts outside the table DOM, two refs are required for the outside-click handler, and menu items must call `stopPropagation` to prevent the portal from unmounting before the click fires:
+
+```tsx
+// Inside RowMenu.tsx — callers don't touch refs, but need to understand the constraint
+const buttonRef = useRef<HTMLButtonElement>(null);
+const dropdownRef = useRef<HTMLDivElement>(null);
+
+// Outside-click handler checks both refs
+const insideButton = buttonRef.current?.contains(target);
+const insideDropdown = dropdownRef.current?.contains(target);
+
+// Menu items must suppress mousedown so the portal doesn't close before click
+<button onMouseDown={(e) => e.stopPropagation()} onClick={handleAction}>
+  Action
+</button>
+```
+
+Callers pass an `items` array — each item needs `label` and `onClick`. The positioning is computed from `buttonRef.current.getBoundingClientRect()` at open time.
+
+### Toast — `useToast()` hook
+
+Views use the `useToast()` hook from `@repo/ui`, not Sonner's `toast()` directly:
+
+```ts
+// ✅ Always use the hook
+const { showToast } = useToast();
+showToast("Payment marked as paid successfully.", "success");
+showToast(err.message, "error");
+
+// ❌ Do not import toast from sonner directly in views
+import { toast } from "sonner";
+```
+
+`Providers.tsx` mounts `<Toaster position="top-right" richColors />` once at the app root. Toasts auto-dismiss after 4 seconds.
 
 ### Button — shadcn pattern
 
-`Button` uses `@base-ui/react/button` as the accessible primitive and `class-variance-authority` for variant composition. Variants are mapped to project token classes so no CSS variables are required (Tailwind v3 compatible):
+`Button` uses `@base-ui/react/button` as the accessible primitive and `class-variance-authority` for variant composition. Variants map to project token classes — no CSS variables required (Tailwind v3 compatible):
 
 ```ts
 const buttonVariants = cva("inline-flex ... focus-visible:ring-brand-500 disabled:opacity-50", {
   variants: {
     variant: {
-      default: "bg-brand-600 text-white hover:bg-brand-700",
-      secondary: "bg-neutral-100 text-neutral-800 hover:bg-neutral-200",
-      outline: "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50",
-      ghost: "text-neutral-700 hover:bg-neutral-100",
+      default:     "bg-brand-600 text-white hover:bg-brand-700",
+      secondary:   "bg-neutral-100 text-neutral-800 hover:bg-neutral-200",
+      outline:     "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50",
+      ghost:       "text-neutral-700 hover:bg-neutral-100",
       destructive: "bg-danger-500 text-white hover:bg-danger-700",
-      link: "text-brand-600 underline-offset-4 hover:underline",
+      link:        "text-brand-600 underline-offset-4 hover:underline",
     },
     size: {
       default: "h-9 px-4",
-      sm: "h-8 px-3 text-xs",
-      lg: "h-10 px-6",
-      icon: "h-9 w-9",
+      sm:      "h-8 px-3 text-xs",
+      lg:      "h-10 px-6",
+      icon:    "h-9 w-9",
     },
   },
   defaultVariants: { variant: "default", size: "default" },
 });
 ```
-
-### Toast — Sonner
-
-`Providers.tsx` mounts `<Toaster position="top-right" richColors />` once at the app root. Call sites import `toast` from `sonner` directly — no context or custom hook needed:
-
-```ts
-// success
-toast("Payment marked as paid successfully.");
-
-// error
-toast.error(err.message);
-```
-
-### Spinner
-
-Uses `Loader2` from `lucide-react` with `animate-spin` — the shadcn-idiomatic pattern. No custom SVG.
-
-### DataTable
-
-Uses `table-auto` (not `table-fixed`) so `w-*` classes on `<th>` columns take effect. Requires `"use client"` because it uses `useState` and `useMemo`.
 
 ### Providers
 
@@ -404,6 +471,56 @@ export const PropertyDetail = ({ propertyId }: Props) => {
 };
 ```
 
+### Component Decomposition
+
+Views that would exceed a single screen of JSX are split into co-located sub-components. Sub-components receive plain props (not hooks) — only the root view component calls hooks.
+
+```
+UnitDetail (root — calls usePropertyDetail, usePayments, useMarkPaid, useSendReminder)
+├── TenantInfoCard        (props: tenant)
+├── ManagerLeaseCard      (props: lease, unit)
+└── PaymentHistoryTable   (props: payments, actions)
+
+TenantDashboard (root — calls useTenantDashboard)
+├── PropertyInfoCard      (props: property, unit)
+├── ManagerInfoCard       (props: property)
+├── LeaseDetailsCard      (props: lease)
+├── PaymentHistoryTable   (props: payments, tenantActions)
+└── PayRentModal          (props: tenantId, leaseId, periodMonth, amountDue, onClose)
+       └── calls usePaymentMethods, usePayRent, useAddPaymentMethod
+
+TenantProfile (root — calls useTenantProfile)
+├── TenantHeader          (props: tenant)
+├── TenantCard            (props: tenant, standing)
+│   └── RiskScore         (props: standing)
+├── TenantInfoCard        (props: tenant)
+├── ManagerLeaseCard      (props: lease)
+└── PaymentHistoryTable   (props: payments)
+```
+
+### Modal State Ownership
+
+Modal open/close state and the selected item live in the **parent view**, not inside the modal. This keeps the modal stateless with respect to which row triggered it:
+
+```tsx
+// TenantDashboard — parent owns the state
+const [payingPeriodMonth, setPayingPeriodMonth] = useState<string | null>(null);
+const pendingPayment = payingPeriodMonth
+  ? (payments.find((p) => p.periodMonth === payingPeriodMonth) ?? null)
+  : null;
+
+// Modal only renders when both conditions hold — it never has to handle "no payment" internally
+{payingPeriodMonth && pendingPayment && lease && (
+  <PayRentModal
+    tenantId={tenantId}
+    leaseId={lease.id}
+    periodMonth={payingPeriodMonth}
+    amountDue={pendingPayment.amountDue}
+    onClose={() => setPayingPeriodMonth(null)}
+  />
+)}
+```
+
 ### View Map
 
 | View Component     | Route                                     | Hook(s) Used                                                         |
@@ -429,8 +546,8 @@ const handleMarkPaid = (periodMonth: string) => {
   markPaid.mutate(
     { periodMonth },
     {
-      onSuccess: () => toast("Payment marked as paid successfully."),
-      onError: (err) => toast.error((err as Error).message),
+      onSuccess: () => showToast("Payment marked as paid successfully.", "success"),
+      onError: (err) => showToast((err as Error).message, "error"),
       onSettled: () => setProcessingPeriodMonth(null),
     },
   );
@@ -453,13 +570,13 @@ All user-visible copy is stored in a single typed object, imported as `@repo/tok
 ```ts
 export const strings = {
   manager: {
-    dashboard: { title, subtitle, loading, error, emptyTitle, ... },
+    dashboard:  { title, subtitle, loading, error, emptyTitle, ... },
     unitDetail: { loading, error, emptyTitle, ... },
     ...
   },
   tenant: {
-    dashboard: { loading, error, emptyTitle, ... },
-    payRentModal: { title, amount, selectMethod, ... },
+    dashboard:    { loading, error, emptyTitle, payments: { empty, emptyDescription, ... } },
+    payRentModal: { title, amount, selectMethod, methodsLoading, ... },
     ...
   },
   paymentTable: { colPeriod, colAmountDue, ... },
@@ -491,9 +608,9 @@ Components use Tailwind class names for static colors (`text-neutral-900`, `bg-b
 
 ## 10. Key Design Decisions
 
-### Why `packages/data/src/wireTypes.ts` instead of importing `@/platform/types`?
+### Why a shared `@repo/platform-types` package instead of duplicating types?
 
-`apps/web/src/platform/types/` is an internal app path. Importing it from `packages/data` would couple the workspace package to the app's internal structure. `wireTypes.ts` is a private copy (not exported from `packages/data/index.ts`) — the same snake_case ↔ camelCase boundary that existed before the split, now enforced at the package level.
+Both `apps/web` route handlers and `packages/data/apiClient` need the snake_case wire types. Keeping a copy in each location means they drift silently — a field added to one is missed in the other until a runtime mismatch surfaces. A shared `@repo/platform-types` package makes the type the only source of truth; both consumers declare `"@repo/platform-types": "workspace:*"` and import directly.
 
 ### Why `transpilePackages` instead of a build pipeline?
 
@@ -501,7 +618,7 @@ Packages ship TypeScript source directly. Next.js compiles them in-process via `
 
 ### Why `onSettled` (not `onSuccess`) for `invalidateQueries`?
 
-`onSettled` fires for both success and error. This ensures the cache stays consistent even after a failure — any optimistic update rolled back in `onError` still triggers a re-fetch to confirm server state. Using `onSuccess` alone would leave the cache in an inconsistent state after certain error scenarios.
+`onSettled` fires for both success and error. This ensures the cache stays consistent even after a failure — any optimistic update rolled back in `onError` still triggers a re-fetch to confirm server state. Using `onSuccess` alone would leave the cache stale after certain error scenarios.
 
 ### Why per-row loading state over `mutation.isPending`?
 

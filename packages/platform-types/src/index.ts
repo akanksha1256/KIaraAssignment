@@ -118,13 +118,6 @@ export interface PropertyDetailData {
   units: UnitDetail[];
 }
 
-export interface TenantStanding {
-  total_payments: number;
-  on_time_payments: number;
-  score: number;
-  label: "Excellent" | "Good" | "Fair" | "Poor";
-}
-
 export interface TenantProfileData {
   tenant: Tenant;
   lease: Lease | null;

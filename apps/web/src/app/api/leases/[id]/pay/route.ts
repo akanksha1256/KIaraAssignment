@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, generateId } from "@/platform/db";
 import { withDelay, errorResponse } from "@/platform/utils";
-import type { Payment } from "@/platform/types";
+import type { Payment } from "@repo/platform-types";
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   try {

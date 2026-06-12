@@ -285,6 +285,7 @@ export const strings = {
       payments: {
         heading: (count: number) => `Payment History [${count}] `,
         empty: "No payment records yet.",
+        emptyDescription: "Payments will appear here once your first due date arrives.",
         payButton: "Pay Rent",
       },
     },
@@ -293,6 +294,7 @@ export const strings = {
       amount: "Amount Due",
       selectMethod: "Payment Method",
       noMethods: "No payment methods saved.",
+      methodsLoading: "Loading…",
       addMethodPlaceholder: "e.g. Chase ••••4242",
       addMethodLabel: "Add a payment method",
       addMethodButton: "Add",

@@ -62,6 +62,7 @@ export const TenantDashboard = ({ tenantId }: Props) => {
         <PaymentHistoryTable
           payments={payments}
           empty={s.payments.empty}
+          emptyDescription={s.payments.emptyDescription}
           tenantActions={
             lease
               ? {

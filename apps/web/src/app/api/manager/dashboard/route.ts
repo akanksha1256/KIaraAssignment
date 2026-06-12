@@ -6,7 +6,7 @@ import type {
   PropertySummary,
   PropertyStatus,
   MonthlyRevenue,
-} from "@/platform/types";
+} from "@repo/platform-types";
 
 export async function GET(req: NextRequest) {
   try {

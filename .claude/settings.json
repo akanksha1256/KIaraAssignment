@@ -10,7 +10,11 @@
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('name:', d.get\\('name'\\)\\); print\\('deps:', d.get\\('dependencies', []\\)\\)\")",
       "Bash(curl -s \"https://ui.shadcn.com/r/styles/default/sonner.json\")",
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('name:', d.get\\('name'\\)\\); print\\('files:', [f.get\\('path',''\\) for f in d.get\\('files',[]\\)]\\); print\\('deps:', d.get\\('dependencies',[]\\)\\)\")",
-      "Bash(pnpm test *)"
+      "Bash(pnpm test *)",
+      "Bash(mkdir -p /Users/akankshalm/Desktop/KIaraAssignment/packages/platform-types/src)"
+    ],
+    "additionalDirectories": [
+      "/Users/akankshalm/Desktop/KIaraAssignment/packages/platform-types"
     ]
   }
 }

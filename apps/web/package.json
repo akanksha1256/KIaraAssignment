@@ -12,6 +12,7 @@
   "dependencies": {
     "@base-ui/react": "^1.5.0",
     "@repo/data": "workspace:*",
+    "@repo/platform-types": "workspace:*",
     "@repo/tokens": "workspace:*",
     "@repo/ui": "workspace:*",
     "@tanstack/react-query": "^5.101.0",

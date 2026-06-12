@@ -82,7 +82,7 @@ export function PayRentModal({ tenantId, leaseId, periodMonth, amountDue, onClos
             {s.selectMethod}
           </label>
           {methodsLoading ? (
-            <p className="text-sm text-neutral-400">Loading…</p>
+            <p className="text-sm text-neutral-400">{s.methodsLoading}</p>
           ) : methods.length > 0 ? (
             <div className="space-y-2">
               {methods.map((m) => (

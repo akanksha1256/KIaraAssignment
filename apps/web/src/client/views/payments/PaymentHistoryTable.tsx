@@ -37,6 +37,7 @@ interface Props {
   payments: Payment[];
   loading?: boolean;
   empty?: string;
+  emptyDescription?: string;
   actions?: PaymentTableActions;
   tenantActions?: TenantPaymentActions;
 }
@@ -149,10 +150,10 @@ function buildRow(
   ];
 }
 
-export function PaymentHistoryTable({ payments, loading, empty, actions, tenantActions }: Props) {
+export function PaymentHistoryTable({ payments, loading, empty, emptyDescription, actions, tenantActions }: Props) {
   if (loading) return <LoadingState message="Loading payments…" />;
   if (payments.length === 0)
-    return <EmptyState title={empty ?? "No payments recorded"} description="" />;
+    return <EmptyState title={empty ?? "No payments recorded"} description={emptyDescription} />;
 
   const hasActions = !!actions;
   const hasTenantActions = !!tenantActions;

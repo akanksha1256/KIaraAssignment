@@ -1,4 +1,4 @@
-import type { Property, Unit, Tenant, Lease, Payment, PaymentMethod } from "@/platform/types";
+import type { Property, Unit, Tenant, Lease, Payment, PaymentMethod } from "@repo/platform-types";
 
 const properties: Property[] = [
   {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/platform/db";
 import { withDelay, errorResponse } from "@/platform/utils";
-import type { TenantProfileData, TenantStanding } from "@/platform/types";
+import type { TenantProfileData, TenantStanding } from "@repo/platform-types";
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {

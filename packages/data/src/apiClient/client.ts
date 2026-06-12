@@ -1,4 +1,4 @@
-import type * as P from "../wireTypes";
+import type * as P from "@repo/platform-types";
 import {
   mapProperty,
   mapPropertySummary,
