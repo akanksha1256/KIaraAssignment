@@ -28,16 +28,23 @@ export interface PaymentTableActions {
   sendingReminderPeriodMonth: string | null;
 }
 
+export interface TenantPaymentActions {
+  onPayRent: (periodMonth: string) => void;
+  payButtonLabel: string;
+}
+
 interface Props {
   payments: Payment[];
   loading?: boolean;
   empty?: string;
   actions?: PaymentTableActions;
+  tenantActions?: TenantPaymentActions;
 }
 
 function buildRow(
   payment: Payment,
   actions?: PaymentTableActions,
+  tenantActions?: TenantPaymentActions,
 ): TableCell[] {
   const cfg = STATUS_CONFIG[payment.status] ?? STATUS_CONFIG.outstanding;
 
@@ -83,6 +90,26 @@ function buildRow(
     },
     statusCell,
   ];
+
+  if (!actions && tenantActions) {
+    const canPay = payment.status === "outstanding" || payment.status === "overdue";
+    return [
+      ...baseCells,
+      {
+        content: canPay ? (
+          <div className="flex justify-end">
+            <button
+              onClick={() => tenantActions.onPayRent(payment.periodMonth)}
+              className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700"
+            >
+              {tenantActions.payButtonLabel}
+            </button>
+          </div>
+        ) : null,
+        className: "whitespace-nowrap px-5 py-4 text-right",
+      },
+    ];
+  }
 
   if (!actions) return baseCells;
 
@@ -141,6 +168,7 @@ export function PaymentHistoryTable({
   loading,
   empty,
   actions,
+  tenantActions,
 }: Props) {
   if (loading) return <LoadingState message="Loading payments…" />;
   if (payments.length === 0)
@@ -149,47 +177,53 @@ export function PaymentHistoryTable({
     );
 
   const hasActions = !!actions;
+  const hasTenantActions = !!tenantActions;
+
+  const hasExtraCol = hasActions || hasTenantActions;
 
   const columns = [
     {
       label: s.colPeriod,
       align: "left" as const,
-      className: hasActions ? "w-[12%]" : "w-[15%]",
+      className: hasExtraCol ? "w-[12%]" : "w-[15%]",
     },
     {
       label: s.colDue,
       align: "right" as const,
-      className: hasActions ? "w-[13%]" : "w-[16%]",
+      className: hasExtraCol ? "w-[13%]" : "w-[16%]",
     },
     {
       label: s.colPaid,
       align: "right" as const,
-      className: hasActions ? "w-[13%]" : "w-[16%]",
+      className: hasExtraCol ? "w-[13%]" : "w-[16%]",
     },
     {
       label: s.colDate,
       align: "right" as const,
-      className: hasActions ? "w-[16%]" : "w-[19%]",
+      className: hasExtraCol ? "w-[16%]" : "w-[19%]",
     },
     {
       label: s.colMethod,
       align: "right" as const,
-      className: hasActions ? "w-[20%]" : "w-[19%]",
+      className: hasExtraCol ? "w-[20%]" : "w-[19%]",
     },
     {
       label: s.colStatus,
       align: "right" as const,
-      className: hasActions ? "w-[18%]" : "w-[15%]",
+      className: hasExtraCol ? "w-[16%]" : "w-[15%]",
     },
-    ...(hasActions
-      ? [{ label: "", align: "right" as const, className: "w-[5%]" }]
+    ...(hasExtraCol
+      ? [{ label: "", align: "right" as const, className: "w-[7%]" }]
       : []),
   ];
 
   return (
     <DataTable
       columns={columns}
-      rows={payments.map((p) => ({ key: p.id, cells: buildRow(p, actions) }))}
+      rows={payments.map((p) => ({
+        key: p.id,
+        cells: buildRow(p, actions, tenantActions),
+      }))}
     />
   );
 }

@@ -3,12 +3,12 @@ import type { Payment, PaymentMethod, PaymentSliceState } from "./type";
 import { initialFetch, initialFetchMap } from "../../types";
 
 const initialState: PaymentSliceState = {
-  paymentsByLeaseId:        initialFetchMap(),
+  paymentsByLeaseId: initialFetchMap(),
   paymentMethodsByTenantId: initialFetchMap(),
-  payRent:                  initialFetch(),
-  addMethod:                initialFetch(),
-  reminderState:            initialFetch(),
-  markPaidState:            initialFetch(),
+  payRent: initialFetch(),
+  addMethod: initialFetch(),
+  reminderState: initialFetch(),
+  markPaidState: initialFetch(),
 };
 
 const paymentSlice = createSlice({
@@ -103,7 +103,11 @@ const paymentSlice = createSlice({
       state,
       action: PayloadAction<{ leaseId: string; payment: Payment }>,
     ) => {
-      state.payRent = { data: action.payload.payment, loading: false, error: null };
+      state.payRent = {
+        data: action.payload.payment,
+        loading: false,
+        error: null,
+      };
       const list = state.paymentsByLeaseId[action.payload.leaseId]?.data;
       if (list) {
         const idx = list.findIndex(
@@ -114,9 +118,17 @@ const paymentSlice = createSlice({
     },
     tenantPayRentFailure: (
       state,
-      action: PayloadAction<{ leaseId: string; periodMonth: string; error: string }>,
+      action: PayloadAction<{
+        leaseId: string;
+        periodMonth: string;
+        error: string;
+      }>,
     ) => {
-      state.payRent = { data: null, loading: false, error: action.payload.error };
+      state.payRent = {
+        data: null,
+        loading: false,
+        error: action.payload.error,
+      };
       const list = state.paymentsByLeaseId[action.payload.leaseId]?.data;
       if (list) {
         const idx = list.findIndex(
@@ -144,7 +156,11 @@ const paymentSlice = createSlice({
       state,
       action: PayloadAction<{ tenantId: string; method: PaymentMethod }>,
     ) => {
-      state.addMethod = { data: action.payload.method, loading: false, error: null };
+      state.addMethod = {
+        data: action.payload.method,
+        loading: false,
+        error: null,
+      };
       const list =
         state.paymentMethodsByTenantId[action.payload.tenantId]?.data;
       if (list) list.push(action.payload.method);
@@ -179,7 +195,11 @@ const paymentSlice = createSlice({
     },
     managerSendReminderFailure: (
       state,
-      action: PayloadAction<{ leaseId: string; periodMonth: string; error: string }>,
+      action: PayloadAction<{
+        leaseId: string;
+        periodMonth: string;
+        error: string;
+      }>,
     ) => {
       state.reminderState = {
         data: null,
@@ -229,7 +249,11 @@ const paymentSlice = createSlice({
     },
     managerMarkPaidFailure: (
       state,
-      action: PayloadAction<{ leaseId: string; periodMonth: string; error: string }>,
+      action: PayloadAction<{
+        leaseId: string;
+        periodMonth: string;
+        error: string;
+      }>,
     ) => {
       state.markPaidState = {
         data: null,

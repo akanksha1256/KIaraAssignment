@@ -287,7 +287,23 @@ export const strings = {
       payments: {
         heading: (count: number) => `Payment History [${count}] `,
         empty: "No payment records yet.",
+        payButton: "Pay Rent",
       },
+    },
+    payRentModal: {
+      title: (period: string) => `Pay Rent — ${period}`,
+      amount: "Amount Due",
+      selectMethod: "Payment Method",
+      noMethods: "No payment methods saved.",
+      addMethodPlaceholder: "e.g. Chase ••••4242",
+      addMethodLabel: "Add a payment method",
+      addMethodButton: "Add",
+      addMethodLoading: "Adding…",
+      payButton: "Pay Now",
+      payLoading: "Processing…",
+      cancel: "Cancel",
+      successToast: "Rent paid successfully.",
+      errorPrefix: "Payment failed:",
     },
   },
 } as const;

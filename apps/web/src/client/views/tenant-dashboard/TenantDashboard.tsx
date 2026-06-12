@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   useAppDispatch,
   useAppSelector,
@@ -14,6 +14,7 @@ import { PaymentHistoryTable } from "@/client/views/payments/PaymentHistoryTable
 import { PropertyInfoCard } from "./PropertyInfoCard";
 import { ManagerInfoCard } from "./ManagerInfoCard";
 import { LeaseDetailsCard } from "./LeaseDetailsCard";
+import { PayRentModal } from "./PayRentModal";
 import { CreditCard as CreditCardIcon } from "lucide-react";
 import { strings } from "@/client/designSystems/strings";
 
@@ -27,6 +28,7 @@ export const TenantDashboard = ({ tenantId }: Props) => {
   const dispatch = useAppDispatch();
 
   const { status, error, data } = useAppSelector(selectTenantDashboard(tenantId));
+  const [payingPeriodMonth, setPayingPeriodMonth] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(fetchTenantDashboard(tenantId));
@@ -44,6 +46,10 @@ export const TenantDashboard = ({ tenantId }: Props) => {
     return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
   const { tenantName, lease, unit, property, payments } = data;
+
+  const pendingPayment = payingPeriodMonth
+    ? payments.find((p) => p.periodMonth === payingPeriodMonth) ?? null
+    : null;
 
   return (
     <div className="space-y-8">
@@ -66,8 +72,29 @@ export const TenantDashboard = ({ tenantId }: Props) => {
             {s.payments.heading(payments.length)}
           </h2>
         </div>
-        <PaymentHistoryTable payments={payments} empty={s.payments.empty} />
+        <PaymentHistoryTable
+          payments={payments}
+          empty={s.payments.empty}
+          tenantActions={
+            lease
+              ? {
+                  onPayRent: (periodMonth) => setPayingPeriodMonth(periodMonth),
+                  payButtonLabel: s.payments.payButton,
+                }
+              : undefined
+          }
+        />
       </div>
+
+      {payingPeriodMonth && pendingPayment && lease && (
+        <PayRentModal
+          tenantId={tenantId}
+          leaseId={lease.id}
+          periodMonth={payingPeriodMonth}
+          amountDue={pendingPayment.amountDue}
+          onClose={() => setPayingPeriodMonth(null)}
+        />
+      )}
     </div>
   );
 };
