@@ -11,13 +11,13 @@ export default function Home() {
       <div className="flex gap-4">
         <Link
           href="/manager"
-          className="rounded-md bg-brand-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-brand-700"
+           className="rounded-md border border-neutral-200 bg-white px-6 py-2.5 text-sm font-medium text-neutral-800 hover:bg-brand-200"
         >
           {strings.nav.manager} View
         </Link>
         <Link
           href="/tenant"
-          className="rounded-md border border-neutral-200 bg-white px-6 py-2.5 text-sm font-medium text-neutral-800 hover:bg-neutral-50"
+          className="rounded-md border border-neutral-200 bg-white px-6 py-2.5 text-sm font-medium text-neutral-800 hover:bg-brand-200"
         >
           {strings.nav.tenant} View
         </Link>

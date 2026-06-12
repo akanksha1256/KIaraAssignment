@@ -20,14 +20,16 @@ export function Nav() {
           </div>
           RentPortal
         </Link>
-        <nav className="flex items-center gap-1 rounded-lg bg-neutral-100 p-1">
-          <Link href="/manager" className={navClass(pathname.startsWith("/manager"))}>
-            Manager
-          </Link>
-          <Link href="/tenant" className={navClass(pathname.startsWith("/tenant"))}>
-            Tenant
-          </Link>
-        </nav>
+        {pathname !== "/" && (
+          <nav className="flex items-center gap-1 rounded-lg bg-neutral-100 p-1">
+            <Link href="/manager" className={navClass(pathname.startsWith("/manager"))}>
+              Manager
+            </Link>
+            <Link href="/tenant" className={navClass(pathname.startsWith("/tenant"))}>
+              Tenant
+            </Link>
+          </nav>
+        )}
       </div>
     </header>
   );
