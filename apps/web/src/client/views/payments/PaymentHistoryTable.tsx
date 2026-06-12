@@ -20,7 +20,7 @@ const STATUS_CONFIG = {
 export interface PaymentTableActions {
   onReminder: (periodMonth: string) => void;
   onMarkPaid: (periodMonth: string) => void;
-  isProcessing: boolean;
+  processingPeriodMonth: string | null;
 }
 
 interface Props {
@@ -81,19 +81,28 @@ function buildRow(
 
   if (!actions) return baseCells;
 
+  const isThisRowProcessing =
+    actions.processingPeriodMonth === payment.periodMonth;
+  const anyRowProcessing = actions.processingPeriodMonth !== null;
+
   const menuItems =
     payment.status === "paid"
       ? []
       : [
-          {
-            label: s.actions.sendReminder,
-            onClick: () => actions.onReminder(payment.periodMonth),
-            disabled: actions.isProcessing,
-          },
+          ...(payment.status === "overdue"
+            ? [
+                {
+                  label: s.actions.sendReminder,
+                  onClick: () => actions.onReminder(payment.periodMonth),
+                  disabled: anyRowProcessing,
+                },
+              ]
+            : []),
           {
             label: s.actions.markPaid,
             onClick: () => actions.onMarkPaid(payment.periodMonth),
-            disabled: actions.isProcessing,
+            disabled: anyRowProcessing,
+            loading: isThisRowProcessing,
           },
         ];
 

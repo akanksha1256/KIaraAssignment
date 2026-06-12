@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { MoreVertical } from "lucide-react";
+import { MoreVertical, Loader2 } from "lucide-react";
 
 export interface RowMenuItem {
   label: string;
   onClick: () => void;
   disabled?: boolean;
+  loading?: boolean;
   variant?: "default" | "danger";
 }
 
@@ -25,14 +26,18 @@ export function RowMenu({ items }: Props) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<DropdownPos | null>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
-    const handleClick = (e: MouseEvent) => {
-      if (!buttonRef.current?.contains(e.target as Node)) setOpen(false);
+    const handleMouseDown = (e: MouseEvent) => {
+      const target = e.target as Node;
+      const insideButton = buttonRef.current?.contains(target);
+      const insideDropdown = dropdownRef.current?.contains(target);
+      if (!insideButton && !insideDropdown) setOpen(false);
     };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    document.addEventListener("mousedown", handleMouseDown);
+    return () => document.removeEventListener("mousedown", handleMouseDown);
   }, [open]);
 
   const handleOpen = (e: React.MouseEvent) => {
@@ -67,6 +72,7 @@ export function RowMenu({ items }: Props) {
         pos &&
         createPortal(
           <div
+            ref={dropdownRef}
             style={{
               position: "fixed",
               top: pos.top,
@@ -79,12 +85,13 @@ export function RowMenu({ items }: Props) {
               <button
                 key={item.label}
                 disabled={item.disabled}
+                onMouseDown={(e) => e.stopPropagation()}
                 onClick={(e) => {
                   e.stopPropagation();
                   item.onClick();
                   setOpen(false);
                 }}
-                className={`w-full px-4 py-2 text-left text-sm transition-colors disabled:opacity-40
+                className={`flex w-full items-center gap-2 px-4 py-2 text-left text-sm transition-colors disabled:opacity-40
                 ${
                   item.variant === "danger"
                     ? "text-danger-600 hover:bg-danger-50"
@@ -92,6 +99,9 @@ export function RowMenu({ items }: Props) {
                 }`}
               >
                 {item.label}
+                {item.loading && (
+                  <Loader2 className="ml-auto h-3.5 w-3.5 animate-spin opacity-60" />
+                )}
               </button>
             ))}
           </div>,

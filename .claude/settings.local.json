@@ -35,7 +35,17 @@
       "Bash(mkdir -p /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/propertyDetail && mkdir -p /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/manager/properties/\\\\[id\\\\])",
       "Bash(npx tsc *)",
       "Bash(npm install *)",
-      "Bash(pnpm add *)"
+      "Bash(pnpm add *)",
+      "Bash(pnpm --filter web dev)",
+      "Bash(curl -s http://localhost:3000)",
+      "mcp__Claude_in_Chrome__navigate",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(curl -s -X POST http://localhost:3002/api/leases/lease-1/pay -H 'Content-Type: application/json' -d '{\"period_month\":\"2024-06\"}')",
+      "Bash(curl -s http://localhost:3002/manager/properties/prop-1/units/unit-1)",
+      "Bash(curl -s http://localhost:3002/api/leases/lease-1/payments)",
+      "Bash(python3 -c \"import json,sys; [print\\(p['period_month'], p['status']\\) for p in json.load\\(sys.stdin\\)]\")",
+      "Bash(curl -s -X POST http://localhost:3002/api/leases/lease-1/pay -H 'Content-Type: application/json' -d '{\"period_month\":\"2024-07\"}')",
+      "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); print\\('status:', p['status'], '| method:', p['method'], '| paid_date:', p['paid_date']\\)\")"
     ]
   }
 }

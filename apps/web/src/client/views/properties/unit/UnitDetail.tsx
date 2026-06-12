@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   useAppDispatch,
   useAppSelector,
@@ -21,6 +21,7 @@ import { CreditCard as CreditCardIcon } from "lucide-react";
 import { MainHeader } from "@/client/commonComponents/MainHeader";
 import { TenantCard } from "@/client/views/tenant/TenantCard";
 import { ManagerLeaseCard } from "@/client/views/lease/ManagerLeaseCard";
+import { useToast } from "@/client/commonComponents/Toast";
 import type { Payment } from "@/client/stateManagement/payment/type";
 import type { RootState } from "@/client/stateManagement/mainFile";
 import { UnitDetailProps } from "../helper";
@@ -30,6 +31,7 @@ const s = strings.manager.unitDetail;
 
 export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
   const dispatch = useAppDispatch();
+  const { showToast } = useToast();
 
   const {
     fetchState: { status, error },
@@ -44,9 +46,16 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
   const paymentsLoading = useAppSelector((state: RootState) =>
     leaseId ? (state.tenant.payments[leaseId]?.loading ?? false) : false,
   );
-  const markPaidLoading = useAppSelector(
-    (state: RootState) => state.tenant.markPaidState.loading,
+  const markPaidState = useAppSelector(
+    (state: RootState) => state.tenant.markPaidState,
   );
+
+  // Track which periodMonth is currently being marked as paid
+  const [processingPeriodMonth, setProcessingPeriodMonth] = useState<
+    string | null
+  >(null);
+  // Ref so the useEffect below can read the latest value without stale closure
+  const processingRef = useRef<string | null>(null);
 
   useEffect(() => {
     dispatch(fetchPropertyById(propertyId));
@@ -55,6 +64,21 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
   useEffect(() => {
     if (leaseId) dispatch(fetchTenantPayments(leaseId));
   }, [dispatch, leaseId]);
+
+  // React to markPaidState changes to show toast and clear loading
+  useEffect(() => {
+    if (!processingRef.current) return;
+
+    if (!markPaidState.loading && markPaidState.data) {
+      showToast("Payment marked as paid successfully.", "success");
+      setProcessingPeriodMonth(null);
+      processingRef.current = null;
+    } else if (!markPaidState.loading && markPaidState.error) {
+      showToast(markPaidState.error ?? "Failed to mark payment as paid.", "error");
+      setProcessingPeriodMonth(null);
+      processingRef.current = null;
+    }
+  }, [markPaidState, showToast]);
 
   if (status === "pending") return <LoadingState message={s.loading} />;
   if (status === "failed")
@@ -68,6 +92,13 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
     return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
   const { bg, text } = statusConfig[unit.paymentStatus];
+
+  const handleMarkPaid = (periodMonth: string) => {
+    if (!leaseId) return;
+    setProcessingPeriodMonth(periodMonth);
+    processingRef.current = periodMonth;
+    dispatch(managerMarkPaid({ leaseId, periodMonth }));
+  };
 
   return (
     <div className="space-y-8">
@@ -107,9 +138,8 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
               onReminder: (periodMonth) =>
                 leaseId &&
                 dispatch(managerSendReminder({ leaseId, periodMonth })),
-              onMarkPaid: (periodMonth) =>
-                leaseId && dispatch(managerMarkPaid({ leaseId, periodMonth })),
-              isProcessing: markPaidLoading,
+              onMarkPaid: handleMarkPaid,
+              processingPeriodMonth,
             }}
           />
         </div>
