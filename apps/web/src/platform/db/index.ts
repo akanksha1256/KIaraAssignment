@@ -1,26 +1,54 @@
 import type { Property, Unit, Tenant, Lease, Payment, PaymentMethod } from "@/platform/types";
 
 const properties: Property[] = [
-  { id: "prop-1", name: "Maple Heights",   address: "123 Maple St, Austin TX 78701", manager_name: "James Carter",   manager_email: "james.carter@rentportal.com",   manager_contact: "+1 512-555-0200" },
-  { id: "prop-2", name: "Riverside Lofts", address: "456 River Rd, Austin TX 78702", manager_name: "Sarah Mitchell", manager_email: "sarah.mitchell@rentportal.com", manager_contact: "+1 512-555-0201" },
+  { id: "prop-1", name: "Maple Heights",    address: "123 Maple St, Austin TX 78701",    manager_name: "James Carter",   manager_email: "james.carter@rentportal.com",   manager_contact: "+1 512-555-0200" },
+  { id: "prop-2", name: "Riverside Lofts",  address: "456 River Rd, Austin TX 78702",    manager_name: "Sarah Mitchell", manager_email: "sarah.mitchell@rentportal.com", manager_contact: "+1 512-555-0201" },
+  { id: "prop-3", name: "Sunset Villas",    address: "789 Sunset Blvd, Austin TX 78703", manager_name: "James Carter",   manager_email: "james.carter@rentportal.com",   manager_contact: "+1 512-555-0200" },
+  { id: "prop-4", name: "Parkview Terrace", address: "321 Park Ave, Austin TX 78704",    manager_name: "Sarah Mitchell", manager_email: "sarah.mitchell@rentportal.com", manager_contact: "+1 512-555-0201" },
+  { id: "prop-5", name: "Harbor View",      address: "654 Harbor Dr, Austin TX 78705",   manager_name: "James Carter",   manager_email: "james.carter@rentportal.com",   manager_contact: "+1 512-555-0200" },
+  { id: "prop-6", name: "The Grand",        address: "987 Grand Blvd, Austin TX 78706",  manager_name: "Sarah Mitchell", manager_email: "sarah.mitchell@rentportal.com", manager_contact: "+1 512-555-0201" },
 ];
 
 const units: Unit[] = [
-  { id: "unit-1", property_id: "prop-1", label: "Apt 101" },
-  { id: "unit-2", property_id: "prop-1", label: "Apt 102" },
-  { id: "unit-3", property_id: "prop-1", label: "Apt 103" },
-  { id: "unit-4", property_id: "prop-2", label: "Loft A"  },
-  { id: "unit-5", property_id: "prop-2", label: "Loft B"  },
-  { id: "unit-6", property_id: "prop-2", label: "Loft C"  },
-  { id: "unit-7", property_id: "prop-2", label: "Loft D"  },
+  { id: "unit-1",  property_id: "prop-1", label: "Apt 101"  },
+  { id: "unit-2",  property_id: "prop-1", label: "Apt 102"  },
+  { id: "unit-3",  property_id: "prop-1", label: "Apt 103"  },
+  { id: "unit-4",  property_id: "prop-2", label: "Loft A"   },
+  { id: "unit-5",  property_id: "prop-2", label: "Loft B"   },
+  { id: "unit-6",  property_id: "prop-2", label: "Loft C"   },
+  { id: "unit-7",  property_id: "prop-2", label: "Loft D"   },
+  // Sunset Villas
+  { id: "unit-8",  property_id: "prop-3", label: "Villa 1"  },
+  { id: "unit-9",  property_id: "prop-3", label: "Villa 2"  },
+  { id: "unit-10", property_id: "prop-3", label: "Villa 3"  },
+  // Parkview Terrace
+  { id: "unit-11", property_id: "prop-4", label: "Unit 1A"  },
+  { id: "unit-12", property_id: "prop-4", label: "Unit 1B"  },
+  { id: "unit-13", property_id: "prop-4", label: "Unit 2A"  },
+  { id: "unit-14", property_id: "prop-4", label: "Unit 2B"  },
+  // Harbor View
+  { id: "unit-15", property_id: "prop-5", label: "Suite 01" },
+  { id: "unit-16", property_id: "prop-5", label: "Suite 02" },
+  { id: "unit-17", property_id: "prop-5", label: "Suite 03" },
+  // The Grand
+  { id: "unit-18", property_id: "prop-6", label: "Studio A" },
+  { id: "unit-19", property_id: "prop-6", label: "Studio B" },
+  { id: "unit-20", property_id: "prop-6", label: "Studio C" },
+  { id: "unit-21", property_id: "prop-6", label: "Studio D" },
 ];
 
 const tenants: Tenant[] = [
-  { id: "tenant-1", name: "Alice Johnson", contact: "+1 512-555-0101", email: "alice@example.com",  kyc_status: "verified",       kyc_verified_on: "2024-01-15T00:00:00.000Z", kyc_document: "/documents/kyc-sample.pdf" },
-  { id: "tenant-2", name: "Bob Martinez",  contact: "+1 512-555-0102", email: "bob@example.com",    kyc_status: "verified",       kyc_verified_on: "2024-03-10T00:00:00.000Z", kyc_document: "/documents/kyc-sample.pdf" },
-  { id: "tenant-3", name: "Carol White",   contact: "+1 512-555-0103", email: "carol@example.com",  kyc_status: "pending",        kyc_verified_on: null,                       kyc_document: "/documents/kyc-sample.pdf" },
-  { id: "tenant-4", name: "David Kim",     contact: "+1 512-555-0104", email: "david@example.com",  kyc_status: "verified",       kyc_verified_on: "2024-02-20T00:00:00.000Z", kyc_document: "/documents/kyc-sample.pdf" },
-  { id: "tenant-5", name: "Eva Rossi",     contact: "+1 512-555-0105", email: "eva@example.com",    kyc_status: "not_submitted",  kyc_verified_on: null,                       kyc_document: null                        },
+  { id: "tenant-1",  name: "Alice Johnson",  contact: "+1 512-555-0101", email: "alice@example.com",   kyc_status: "verified",      kyc_verified_on: "2024-01-15T00:00:00.000Z", kyc_document: "/documents/kyc-sample.pdf" },
+  { id: "tenant-2",  name: "Bob Martinez",   contact: "+1 512-555-0102", email: "bob@example.com",     kyc_status: "verified",      kyc_verified_on: "2024-03-10T00:00:00.000Z", kyc_document: "/documents/kyc-sample.pdf" },
+  { id: "tenant-3",  name: "Carol White",    contact: "+1 512-555-0103", email: "carol@example.com",   kyc_status: "pending",       kyc_verified_on: null,                       kyc_document: "/documents/kyc-sample.pdf" },
+  { id: "tenant-4",  name: "David Kim",      contact: "+1 512-555-0104", email: "david@example.com",   kyc_status: "verified",      kyc_verified_on: "2024-02-20T00:00:00.000Z", kyc_document: "/documents/kyc-sample.pdf" },
+  { id: "tenant-5",  name: "Eva Rossi",      contact: "+1 512-555-0105", email: "eva@example.com",     kyc_status: "not_submitted", kyc_verified_on: null,                       kyc_document: null                        },
+  { id: "tenant-6",  name: "Frank Nguyen",   contact: "+1 512-555-0106", email: "frank@example.com",   kyc_status: "verified",      kyc_verified_on: "2024-05-01T00:00:00.000Z", kyc_document: "/documents/kyc-sample.pdf" },
+  { id: "tenant-7",  name: "Grace Patel",    contact: "+1 512-555-0107", email: "grace@example.com",   kyc_status: "verified",      kyc_verified_on: "2024-04-18T00:00:00.000Z", kyc_document: "/documents/kyc-sample.pdf" },
+  { id: "tenant-8",  name: "Henry Walsh",    contact: "+1 512-555-0108", email: "henry@example.com",   kyc_status: "pending",       kyc_verified_on: null,                       kyc_document: "/documents/kyc-sample.pdf" },
+  { id: "tenant-9",  name: "Isla Chen",      contact: "+1 512-555-0109", email: "isla@example.com",    kyc_status: "verified",      kyc_verified_on: "2024-06-10T00:00:00.000Z", kyc_document: "/documents/kyc-sample.pdf" },
+  { id: "tenant-10", name: "Jake Torres",    contact: "+1 512-555-0110", email: "jake@example.com",    kyc_status: "not_submitted", kyc_verified_on: null,                       kyc_document: null                        },
+  { id: "tenant-11", name: "Karen Brooks",   contact: "+1 512-555-0111", email: "karen@example.com",   kyc_status: "verified",      kyc_verified_on: "2024-03-25T00:00:00.000Z", kyc_document: "/documents/kyc-sample.pdf" },
 ];
 
 const leases: Lease[] = [
@@ -29,8 +57,21 @@ const leases: Lease[] = [
   // unit-3 (Apt 103) is vacant — no lease
   { id: "lease-3", unit_id: "unit-4", tenant_id: "tenant-3", start_date: "2024-06-01T00:00:00.000Z", end_date: "2025-05-31T00:00:00.000Z", monthly_rent: 2500, terms: "12-month lease. No smoking. Parking included. $800 security deposit.",           lease_document: "/documents/lease-sample.pdf" },
   { id: "lease-4", unit_id: "unit-5", tenant_id: "tenant-4", start_date: "2024-02-01T00:00:00.000Z", end_date: "2025-01-31T00:00:00.000Z", monthly_rent: 2800, terms: "12-month lease. Pets allowed. Rooftop access included. $900 security deposit.",  lease_document: "/documents/lease-sample.pdf" },
-  { id: "lease-5", unit_id: "unit-6", tenant_id: "tenant-5", start_date: "2024-04-01T00:00:00.000Z", end_date: "2025-03-31T00:00:00.000Z", monthly_rent: 3200, terms: "12-month lease. No subletting. Gym access included. $1,000 security deposit.",  lease_document: "/documents/lease-sample.pdf" },
+  { id: "lease-5",  unit_id: "unit-6",  tenant_id: "tenant-5",  start_date: "2024-04-01T00:00:00.000Z", end_date: "2025-03-31T00:00:00.000Z", monthly_rent: 3200, terms: "12-month lease. No subletting. Gym access included. $1,000 security deposit.",    lease_document: "/documents/lease-sample.pdf" },
   // unit-7 (Loft D) is vacant — no lease
+  // Sunset Villas — Villa 1 & 2 occupied, Villa 3 vacant
+  { id: "lease-6",  unit_id: "unit-8",  tenant_id: "tenant-6",  start_date: "2024-05-01T00:00:00.000Z", end_date: "2025-04-30T00:00:00.000Z", monthly_rent: 2200, terms: "12-month lease. No pets. Water included. $600 security deposit.",                   lease_document: "/documents/lease-sample.pdf" },
+  { id: "lease-7",  unit_id: "unit-9",  tenant_id: "tenant-7",  start_date: "2024-04-01T00:00:00.000Z", end_date: "2025-03-31T00:00:00.000Z", monthly_rent: 2400, terms: "12-month lease. Pets allowed with deposit. Tenant pays utilities.",                  lease_document: "/documents/lease-sample.pdf" },
+  // unit-10 (Villa 3) is vacant — no lease
+  // Parkview Terrace — Unit 1A & 2B occupied, 1B & 2A vacant
+  { id: "lease-8",  unit_id: "unit-11", tenant_id: "tenant-8",  start_date: "2024-06-01T00:00:00.000Z", end_date: "2025-05-31T00:00:00.000Z", monthly_rent: 1950, terms: "12-month lease. No smoking. Pool access included. $650 security deposit.",          lease_document: "/documents/lease-sample.pdf" },
+  { id: "lease-9",  unit_id: "unit-14", tenant_id: "tenant-9",  start_date: "2024-03-01T00:00:00.000Z", end_date: "2025-02-28T00:00:00.000Z", monthly_rent: 2050, terms: "12-month lease. No subletting. Covered parking included. $700 security deposit.",  lease_document: "/documents/lease-sample.pdf" },
+  // unit-12 (Unit 1B) & unit-13 (Unit 2A) are vacant — no lease
+  // Harbor View — Suite 01 & 02 occupied, Suite 03 vacant
+  { id: "lease-10", unit_id: "unit-15", tenant_id: "tenant-10", start_date: "2024-07-01T00:00:00.000Z", end_date: "2025-06-30T00:00:00.000Z", monthly_rent: 3500, terms: "12-month lease. No pets. Concierge service included. $1,200 security deposit.",    lease_document: "/documents/lease-sample.pdf" },
+  { id: "lease-11", unit_id: "unit-16", tenant_id: "tenant-11", start_date: "2024-05-01T00:00:00.000Z", end_date: "2025-04-30T00:00:00.000Z", monthly_rent: 3800, terms: "12-month lease. Pets allowed. Rooftop & gym access. $1,300 security deposit.",     lease_document: "/documents/lease-sample.pdf" },
+  // unit-17 (Suite 03) is vacant — no lease
+  // The Grand — all 4 studios vacant
 ];
 
 const payments: Payment[] = [
@@ -57,12 +98,36 @@ const payments: Payment[] = [
   { id: "pay-17", lease_id: "lease-4", period_month: "2024-04", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-04-01T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
   { id: "pay-18", lease_id: "lease-4", period_month: "2024-05", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-05-01T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
   { id: "pay-19", lease_id: "lease-4", period_month: "2024-06", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-06-01T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
-  { id: "pay-20", lease_id: "lease-4", period_month: "2024-07", amount_due: 2800, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null,             last_reminded_on: null },
+  { id: "pay-20", lease_id: "lease-4", period_month: "2024-07", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-07-01T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
   // Eva – lease-5
-  { id: "pay-21", lease_id: "lease-5", period_month: "2024-04", amount_due: 3200, amount_paid: 3200, status: "paid",        paid_date: "2024-04-03T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
-  { id: "pay-22", lease_id: "lease-5", period_month: "2024-05", amount_due: 3200, amount_paid: 3200, status: "paid",        paid_date: "2024-05-01T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
-  { id: "pay-23", lease_id: "lease-5", period_month: "2024-06", amount_due: 3200, amount_paid: 0,    status: "overdue",     paid_date: null,                       method: null,             last_reminded_on: null },
-  { id: "pay-24", lease_id: "lease-5", period_month: "2024-07", amount_due: 3200, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null,             last_reminded_on: null },
+  { id: "pay-21", lease_id: "lease-5",  period_month: "2024-04", amount_due: 3200, amount_paid: 3200, status: "paid",        paid_date: "2024-04-03T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
+  { id: "pay-22", lease_id: "lease-5",  period_month: "2024-05", amount_due: 3200, amount_paid: 3200, status: "paid",        paid_date: "2024-05-01T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
+  { id: "pay-23", lease_id: "lease-5",  period_month: "2024-06", amount_due: 3200, amount_paid: 0,    status: "overdue",     paid_date: null,                       method: null,             last_reminded_on: null },
+  { id: "pay-24", lease_id: "lease-5",  period_month: "2024-07", amount_due: 3200, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null,             last_reminded_on: null },
+  // Frank – lease-6 (Sunset Villas, Villa 1)
+  { id: "pay-25", lease_id: "lease-6",  period_month: "2024-05", amount_due: 2200, amount_paid: 2200, status: "paid",        paid_date: "2024-05-02T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
+  { id: "pay-26", lease_id: "lease-6",  period_month: "2024-06", amount_due: 2200, amount_paid: 2200, status: "paid",        paid_date: "2024-06-01T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
+  { id: "pay-27", lease_id: "lease-6",  period_month: "2024-07", amount_due: 2200, amount_paid: 2200, status: "paid",        paid_date: "2024-07-01T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
+  // Grace – lease-7 (Sunset Villas, Villa 2)
+  { id: "pay-28", lease_id: "lease-7",  period_month: "2024-04", amount_due: 2400, amount_paid: 2400, status: "paid",        paid_date: "2024-04-01T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
+  { id: "pay-29", lease_id: "lease-7",  period_month: "2024-05", amount_due: 2400, amount_paid: 2400, status: "paid",        paid_date: "2024-05-03T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
+  { id: "pay-30", lease_id: "lease-7",  period_month: "2024-06", amount_due: 2400, amount_paid: 2400, status: "paid",        paid_date: "2024-06-02T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
+  { id: "pay-31", lease_id: "lease-7",  period_month: "2024-07", amount_due: 2400, amount_paid: 2400, status: "paid",        paid_date: "2024-07-01T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
+  // Henry – lease-8 (Parkview Terrace, Unit 1A)
+  { id: "pay-32", lease_id: "lease-8",  period_month: "2024-06", amount_due: 1950, amount_paid: 1950, status: "paid",        paid_date: "2024-06-02T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
+  { id: "pay-33", lease_id: "lease-8",  period_month: "2024-07", amount_due: 1950, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null,             last_reminded_on: null },
+  // Isla – lease-9 (Parkview Terrace, Unit 2B)
+  { id: "pay-34", lease_id: "lease-9",  period_month: "2024-03", amount_due: 2050, amount_paid: 2050, status: "paid",        paid_date: "2024-03-01T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
+  { id: "pay-35", lease_id: "lease-9",  period_month: "2024-04", amount_due: 2050, amount_paid: 2050, status: "paid",        paid_date: "2024-04-02T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
+  { id: "pay-36", lease_id: "lease-9",  period_month: "2024-05", amount_due: 2050, amount_paid: 2050, status: "paid",        paid_date: "2024-05-01T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
+  { id: "pay-37", lease_id: "lease-9",  period_month: "2024-06", amount_due: 2050, amount_paid: 0,    status: "overdue",     paid_date: null,                       method: null,             last_reminded_on: null },
+  { id: "pay-38", lease_id: "lease-9",  period_month: "2024-07", amount_due: 2050, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null,             last_reminded_on: null },
+  // Jake – lease-10 (Harbor View, Suite 01)
+  { id: "pay-39", lease_id: "lease-10", period_month: "2024-07", amount_due: 3500, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null,             last_reminded_on: null },
+  // Karen – lease-11 (Harbor View, Suite 02)
+  { id: "pay-40", lease_id: "lease-11", period_month: "2024-05", amount_due: 3800, amount_paid: 3800, status: "paid",        paid_date: "2024-05-01T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
+  { id: "pay-41", lease_id: "lease-11", period_month: "2024-06", amount_due: 3800, amount_paid: 3800, status: "paid",        paid_date: "2024-06-03T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
+  { id: "pay-42", lease_id: "lease-11", period_month: "2024-07", amount_due: 3800, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null,             last_reminded_on: null },
 ];
 
 const paymentMethods: PaymentMethod[] = [
