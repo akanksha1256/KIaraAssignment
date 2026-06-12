@@ -1,13 +1,13 @@
 "use client";
 
-import { DataTable } from "@/client/commonComponents/DataTable";
-import { RowMenu } from "@/client/commonComponents/RowMenu";
+import { DataTable } from "@repo/ui";
+import { RowMenu } from "@repo/ui";
 import { EmptyState } from "@/client/views/EmptyScreen";
 import { LoadingState } from "@/client/views/LoadingScreen";
-import { strings } from "@/client/designSystems/strings";
-import type { Payment } from "@/client/types";
-import type { TableCell } from "@/client/commonComponents/DataTable";
-import { formatDate, formatPeriodMonth } from "@/client/helpers/utils";
+import { strings } from "@repo/tokens";
+import type { Payment } from "@repo/data";
+import type { TableCell } from "@repo/ui";
+import { formatDate, formatPeriodMonth } from "@repo/ui";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 

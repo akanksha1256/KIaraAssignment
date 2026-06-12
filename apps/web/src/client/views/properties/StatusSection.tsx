@@ -1,5 +1,5 @@
-import { StatCard } from "@/client/commonComponents/StatCard";
-import { strings } from "@/client/designSystems/strings";
+import { StatCard } from "@repo/ui";
+import { strings } from "@repo/tokens";
 import { Building2, DoorOpen, DoorClosed, DollarSign } from "lucide-react";
 
 const s = strings.manager.propertyDetail;

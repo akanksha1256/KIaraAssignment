@@ -65,7 +65,8 @@
       "Bash(curl -s \"http://localhost:3003/api/manager/dashboard\")",
       "Bash(curl -s \"http://localhost:3003/api/tenants/tenant-1\")",
       "Bash(python3 -m json.tool)",
-      "Bash(xargs ls -la)"
+      "Bash(xargs ls -la)",
+      "Bash(pnpm type-check *)"
     ]
   }
 }

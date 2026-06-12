@@ -1,19 +1,19 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useManagerDashboard } from "@/client/hooks/useManagerDashboard";
+import { useManagerDashboard } from "@repo/data";
 import { EmptyState } from "@/client/views/EmptyScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { LoadingState } from "@/client/views/LoadingScreen";
-import { strings } from "@/client/designSystems/strings";
+import { strings } from "@repo/tokens";
 import { ChevronRight } from "lucide-react";
 import { TABLE_COLS } from "./util";
 import { StatusSection } from "./components/StatusSection";
 import { MonthlyRevenueSection } from "./components/MonthlyRevenueSection";
 import { PaymentStatusSection } from "./components/PaymentStatusSection";
-import { Pill } from "../../commonComponents/Pill";
-import { DataTable } from "@/client/commonComponents/DataTable";
-import type { PropertySummary } from "@/client/types";
+import { Pill } from "@repo/ui";
+import { DataTable } from "@repo/ui";
+import type { PropertySummary } from "@repo/data";
 
 const s = strings.manager.dashboard;
 

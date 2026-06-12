@@ -1,18 +1,18 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { usePropertyDetail } from "@/client/hooks/usePropertyDetail";
+import { usePropertyDetail } from "@repo/data";
 import { LoadingState } from "@/client/views/LoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
 import { StatusSection } from "./StatusSection";
-import { DataTable } from "@/client/commonComponents/DataTable";
-import { strings } from "@/client/designSystems/strings";
+import { DataTable } from "@repo/ui";
+import { strings } from "@repo/tokens";
 import { ChevronRight } from "lucide-react";
-import { MainHeader } from "@/client/commonComponents/MainHeader";
-import type { UnitDetailItem } from "@/client/types";
-import type { TableCell } from "@/client/commonComponents/DataTable";
-import { statusConfig, formatDate } from "@/client/helpers/utils";
+import { MainHeader } from "@repo/ui";
+import type { UnitDetailItem } from "@repo/data";
+import type { TableCell } from "@repo/ui";
+import { statusConfig, formatDate } from "@repo/ui";
 
 const s = strings.manager.propertyDetail;
 

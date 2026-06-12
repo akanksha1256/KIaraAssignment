@@ -6,16 +6,16 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/client/commonComponents/Card";
-import { strings } from "@/client/designSystems/strings";
-import { formatDate } from "@/client/helpers/utils";
-import { colors } from "@/client/designSystems/colors";
+} from "@repo/ui";
+import { strings } from "@repo/tokens";
+import { formatDate } from "@repo/ui";
+import { colors } from "@repo/tokens";
 import { User, ExternalLink } from "lucide-react";
 import type {
   Tenant,
   KycStatus,
   TenantStanding,
-} from "@/client/types";
+} from "@repo/data";
 
 const s = strings.manager.tenantProfile.info;
 const ss = strings.manager.tenantProfile.standing;

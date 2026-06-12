@@ -1,4 +1,4 @@
-import { Spinner } from "@/client/commonComponents/Spinner";
+import { Spinner } from "@repo/ui";
 
 export const LoadingState = ({
   message = "Loading...",

@@ -4,10 +4,10 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/client/commonComponents/Card";
-import { strings } from "@/client/designSystems/strings";
+} from "@repo/ui";
+import { strings } from "@repo/tokens";
 import { User, ExternalLink } from "lucide-react";
-import type { Tenant } from "@/client/types";
+import type { Tenant } from "@repo/data";
 
 const s = strings.manager.unitDetail.tenant;
 

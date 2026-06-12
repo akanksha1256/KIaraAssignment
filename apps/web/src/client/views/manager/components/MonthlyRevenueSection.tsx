@@ -8,12 +8,12 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Card, CardHeader, CardTitle, CardContent } from "@/client/commonComponents/Card";
+import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui";
 import { EmptyState } from "@/client/views/EmptyScreen";
-import { CommonTooltip } from "@/client/commonComponents/Tooltip";
-import { strings } from "@/client/designSystems/strings";
-import { colors } from "@/client/designSystems/colors";
-import type { MonthlyRevenue } from "@/client/types";
+import { CommonTooltip } from "@repo/ui";
+import { strings } from "@repo/tokens";
+import { colors } from "@repo/tokens";
+import type { MonthlyRevenue } from "@repo/data";
 
 const s = strings.manager.dashboard;
 

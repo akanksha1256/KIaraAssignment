@@ -3,11 +3,11 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/client/commonComponents/Card";
+} from "@repo/ui";
 import { FileText, ExternalLink } from "lucide-react";
-import { strings } from "@/client/designSystems/strings";
-import { formatDate } from "@/client/helpers/utils";
-import type { Lease } from "@/client/types";
+import { strings } from "@repo/tokens";
+import { formatDate } from "@repo/ui";
+import type { Lease } from "@repo/data";
 
 const s = strings.tenant.leaseDetails;
 

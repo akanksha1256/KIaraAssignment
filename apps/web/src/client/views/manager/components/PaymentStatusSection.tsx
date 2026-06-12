@@ -8,11 +8,11 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { Card, CardHeader, CardTitle, CardContent } from "@/client/commonComponents/Card";
+import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui";
 import { EmptyState } from "@/client/views/EmptyScreen";
-import { strings } from "@/client/designSystems/strings";
-import { colors } from "@/client/designSystems/colors";
-import type { PaymentBreakdown } from "@/client/types";
+import { strings } from "@repo/tokens";
+import { colors } from "@repo/tokens";
+import type { PaymentBreakdown } from "@repo/data";
 
 const s = strings.manager.dashboard;
 

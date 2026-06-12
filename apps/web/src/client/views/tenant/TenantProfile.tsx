@@ -1,13 +1,13 @@
 "use client";
 
-import { useTenantProfile } from "@/client/hooks/useTenantProfile";
+import { useTenantProfile } from "@repo/data";
 import { LoadingState } from "@/client/views/LoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
 import { PaymentHistoryTable } from "@/client/views/payments/PaymentHistoryTable";
-import { strings } from "@/client/designSystems/strings";
+import { strings } from "@repo/tokens";
 import { CreditCard as CreditCardIcon } from "lucide-react";
-import { MainHeader } from "@/client/commonComponents/MainHeader";
+import { MainHeader } from "@repo/ui";
 import { TenantInfoCard } from "./TenantInfoCard";
 import { TenantCurrentLeaseCard } from "../lease/TenantCurrentLeaseCard";
 

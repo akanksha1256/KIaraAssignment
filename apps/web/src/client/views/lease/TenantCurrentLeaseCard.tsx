@@ -3,13 +3,13 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/client/commonComponents/Card";
-import { strings } from "@/client/designSystems/strings";
+} from "@repo/ui";
+import { strings } from "@repo/tokens";
 import { FileText, ExternalLink } from "lucide-react";
-import type { Lease } from "@/client/types";
-import type { Unit } from "@/client/types";
-import type { Property } from "@/client/types";
-import { formatDate } from "@/client/helpers/utils";
+import type { Lease } from "@repo/data";
+import type { Unit } from "@repo/data";
+import type { Property } from "@repo/data";
+import { formatDate } from "@repo/ui";
 
 const s = strings.manager.tenantProfile.lease;
 

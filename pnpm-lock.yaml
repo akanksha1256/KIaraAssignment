@@ -20,6 +20,15 @@ importers:
 
   apps/web:
     dependencies:
+      '@repo/data':
+        specifier: workspace:*
+        version: link:../../packages/data
+      '@repo/tokens':
+        specifier: workspace:*
+        version: link:../../packages/tokens
+      '@repo/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@tanstack/react-query':
         specifier: ^5.101.0
         version: 5.101.0(react@18.3.1)
@@ -66,6 +75,70 @@ importers:
       tailwindcss:
         specifier: ^3.4.4
         version: 3.4.19
+      typescript:
+        specifier: ^5.4.0
+        version: 5.9.3
+
+  packages/data:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.0.0
+        version: 5.101.0(react@18.3.1)
+      react:
+        specifier: ^18.3.0
+        version: 18.3.1
+    devDependencies:
+      '@types/react':
+        specifier: ^18.3.0
+        version: 18.3.31
+      typescript:
+        specifier: ^5.4.0
+        version: 5.9.3
+
+  packages/tokens: {}
+
+  packages/ui:
+    dependencies:
+      '@repo/data':
+        specifier: workspace:*
+        version: link:../data
+      '@repo/tokens':
+        specifier: workspace:*
+        version: link:../tokens
+      '@tanstack/react-query':
+        specifier: ^5.0.0
+        version: 5.101.0(react@18.3.1)
+      class-variance-authority:
+        specifier: ^0.7.0
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      dayjs:
+        specifier: ^1.11.21
+        version: 1.11.21
+      lucide-react:
+        specifier: ^0.395.0
+        version: 0.395.0(react@18.3.1)
+      next:
+        specifier: ^14.2.0
+        version: 14.2.35(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react:
+        specifier: ^18.3.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.0
+        version: 18.3.1(react@18.3.1)
+      tailwind-merge:
+        specifier: ^2.3.0
+        version: 2.6.1
+    devDependencies:
+      '@types/react':
+        specifier: ^18.3.0
+        version: 18.3.31
+      '@types/react-dom':
+        specifier: ^18.3.0
+        version: 18.3.7(@types/react@18.3.31)
       typescript:
         specifier: ^5.4.0
         version: 5.9.3

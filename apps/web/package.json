@@ -10,6 +10,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@repo/tokens": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "@repo/data": "workspace:*",
     "@tanstack/react-query": "^5.101.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

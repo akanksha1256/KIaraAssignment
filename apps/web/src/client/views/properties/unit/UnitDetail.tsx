@@ -1,22 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { usePropertyDetail } from "@/client/hooks/usePropertyDetail";
-import { usePayments } from "@/client/hooks/usePayments";
-import { useMarkPaid } from "@/client/hooks/useMarkPaid";
-import { useSendReminder } from "@/client/hooks/useSendReminder";
+import { usePropertyDetail } from "@repo/data";
+import { usePayments } from "@repo/data";
+import { useMarkPaid } from "@repo/data";
+import { useSendReminder } from "@repo/data";
 import { LoadingState } from "@/client/views/LoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
 import { PaymentHistoryTable } from "@/client/views/payments/PaymentHistoryTable";
-import { strings } from "@/client/designSystems/strings";
+import { strings } from "@repo/tokens";
 import { CreditCard as CreditCardIcon } from "lucide-react";
-import { MainHeader } from "@/client/commonComponents/MainHeader";
+import { MainHeader } from "@repo/ui";
 import { TenantCard } from "@/client/views/tenant/TenantCard";
 import { ManagerLeaseCard } from "@/client/views/lease/ManagerLeaseCard";
-import { useToast } from "@/client/commonComponents/Toast";
+import { useToast } from "@repo/ui";
 import { UnitDetailProps } from "../helper";
-import { statusConfig } from "@/client/helpers/utils";
+import { statusConfig } from "@repo/ui";
 
 const s  = strings.manager.unitDetail;
 const st = strings.paymentTable;

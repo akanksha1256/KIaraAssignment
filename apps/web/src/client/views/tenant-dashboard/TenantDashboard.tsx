@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTenantDashboard } from "@/client/hooks/useTenantDashboard";
+import { useTenantDashboard } from "@repo/data";
 import { LoadingState } from "@/client/views/LoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
@@ -11,7 +11,7 @@ import { ManagerInfoCard } from "./ManagerInfoCard";
 import { LeaseDetailsCard } from "./LeaseDetailsCard";
 import { PayRentModal } from "./PayRentModal";
 import { CreditCard as CreditCardIcon } from "lucide-react";
-import { strings } from "@/client/designSystems/strings";
+import { strings } from "@repo/tokens";
 
 const s = strings.tenant.dashboard;
 

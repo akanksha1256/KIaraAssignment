@@ -1,24 +1,13 @@
-import type { PropertySummary } from "@/client/types";
-import { strings } from "@/client/designSystems/strings";
-import type { StatCardProps } from "./type";
-import { Pill } from "../../commonComponents/Pill";
+import type { PropertySummary } from "@repo/data";
+import { strings } from "@repo/tokens";
+import { Pill } from "@repo/ui";
 import { ChevronRight } from "lucide-react";
-import type { TableCell } from "@/client/commonComponents/DataTable";
+import type { TableCell } from "@repo/ui";
 
 const s = strings.manager.dashboard;
 
 const STATUS_SORT: Record<string, number> = {
   overdue: 0, outstanding: 1, allPaid: 2, vacant: 3,
-};
-
-export const accentMap: Record<
-  StatCardProps["accent"],
-  { bg: string; text: string }
-> = {
-  brand: { bg: "bg-brand-50", text: "text-brand-600" },
-  success: { bg: "bg-success-50", text: "text-success-700" },
-  warning: { bg: "bg-warning-50", text: "text-warning-700" },
-  danger: { bg: "bg-danger-50", text: "text-danger-700" },
 };
 
 export const TABLE_COLS = [

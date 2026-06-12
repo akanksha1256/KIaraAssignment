@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { strings } from "@/client/designSystems/strings";
+import { strings } from "@repo/tokens";
 
 export default function Home() {
   return (

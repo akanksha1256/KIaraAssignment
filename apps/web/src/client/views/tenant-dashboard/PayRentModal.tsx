@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { usePaymentMethods } from "@/client/hooks/usePaymentMethods";
-import { usePayRent } from "@/client/hooks/usePayRent";
-import { useAddPaymentMethod } from "@/client/hooks/useAddPaymentMethod";
-import { useToast } from "@/client/commonComponents/Toast";
-import { strings } from "@/client/designSystems/strings";
-import { formatPeriodMonth } from "@/client/helpers/utils";
+import { usePaymentMethods } from "@repo/data";
+import { usePayRent } from "@repo/data";
+import { useAddPaymentMethod } from "@repo/data";
+import { useToast } from "@repo/ui";
+import { strings } from "@repo/tokens";
+import { formatPeriodMonth } from "@repo/ui";
 
 const s = strings.tenant.payRentModal;
 

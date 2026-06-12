@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/client/commonComponents/Card";
-import { strings } from "@/client/designSystems/strings";
+import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui";
+import { strings } from "@repo/tokens";
 import { Star } from "lucide-react";
-import type { TenantStanding } from "@/client/types";
+import type { TenantStanding } from "@repo/data";
 
 const s = strings.manager.tenantProfile.standing;
 

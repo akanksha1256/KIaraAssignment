@@ -3,11 +3,11 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/client/commonComponents/Card";
+} from "@repo/ui";
 import { Building2 } from "lucide-react";
-import { strings } from "@/client/designSystems/strings";
-import type { Property } from "@/client/types";
-import type { Unit } from "@/client/types";
+import { strings } from "@repo/tokens";
+import type { Property } from "@repo/data";
+import type { Unit } from "@repo/data";
 
 const s = strings.tenant.propertyInfo;
 
