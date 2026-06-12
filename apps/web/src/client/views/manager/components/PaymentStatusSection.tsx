@@ -12,7 +12,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/client/commonCompone
 import { EmptyState } from "@/client/views/EmptyScreen";
 import { strings } from "@/client/designSystems/strings";
 import { colors } from "@/client/designSystems/colors";
-import type { PaymentBreakdown } from "@/client/stateManagement/managerDashboard/manager/type";
+import type { PaymentBreakdown } from "@/client/types";
 
 const s = strings.manager.dashboard;
 

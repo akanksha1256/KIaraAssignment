@@ -7,7 +7,7 @@ import {
 } from "@/client/commonComponents/Card";
 import { strings } from "@/client/designSystems/strings";
 import { User, ExternalLink } from "lucide-react";
-import type { Tenant } from "@/client/stateManagement/managerDashboard/tenant/type";
+import type { Tenant } from "@/client/types";
 
 const s = strings.manager.unitDetail.tenant;
 

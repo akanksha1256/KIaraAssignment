@@ -5,7 +5,7 @@ import { RowMenu } from "@/client/commonComponents/RowMenu";
 import { EmptyState } from "@/client/views/EmptyScreen";
 import { LoadingState } from "@/client/views/LoadingScreen";
 import { strings } from "@/client/designSystems/strings";
-import type { Payment } from "@/client/stateManagement/managerDashboard/payment/type";
+import type { Payment } from "@/client/types";
 import type { TableCell } from "@/client/commonComponents/DataTable";
 import { formatDate, formatPeriodMonth } from "@/client/helpers/utils";
 import dayjs from "dayjs";

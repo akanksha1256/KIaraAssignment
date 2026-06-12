@@ -1,14 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {
-  useAppDispatch,
-  useAppSelector,
-} from "@/client/stateManagement/mainFile";
-import { fetchManagerDashboard } from "@/client/stateManagement/managerDashboard/manager/managerSlice";
-import { selectDashboard } from "@/client/stateManagement/managerDashboard/manager/managerSelectors";
-import { selectPropertiesList } from "@/client/stateManagement/managerDashboard/property/propertySelectors";
+import { useManagerDashboard } from "@/client/hooks/useManagerDashboard";
 import { EmptyState } from "@/client/views/EmptyScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { LoadingState } from "@/client/views/LoadingScreen";
@@ -20,81 +13,66 @@ import { MonthlyRevenueSection } from "./components/MonthlyRevenueSection";
 import { PaymentStatusSection } from "./components/PaymentStatusSection";
 import { Pill } from "../../commonComponents/Pill";
 import { DataTable } from "@/client/commonComponents/DataTable";
-import type { PropertySummary } from "@/client/stateManagement/managerDashboard/property/type";
+import type { PropertySummary } from "@/client/types";
 
 const s = strings.manager.dashboard;
 
 export const ManagerDashboard = () => {
-  const dispatch = useAppDispatch();
   const router = useRouter();
+  const { data, isLoading, isError, error, refetch } = useManagerDashboard();
 
-  const { status, stats, paymentBreakdown, monthlyRevenue } =
-    useAppSelector(selectDashboard);
-
-  const { properties } = useAppSelector(selectPropertiesList);
-
-  useEffect(() => {
-    dispatch(fetchManagerDashboard());
-  }, [dispatch]);
-
-  if (status === "pending") return <LoadingState message={s.loading} />;
-  if (status === "failed")
+  if (isLoading) return <LoadingState message={s.loading} />;
+  if (isError)
     return (
       <ErrorState
-        message={s.error}
-        onRetry={() => dispatch(fetchManagerDashboard())}
+        message={(error as Error)?.message ?? s.error}
+        onRetry={() => refetch()}
       />
     );
-  if (!stats)
+  if (!data)
     return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
-  const getTableRow = (row: PropertySummary) => {
-    return [
-      {
-        content: row.id,
-        className:
-          "whitespace-nowrap px-5 py-4 text-xs font-mono text-neutral-400",
-      },
-      {
-        content: row.name,
-        className:
-          "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
-      },
-      { content: row.address, className: "px-5 py-4 text-right text-sm text-neutral-500 w-78" },
-      {
-        content: (
-          <>
-            {row.leasedCount}/{row.unitCount}
-            <span className="ml-1 text-xs text-neutral-400">
-              {s.propertiesTable.occupiedSuffix}
-            </span>
-          </>
-        ),
-        className:
-          "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-600",
-      },
-      {
-        content:
-          row.totalRent > 0 ? `$${row.totalRent.toLocaleString()}/mo` : "—",
-        className:
-          "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
-      },
-      {
-        content: <div className="flex justify-end"><Pill status={row.status} /></div>,
-        sortValue: ({ overdue: 0, outstanding: 1, allPaid: 2, vacant: 3 } as Record<string, number>)[row.status] ?? 99,
-        className: "whitespace-nowrap w-28 px-5 py-4",
-      },
-      {
-        content: (
-          <span className="inline-flex items-center gap-1 text-sm text-brand-600">
-            {s.propertiesTable.viewLink}{" "}
-            <ChevronRight className="h-3.5 w-3.5" />
+  const { stats, paymentBreakdown, monthlyRevenue, properties } = data;
+
+  const getTableRow = (row: PropertySummary) => [
+    {
+      content: row.id,
+      className: "whitespace-nowrap px-5 py-4 text-xs font-mono text-neutral-400",
+    },
+    {
+      content: row.name,
+      className: "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
+    },
+    { content: row.address, className: "px-5 py-4 text-right text-sm text-neutral-500 w-78" },
+    {
+      content: (
+        <>
+          {row.leasedCount}/{row.unitCount}
+          <span className="ml-1 text-xs text-neutral-400">
+            {s.propertiesTable.occupiedSuffix}
           </span>
-        ),
-        className: "whitespace-nowrap px-5 py-4 text-right",
-      },
-    ];
-  };
+        </>
+      ),
+      className: "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-600",
+    },
+    {
+      content: row.totalRent > 0 ? `$${row.totalRent.toLocaleString()}/mo` : "—",
+      className: "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
+    },
+    {
+      content: <div className="flex justify-end"><Pill status={row.status} /></div>,
+      sortValue: ({ overdue: 0, outstanding: 1, allPaid: 2, vacant: 3 } as Record<string, number>)[row.status] ?? 99,
+      className: "whitespace-nowrap w-28 px-5 py-4",
+    },
+    {
+      content: (
+        <span className="inline-flex items-center gap-1 text-sm text-brand-600">
+          {s.propertiesTable.viewLink} <ChevronRight className="h-3.5 w-3.5" />
+        </span>
+      ),
+      className: "whitespace-nowrap px-5 py-4 text-right",
+    },
+  ];
 
   return (
     <div className="space-y-8">
@@ -105,13 +83,11 @@ export const ManagerDashboard = () => {
 
       <StatusSection stats={stats} />
 
-      {/* ── Charts row ──────────────────────────────────────────────────────── */}
       <div className="grid gap-6 lg:grid-cols-5">
         <MonthlyRevenueSection monthlyRevenue={monthlyRevenue} />
         <PaymentStatusSection paymentBreakdown={paymentBreakdown} />
       </div>
 
-      {/* ── Properties table ────────────────────────────────────────────────── */}
       <div>
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-400">

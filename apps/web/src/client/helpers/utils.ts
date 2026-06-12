@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { strings } from "@/client/designSystems/strings";
-import { PropertyStatus } from "../stateManagement/managerDashboard/property/type";
+import { PropertyStatus } from "@/client/types";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";

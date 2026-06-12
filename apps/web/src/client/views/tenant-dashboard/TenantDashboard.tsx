@@ -1,13 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  useAppDispatch,
-  useAppSelector,
-} from "@/client/stateManagement/mainFile";
-import { fetchTenantDashboard } from "@/client/stateManagement/tenantDashboard/tenantDashboardSlice";
-import { selectTenantDashboard } from "@/client/stateManagement/tenantDashboard/tenantDashboardSelectors";
-import { selectTenantPayments } from "@/client/stateManagement/tenantDashboard/payment/tenantPaymentSelectors";
+import { useState } from "react";
+import { useTenantDashboard } from "@/client/hooks/useTenantDashboard";
 import { LoadingState } from "@/client/views/LoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
@@ -26,34 +20,25 @@ interface Props {
 }
 
 export const TenantDashboard = ({ tenantId }: Props) => {
-  const dispatch = useAppDispatch();
-
-  const { status, error, data } = useAppSelector(selectTenantDashboard(tenantId));
-  const leaseId = data?.lease?.id ?? "";
-  const { payments } = useAppSelector(selectTenantPayments(leaseId));
-
+  const { data, isLoading, isError, error, refetch } = useTenantDashboard(tenantId);
   const [payingPeriodMonth, setPayingPeriodMonth] = useState<string | null>(null);
 
-  useEffect(() => {
-    dispatch(fetchTenantDashboard(tenantId));
-  }, [dispatch, tenantId]);
-
-  if (status === "pending") return <LoadingState message={s.loading} />;
-  if (error)
+  if (isLoading) return <LoadingState message={s.loading} />;
+  if (isError)
     return (
       <ErrorState
-        message={error}
-        onRetry={() => dispatch(fetchTenantDashboard(tenantId))}
+        message={(error as Error)?.message ?? "Failed to load dashboard."}
+        onRetry={() => refetch()}
       />
     );
   if (!data)
     return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
-  const { tenantName, lease, unit, property } = data;
-  const paymentList = payments ?? [];
+  const { dashboard, payments } = data;
+  const { tenantName, lease, unit, property } = dashboard;
 
   const pendingPayment = payingPeriodMonth
-    ? paymentList.find((p) => p.periodMonth === payingPeriodMonth) ?? null
+    ? payments.find((p) => p.periodMonth === payingPeriodMonth) ?? null
     : null;
 
   return (
@@ -74,11 +59,11 @@ export const TenantDashboard = ({ tenantId }: Props) => {
         <div className="mb-3 flex items-center gap-2">
           <CreditCardIcon className="h-4 w-4 text-neutral-400" />
           <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-400">
-            {s.payments.heading(paymentList.length)}
+            {s.payments.heading(payments.length)}
           </h2>
         </div>
         <PaymentHistoryTable
-          payments={paymentList}
+          payments={payments}
           empty={s.payments.empty}
           tenantActions={
             lease

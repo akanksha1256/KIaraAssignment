@@ -1,11 +1,11 @@
 import type * as P from "@/platform/types";
-import type { Property, PropertySummary, UnitDetailItem, PropertyDetailData } from "@/client/stateManagement/managerDashboard/property/type";
-import type { Unit }                       from "@/client/stateManagement/managerDashboard/unit/type";
-import type { Tenant, TenantStanding, TenantProfile } from "@/client/stateManagement/managerDashboard/tenant/type";
-import type { TenantDashboardData } from "@/client/stateManagement/tenantDashboard/type";
-import type { Lease }                      from "@/client/stateManagement/managerDashboard/lease/type";
-import type { Payment, PaymentMethod }     from "@/client/stateManagement/managerDashboard/payment/type";
-import type { ManagerDashboardData, DashboardStats, PaymentBreakdown, MonthlyRevenue } from "@/client/stateManagement/managerDashboard/manager/type";
+import type { Property, PropertySummary, UnitDetailItem, PropertyDetailData } from "@/client/types";
+import type { Unit }                       from "@/client/types";
+import type { Tenant, TenantStanding, TenantProfile } from "@/client/types";
+import type { TenantDashboardData } from "@/client/types";
+import type { Lease }                      from "@/client/types";
+import type { Payment, PaymentMethod }     from "@/client/types";
+import type { ManagerDashboardData, DashboardStats, PaymentBreakdown, MonthlyRevenue } from "@/client/types";
 
 export const mapProperty = (p: P.Property): Property => ({
   id:             p.id,

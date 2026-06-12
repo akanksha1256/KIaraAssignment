@@ -13,21 +13,21 @@ import {
   mapPaymentMethod,
   mapManagerDashboard,
 } from "./mappers";
-import type { ManagerDashboardData } from "@/client/stateManagement/managerDashboard/manager/type";
+import type { ManagerDashboardData } from "@/client/types";
 import type {
   Property,
   PropertySummary,
   PropertyDetailData,
-} from "@/client/stateManagement/managerDashboard/property/type";
-import type { TenantProfile } from "@/client/stateManagement/managerDashboard/tenant/type";
-import type { TenantDashboardData } from "@/client/stateManagement/tenantDashboard/type";
-import type { Unit } from "@/client/stateManagement/managerDashboard/unit/type";
-import type { Tenant } from "@/client/stateManagement/managerDashboard/tenant/type";
-import type { Lease } from "@/client/stateManagement/managerDashboard/lease/type";
+} from "@/client/types";
+import type { TenantProfile } from "@/client/types";
+import type { TenantDashboardData } from "@/client/types";
+import type { Unit } from "@/client/types";
+import type { Tenant } from "@/client/types";
+import type { Lease } from "@/client/types";
 import type {
   Payment,
   PaymentMethod,
-} from "@/client/stateManagement/managerDashboard/payment/type";
+} from "@/client/types";
 
 const BASE = "/api";
 

@@ -1,20 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import {
-  useAppDispatch,
-  useAppSelector,
-} from "@/client/stateManagement/mainFile";
-import {
-  tenantFetchPaymentMethods,
-  tenantAddPaymentMethod,
-  tenantPayRent,
-} from "@/client/stateManagement/tenantDashboard/payment/tenantPaymentSlice";
-import {
-  selectTenantPaymentMethods,
-  selectTenantPayRentState,
-  selectTenantAddMethodState,
-} from "@/client/stateManagement/tenantDashboard/payment/tenantPaymentSelectors";
+import { useState } from "react";
+import { usePaymentMethods } from "@/client/hooks/usePaymentMethods";
+import { usePayRent } from "@/client/hooks/usePayRent";
+import { useAddPaymentMethod } from "@/client/hooks/useAddPaymentMethod";
 import { useToast } from "@/client/commonComponents/Toast";
 import { strings } from "@/client/designSystems/strings";
 import { formatPeriodMonth } from "@/client/helpers/utils";
@@ -29,74 +18,53 @@ interface Props {
   onClose: () => void;
 }
 
-export function PayRentModal({
-  tenantId,
-  leaseId,
-  periodMonth,
-  amountDue,
-  onClose,
-}: Props) {
-  const dispatch = useAppDispatch();
+export function PayRentModal({ tenantId, leaseId, periodMonth, amountDue, onClose }: Props) {
   const { showToast } = useToast();
 
-  const { methods, loading: methodsLoading } = useAppSelector(
-    selectTenantPaymentMethods(tenantId),
-  );
-  const payRentState = useAppSelector(selectTenantPayRentState);
-  const addMethodState = useAppSelector(selectTenantAddMethodState);
+  const { data: methods = [], isLoading: methodsLoading } = usePaymentMethods(tenantId);
+  const payRent     = usePayRent(tenantId, leaseId);
+  const addMethod   = useAddPaymentMethod(tenantId);
 
-  const [selectedMethodId, setSelectedMethodId] = useState<string>("");
+  const [selectedMethodId, setSelectedMethodId] = useState<string>(
+    () => methods[0]?.id ?? "",
+  );
   const [newLabel, setNewLabel] = useState("");
 
-  const payingRef = useRef(false);
-  const addingRef = useRef(false);
-
-  useEffect(() => {
-    if (!methods) dispatch(tenantFetchPaymentMethods(tenantId));
-  }, [dispatch, tenantId, methods]);
-
-  useEffect(() => {
-    if (methods && methods.length > 0 && !selectedMethodId) {
-      setSelectedMethodId(methods[0].id);
-    }
-  }, [methods, selectedMethodId]);
-
-  // Handle add-method completion
-  useEffect(() => {
-    if (!addingRef.current) return;
-    if (!addMethodState.loading && addMethodState.data) {
-      setSelectedMethodId(addMethodState.data.id);
-      setNewLabel("");
-      addingRef.current = false;
-    }
-  }, [addMethodState]);
-
-  // Handle pay-rent completion
-  useEffect(() => {
-    if (!payingRef.current) return;
-    if (!payRentState.loading && payRentState.data) {
-      showToast(s.successToast, "success");
-      payingRef.current = false;
-      onClose();
-    } else if (!payRentState.loading && payRentState.error) {
-      showToast(`${s.errorPrefix} ${payRentState.error}`, "error");
-      payingRef.current = false;
-    }
-  }, [payRentState, onClose, showToast]);
+  // keep selectedMethodId in sync when methods first load
+  if (methods.length > 0 && !selectedMethodId) {
+    setSelectedMethodId(methods[0].id);
+  }
 
   const handleAddMethod = () => {
     if (!newLabel.trim()) return;
-    addingRef.current = true;
-    dispatch(tenantAddPaymentMethod({ tenantId, label: newLabel.trim() }));
+    addMethod.mutate(
+      { label: newLabel.trim() },
+      {
+        onSuccess: (method) => {
+          setSelectedMethodId(method.id);
+          setNewLabel("");
+        },
+      },
+    );
   };
 
   const handlePay = () => {
     if (!selectedMethodId) return;
-    payingRef.current = true;
-    dispatch(tenantPayRent({ leaseId, periodMonth, paymentMethodId: selectedMethodId }));
+    payRent.mutate(
+      { periodMonth, paymentMethodId: selectedMethodId },
+      {
+        onSuccess: () => {
+          showToast(s.successToast, "success");
+          onClose();
+        },
+        onError: (err) => {
+          showToast(`${s.errorPrefix} ${(err as Error).message}`, "error");
+        },
+      },
+    );
   };
 
-  const anyLoading = payRentState.loading || addMethodState.loading;
+  const anyLoading = payRent.isPending || addMethod.isPending;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -106,9 +74,7 @@ export function PayRentModal({
         </h2>
         <p className="mb-6 text-sm text-neutral-500">
           {s.amount}:{" "}
-          <span className="font-semibold text-neutral-900">
-            ${amountDue.toLocaleString()}
-          </span>
+          <span className="font-semibold text-neutral-900">${amountDue.toLocaleString()}</span>
         </p>
 
         {/* Payment method selection */}
@@ -118,7 +84,7 @@ export function PayRentModal({
           </label>
           {methodsLoading ? (
             <p className="text-sm text-neutral-400">Loading…</p>
-          ) : methods && methods.length > 0 ? (
+          ) : methods.length > 0 ? (
             <div className="space-y-2">
               {methods.map((m) => (
                 <label
@@ -161,7 +127,7 @@ export function PayRentModal({
               disabled={!newLabel.trim() || anyLoading}
               className="rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-200 disabled:opacity-40"
             >
-              {addMethodState.loading ? s.addMethodLoading : s.addMethodButton}
+              {addMethod.isPending ? s.addMethodLoading : s.addMethodButton}
             </button>
           </div>
         </div>
@@ -180,7 +146,7 @@ export function PayRentModal({
             disabled={!selectedMethodId || anyLoading}
             className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-40"
           >
-            {payRentState.loading ? s.payLoading : s.payButton}
+            {payRent.isPending ? s.payLoading : s.payButton}
           </button>
         </div>
       </div>

@@ -1,12 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-import {
-  useAppDispatch,
-  useAppSelector,
-} from "@/client/stateManagement/mainFile";
-import { fetchTenantProfile } from "@/client/stateManagement/managerDashboard/tenant/tenantSlice";
-import { selectTenantProfile } from "@/client/stateManagement/managerDashboard/tenant/tenantSelectors";
+import { useTenantProfile } from "@/client/hooks/useTenantProfile";
 import { LoadingState } from "@/client/views/LoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
@@ -24,28 +18,21 @@ interface Props {
 }
 
 export const TenantProfile = ({ tenantId }: Props) => {
-  const dispatch = useAppDispatch();
+  const { data: profile, isLoading, isError, error, refetch } = useTenantProfile(tenantId);
 
-  const { status, error, profile } = useAppSelector(
-    selectTenantProfile(tenantId),
-  );
-
-  useEffect(() => {
-    dispatch(fetchTenantProfile(tenantId));
-  }, [dispatch, tenantId]);
-
-  if (status === "pending") return <LoadingState message={s.loading} />;
-  if (error)
+  if (isLoading) return <LoadingState message={s.loading} />;
+  if (isError)
     return (
       <ErrorState
-        message={error}
-        onRetry={() => dispatch(fetchTenantProfile(tenantId))}
+        message={(error as Error)?.message ?? s.error}
+        onRetry={() => refetch()}
       />
     );
   if (!profile)
     return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
   const { tenant, lease, unit, property, payments, standing } = profile;
+
   return (
     <div className="space-y-8">
       <MainHeader label={s.backLink} />
@@ -54,11 +41,7 @@ export const TenantProfile = ({ tenantId }: Props) => {
           <TenantInfoCard tenant={tenant} standing={standing} />
         </div>
         <div className="lg:col-span-2">
-          <TenantCurrentLeaseCard
-            lease={lease}
-            unit={unit}
-            property={property}
-          />
+          <TenantCurrentLeaseCard lease={lease} unit={unit} property={property} />
         </div>
       </div>
 

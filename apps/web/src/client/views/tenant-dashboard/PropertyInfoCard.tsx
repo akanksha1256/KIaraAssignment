@@ -6,8 +6,8 @@ import {
 } from "@/client/commonComponents/Card";
 import { Building2 } from "lucide-react";
 import { strings } from "@/client/designSystems/strings";
-import type { Property } from "@/client/stateManagement/managerDashboard/property/type";
-import type { Unit } from "@/client/stateManagement/managerDashboard/unit/type";
+import type { Property } from "@/client/types";
+import type { Unit } from "@/client/types";
 
 const s = strings.tenant.propertyInfo;
 

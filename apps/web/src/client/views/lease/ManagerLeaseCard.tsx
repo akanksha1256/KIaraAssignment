@@ -6,7 +6,7 @@ import {
 } from "@/client/commonComponents/Card";
 import { strings } from "@/client/designSystems/strings";
 import { FileText, ExternalLink } from "lucide-react";
-import type { Lease } from "@/client/stateManagement/managerDashboard/lease/type";
+import type { Lease } from "@/client/types";
 import { formatDate } from "@/client/helpers/utils";
 
 const s = strings.manager.unitDetail.lease;

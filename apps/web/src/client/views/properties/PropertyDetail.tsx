@@ -1,14 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {
-  useAppDispatch,
-  useAppSelector,
-} from "@/client/stateManagement/mainFile";
-import { fetchPropertyById } from "@/client/stateManagement/managerDashboard/property/propertySlice";
-import { selectPropertyDetailById } from "@/client/stateManagement/managerDashboard/property/propertySelectors";
-import { selectUnitsForProperty } from "@/client/stateManagement/managerDashboard/unit/unitSelectors";
+import { usePropertyDetail } from "@/client/hooks/usePropertyDetail";
 import { LoadingState } from "@/client/views/LoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
@@ -17,7 +10,7 @@ import { DataTable } from "@/client/commonComponents/DataTable";
 import { strings } from "@/client/designSystems/strings";
 import { ChevronRight } from "lucide-react";
 import { MainHeader } from "@/client/commonComponents/MainHeader";
-import type { UnitDetailItem } from "@/client/stateManagement/managerDashboard/property/type";
+import type { UnitDetailItem } from "@/client/types";
 import type { TableCell } from "@/client/commonComponents/DataTable";
 import { statusConfig, formatDate } from "@/client/helpers/utils";
 
@@ -37,8 +30,7 @@ const getUnitRow = (unit: UnitDetailItem): TableCell[] => {
   return [
     {
       content: unit.label,
-      className:
-        "whitespace-nowrap px-5 py-4 text-sm font-semibold text-neutral-900",
+      className: "whitespace-nowrap px-5 py-4 text-sm font-semibold text-neutral-900",
     },
     {
       content: unit.tenant?.name ?? (
@@ -47,11 +39,8 @@ const getUnitRow = (unit: UnitDetailItem): TableCell[] => {
       className: "px-5 py-4 text-sm text-neutral-700",
     },
     {
-      content: unit.lease
-        ? `$${unit.lease.monthlyRent.toLocaleString()}/mo`
-        : "—",
-      className:
-        "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
+      content: unit.lease ? `$${unit.lease.monthlyRent.toLocaleString()}/mo` : "—",
+      className: "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
     },
     {
       content: unit.lease ? (
@@ -64,9 +53,7 @@ const getUnitRow = (unit: UnitDetailItem): TableCell[] => {
     {
       content: (
         <div className="flex justify-end">
-          <span
-            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${bg} ${text}`}
-          >
+          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${bg} ${text}`}>
             {label}
           </span>
         </div>
@@ -89,36 +76,25 @@ interface Props {
 }
 
 export const PropertyDetail = ({ propertyId }: Props) => {
-  const dispatch = useAppDispatch();
   const router = useRouter();
+  const { data, isLoading, isError, error, refetch } = usePropertyDetail(propertyId);
 
-  const { fetchState: { status, error }, property } = useAppSelector(selectPropertyDetailById(propertyId));
-  const { units } = useAppSelector(selectUnitsForProperty(propertyId));
-
-  useEffect(() => {
-    dispatch(fetchPropertyById(propertyId));
-  }, [dispatch, propertyId]);
-
-  if (status === "pending") return <LoadingState message={s.loading} />;
-  if (status === "failed")
+  if (isLoading) return <LoadingState message={s.loading} />;
+  if (isError)
     return (
       <ErrorState
-        message={error ?? s.error}
-        onRetry={() => dispatch(fetchPropertyById(propertyId))}
+        message={(error as Error)?.message ?? s.error}
+        onRetry={() => refetch()}
       />
     );
-  if (!property)
+  if (!data)
     return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
-  const totalUnits = units.length;
-  const occupiedUnits = units.filter(
-    (u) => u.paymentStatus !== "vacant",
-  ).length;
-  const vacantUnits = totalUnits - occupiedUnits;
-  const totalRent = units.reduce(
-    (sum, u) => sum + (u.lease?.monthlyRent ?? 0),
-    0,
-  );
+  const { property, units } = data;
+  const totalUnits    = units.length;
+  const occupiedUnits = units.filter((u) => u.paymentStatus !== "vacant").length;
+  const vacantUnits   = totalUnits - occupiedUnits;
+  const totalRent     = units.reduce((sum, u) => sum + (u.lease?.monthlyRent ?? 0), 0);
 
   return (
     <div className="space-y-8">
@@ -136,7 +112,6 @@ export const PropertyDetail = ({ propertyId }: Props) => {
         totalRent={totalRent}
       />
 
-      {/* Units table */}
       <div>
         <div className="mb-3">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-400">
@@ -145,19 +120,13 @@ export const PropertyDetail = ({ propertyId }: Props) => {
         </div>
 
         {units.length === 0 ? (
-          <EmptyState
-            title={s.unitsTable.empty}
-            description={s.unitsTable.emptyDescription}
-          />
+          <EmptyState title={s.unitsTable.empty} description={s.unitsTable.emptyDescription} />
         ) : (
           <DataTable
             columns={TABLE_COLS}
             rows={units.map((unit) => ({
               key: unit.id,
-              onClick: () =>
-                router.push(
-                  `/manager/properties/${propertyId}/units/${unit.id}`,
-                ),
+              onClick: () => router.push(`/manager/properties/${propertyId}/units/${unit.id}`),
               cells: getUnitRow(unit),
             }))}
           />

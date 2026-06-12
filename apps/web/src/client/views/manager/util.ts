@@ -1,4 +1,4 @@
-import type { PropertySummary } from "@/client/stateManagement/managerDashboard/property/type";
+import type { PropertySummary } from "@/client/types";
 import { strings } from "@/client/designSystems/strings";
 import type { StatCardProps } from "./type";
 import { TableColumn } from "@/client/commonComponents/DataTable";

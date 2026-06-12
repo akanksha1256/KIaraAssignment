@@ -1,7 +1,7 @@
 import { Building2, DoorOpen, DollarSign, TrendingUp } from "lucide-react";
 import { strings } from "@/client/designSystems/strings";
 import { StatCard } from "@/client/commonComponents/StatCard";
-import type { DashboardStats } from "@/client/stateManagement/managerDashboard/manager/type";
+import type { DashboardStats } from "@/client/types";
 
 const s = strings.manager.dashboard;
 

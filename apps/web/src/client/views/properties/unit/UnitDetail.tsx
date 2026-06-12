@@ -1,17 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import {
-  useAppDispatch,
-  useAppSelector,
-} from "@/client/stateManagement/mainFile";
-import { fetchPropertyById } from "@/client/stateManagement/managerDashboard/property/propertySlice";
-import {
-  fetchTenantPayments,
-  managerSendReminder,
-  managerMarkPaid,
-} from "@/client/stateManagement/managerDashboard/payment/paymentSlice";
-import { selectUnitById } from "@/client/stateManagement/managerDashboard/unit/unitSelectors";
+import { useState } from "react";
+import { usePropertyDetail } from "@/client/hooks/usePropertyDetail";
+import { usePayments } from "@/client/hooks/usePayments";
+import { useMarkPaid } from "@/client/hooks/useMarkPaid";
+import { useSendReminder } from "@/client/hooks/useSendReminder";
 import { LoadingState } from "@/client/views/LoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
@@ -22,104 +15,77 @@ import { MainHeader } from "@/client/commonComponents/MainHeader";
 import { TenantCard } from "@/client/views/tenant/TenantCard";
 import { ManagerLeaseCard } from "@/client/views/lease/ManagerLeaseCard";
 import { useToast } from "@/client/commonComponents/Toast";
-import type { Payment } from "@/client/stateManagement/managerDashboard/payment/type";
-import type { RootState } from "@/client/stateManagement/mainFile";
 import { UnitDetailProps } from "../helper";
 import { statusConfig } from "@/client/helpers/utils";
 
-const s = strings.manager.unitDetail;
+const s  = strings.manager.unitDetail;
 const st = strings.paymentTable;
 
 export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
-  const dispatch = useAppDispatch();
   const { showToast } = useToast();
 
-  const {
-    fetchState: { status, error },
-    unit,
-  } = useAppSelector(selectUnitById(propertyId, unitId));
-
+  const { data, isLoading, isError, error, refetch } = usePropertyDetail(propertyId);
+  const unit    = data?.units.find((u) => u.id === unitId) ?? null;
   const leaseId = unit?.lease?.id;
-  const tenantName = unit?.tenant?.name ?? "Tenant";
 
-  const payments: Payment[] = useAppSelector((state: RootState) =>
-    leaseId ? (state.payment.paymentsByLeaseId[leaseId]?.data ?? []) : [],
-  );
-  const paymentsLoading = useAppSelector((state: RootState) =>
-    leaseId ? (state.payment.paymentsByLeaseId[leaseId]?.loading ?? false) : false,
-  );
-  const markPaidState = useAppSelector(
-    (state: RootState) => state.payment.markPaidState,
-  );
-  const reminderState = useAppSelector(
-    (state: RootState) => state.payment.reminderState,
-  );
+  const { data: payments = [], isLoading: paymentsLoading } = usePayments(leaseId);
 
-  const [processingPeriodMonth, setProcessingPeriodMonth] = useState<string | null>(null);
-  const processingRef = useRef<string | null>(null);
-
+  const [processingPeriodMonth, setProcessingPeriodMonth]         = useState<string | null>(null);
   const [sendingReminderPeriodMonth, setSendingReminderPeriodMonth] = useState<string | null>(null);
-  const reminderRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    dispatch(fetchPropertyById(propertyId));
-  }, [dispatch, propertyId]);
+  const markPaid = useMarkPaid(leaseId ?? "");
+  const sendReminder = useSendReminder(leaseId ?? "");
 
-  useEffect(() => {
-    if (leaseId) dispatch(fetchTenantPayments(leaseId));
-  }, [dispatch, leaseId]);
-
-  useEffect(() => {
-    if (!processingRef.current) return;
-    if (!markPaidState.loading && markPaidState.data) {
-      showToast("Payment marked as paid successfully.", "success");
-      setProcessingPeriodMonth(null);
-      processingRef.current = null;
-    } else if (!markPaidState.loading && markPaidState.error) {
-      showToast(markPaidState.error ?? "Failed to mark payment as paid.", "error");
-      setProcessingPeriodMonth(null);
-      processingRef.current = null;
-    }
-  }, [markPaidState, showToast]);
-
-  useEffect(() => {
-    if (!reminderRef.current) return;
-    if (!reminderState.loading && reminderState.data) {
-      showToast(st.actions.reminderToast(tenantName), "success");
-      setSendingReminderPeriodMonth(null);
-      reminderRef.current = null;
-    } else if (!reminderState.loading && reminderState.error) {
-      showToast(reminderState.error ?? "Failed to send reminder.", "error");
-      setSendingReminderPeriodMonth(null);
-      reminderRef.current = null;
-    }
-  }, [reminderState, showToast, tenantName]);
-
-  if (status === "pending") return <LoadingState message={s.loading} />;
-  if (status === "failed")
+  if (isLoading) return <LoadingState message={s.loading} />;
+  if (isError)
     return (
       <ErrorState
-        message={error ?? s.error}
-        onRetry={() => dispatch(fetchPropertyById(propertyId))}
+        message={(error as Error)?.message ?? s.error}
+        onRetry={() => refetch()}
       />
     );
   if (!unit)
     return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
   const { bg, text } = statusConfig[unit.paymentStatus];
+  const tenantName = unit.tenant?.name ?? "Tenant";
 
   const handleMarkPaid = (periodMonth: string) => {
     if (!leaseId) return;
     setProcessingPeriodMonth(periodMonth);
-    processingRef.current = periodMonth;
-    dispatch(managerMarkPaid({ leaseId, periodMonth }));
+    markPaid.mutate(
+      { periodMonth },
+      {
+        onSuccess: () => {
+          showToast("Payment marked as paid successfully.", "success");
+        },
+        onError: (err) => {
+          showToast((err as Error).message ?? "Failed to mark payment as paid.", "error");
+        },
+        onSettled: () => {
+          setProcessingPeriodMonth(null);
+        },
+      },
+    );
   };
 
   const handleSendReminder = (periodMonth: string) => {
     if (!leaseId) return;
     setSendingReminderPeriodMonth(periodMonth);
-    reminderRef.current = periodMonth;
-    dispatch(managerSendReminder({ leaseId, periodMonth }));
+    sendReminder.mutate(
+      { periodMonth },
+      {
+        onSuccess: () => {
+          showToast(st.actions.reminderToast(tenantName), "success");
+        },
+        onError: (err) => {
+          showToast((err as Error).message ?? "Failed to send reminder.", "error");
+        },
+        onSettled: () => {
+          setSendingReminderPeriodMonth(null);
+        },
+      },
+    );
   };
 
   return (
@@ -128,9 +94,7 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
 
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-neutral-900">{unit.label}</h1>
-        <span
-          className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold ${bg} ${text}`}
-        >
+        <span className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold ${bg} ${text}`}>
           {s.statusPill[unit.paymentStatus]}
         </span>
       </div>
@@ -157,8 +121,8 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
             loading={paymentsLoading}
             empty={s.payments.empty}
             actions={{
-              onReminder: handleSendReminder,
-              onMarkPaid: handleMarkPaid,
+              onReminder:                handleSendReminder,
+              onMarkPaid:                handleMarkPaid,
               processingPeriodMonth,
               sendingReminderPeriodMonth,
             }}

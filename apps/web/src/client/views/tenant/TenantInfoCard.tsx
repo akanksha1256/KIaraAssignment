@@ -15,7 +15,7 @@ import type {
   Tenant,
   KycStatus,
   TenantStanding,
-} from "@/client/stateManagement/managerDashboard/tenant/type";
+} from "@/client/types";
 
 const s = strings.manager.tenantProfile.info;
 const ss = strings.manager.tenantProfile.standing;
