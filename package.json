@@ -9,9 +9,11 @@
     "type-check": "turbo run type-check",
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,css,md}\" --ignore-path .gitignore",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,css,md}\" --ignore-path .gitignore",
-    "test": "vitest run"
+    "test": "vitest run && pnpm --filter @repo/web test",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@types/node": "^20.0.0",
     "prettier": "^3.3.0",
     "turbo": "^2.0.0",
