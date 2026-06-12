@@ -48,7 +48,11 @@ The brief asked for management of properties and leases. The full CRUD surface �
 
 ### Authentication / session management
 
-There is no login. Manager and tenant views are separated by route namespace only (`/manager` vs `/tenant`). The tenant view is hardcoded to Alice Johnson (tenant-1). Auth would require a session layer, middleware route protection, and role-aware data fetching — none of which changes the core data or UI behaviour being demonstrated. It was cut cleanly and the app is structured so a JWT-based auth wrapper could be layered in without touching any view or hook.
+There is no login. Manager and tenant views are separated by route namespace only (`/manager` vs `/tenant`). The tenant view is hardcoded to Alice Johnson (`tenant-1`).
+
+The hardcoding is intentional for this demo scope: in a real application, a tenant would log in and the session would carry their `tenantId`. The `/tenant` route would read that ID from the session and pass it to `useTenantDashboard(tenantId)`, directing each tenant directly to their own dashboard. Since there is no auth layer here, `tenant-1` is used as a stand-in for "the currently logged-in tenant."
+
+The data-fetching code is already written generically — `useTenantDashboard` and `usePayRent` both accept `tenantId` as a parameter, so swapping in a real session ID requires no changes to hooks or views, only to where the ID is sourced.
 
 ### Real-time sync / WebSockets
 
