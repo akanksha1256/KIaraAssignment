@@ -1,9 +1,12 @@
 // Platform types — snake_case to match API/DB wire format
 
 export interface Property {
-  id: string;
-  name: string;
-  address: string;
+  id:              string;
+  name:            string;
+  address:         string;
+  manager_name:    string;
+  manager_email:   string;
+  manager_contact: string;
 }
 
 export interface Unit {

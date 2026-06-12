@@ -6,9 +6,12 @@ import type { PaymentStatus } from "../payment/type";
 export type PropertyStatus = "paid" | "outstanding" | "overdue" | "vacant";
 
 export interface Property {
-  id: string;
-  name: string;
-  address: string;
+  id:             string;
+  name:           string;
+  address:        string;
+  managerName:    string;
+  managerEmail:   string;
+  managerContact: string;
 }
 
 export interface PropertySummary {

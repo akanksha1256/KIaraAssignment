@@ -1,8 +1,8 @@
 import type { Property, Unit, Tenant, Lease, Payment, PaymentMethod } from "@/platform/types";
 
 const properties: Property[] = [
-  { id: "prop-1", name: "Maple Heights",   address: "123 Maple St, Austin TX 78701" },
-  { id: "prop-2", name: "Riverside Lofts", address: "456 River Rd, Austin TX 78702" },
+  { id: "prop-1", name: "Maple Heights",   address: "123 Maple St, Austin TX 78701", manager_name: "James Carter",   manager_email: "james.carter@rentportal.com",   manager_contact: "+1 512-555-0200" },
+  { id: "prop-2", name: "Riverside Lofts", address: "456 River Rd, Austin TX 78702", manager_name: "Sarah Mitchell", manager_email: "sarah.mitchell@rentportal.com", manager_contact: "+1 512-555-0201" },
 ];
 
 const units: Unit[] = [

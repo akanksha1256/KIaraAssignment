@@ -7,9 +7,12 @@ import type { Payment, PaymentMethod }     from "@/client/stateManagement/paymen
 import type { ManagerDashboardData, DashboardStats, PaymentBreakdown, MonthlyRevenue } from "@/client/stateManagement/manager/type";
 
 export const mapProperty = (p: P.Property): Property => ({
-  id:      p.id,
-  name:    p.name,
-  address: p.address,
+  id:             p.id,
+  name:           p.name,
+  address:        p.address,
+  managerName:    p.manager_name,
+  managerEmail:   p.manager_email,
+  managerContact: p.manager_contact,
 });
 
 export const mapUnit = (u: P.Unit): Unit => ({

@@ -1,3 +1,5 @@
+import { TenantDashboard } from "@/client/views/tenant-dashboard/TenantDashboard";
+
 export default function Page() {
-  return <div className="py-16 text-center text-neutral-400">Tenant view — coming soon.</div>;
+  return <TenantDashboard tenantId="tenant-1" />;
 }

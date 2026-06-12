@@ -11,19 +11,19 @@ import { LoadingState } from "@/client/views/LoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
 import { PaymentHistoryTable } from "@/client/views/payments/PaymentHistoryTable";
-import { strings } from "@/client/designSystems/strings";
+import { PropertyInfoCard } from "./PropertyInfoCard";
+import { ManagerInfoCard } from "./ManagerInfoCard";
+import { LeaseDetailsCard } from "./LeaseDetailsCard";
 import { CreditCard as CreditCardIcon } from "lucide-react";
-import { MainHeader } from "@/client/commonComponents/MainHeader";
-import { TenantInfoCard } from "./TenantInfoCard";
-import { TenantCurrentLeaseCard } from "../lease/TenantCurrentLeaseCard";
+import { strings } from "@/client/designSystems/strings";
 
-const s = strings.manager.tenantProfile;
+const s = strings.tenant.dashboard;
 
 interface Props {
   tenantId: string;
 }
 
-export const TenantProfile = ({ tenantId }: Props) => {
+export const TenantDashboard = ({ tenantId }: Props) => {
   const dispatch = useAppDispatch();
 
   const { status, error, profile } = useAppSelector(
@@ -45,21 +45,20 @@ export const TenantProfile = ({ tenantId }: Props) => {
   if (!profile)
     return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
-  const { tenant, lease, unit, property, payments, standing } = profile;
+  const { tenant, lease, unit, property, payments } = profile;
+
   return (
     <div className="space-y-8">
-      <MainHeader label={s.backLink} />
-      <div className="grid gap-6 lg:grid-cols-5">
-        <div className="lg:col-span-3">
-          <TenantInfoCard tenant={tenant} standing={standing} />
-        </div>
-        <div className="lg:col-span-2">
-          <TenantCurrentLeaseCard
-            lease={lease}
-            unit={unit}
-            property={property}
-          />
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold text-neutral-900">
+          {s.heading(tenant.name)}
+        </h1>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <PropertyInfoCard property={property} unit={unit} />
+        <ManagerInfoCard property={property} />
+        <LeaseDetailsCard lease={lease} />
       </div>
 
       <div>
