@@ -7,6 +7,10 @@ import type { TableCell } from "@/client/commonComponents/DataTable";
 
 const s = strings.manager.dashboard;
 
+const STATUS_SORT: Record<string, number> = {
+  overdue: 0, outstanding: 1, allPaid: 2, vacant: 3,
+};
+
 export const accentMap: Record<
   StatCardProps["accent"],
   { bg: string; text: string }
@@ -18,28 +22,29 @@ export const accentMap: Record<
 };
 
 export const TABLE_COLS = [
-  { label: s.propertiesTable.colId, align: "left" as const },
-  { label: s.propertiesTable.colName, align: "right" as const },
+  { label: s.propertiesTable.colId,      align: "left"  as const },
+  { label: s.propertiesTable.colName,    align: "right" as const },
   { label: s.propertiesTable.colAddress, align: "right" as const },
-  { label: s.propertiesTable.colUnits, align: "right" as const },
-  { label: s.propertiesTable.colRent, align: "right" as const },
-  { label: s.propertiesTable.colStatus, align: "right" as const },
-  { label: "", align: "right" as const },
+  { label: s.propertiesTable.colUnits,   align: "right" as const },
+  { label: s.propertiesTable.colRent,    align: "right" as const },
+  { label: s.propertiesTable.colStatus,  align: "right" as const, sortable: true },
+  { label: "",                           align: "right" as const },
 ];
 
 export const getTableRow = (row: PropertySummary): TableCell[] => {
   return [
     {
       content: row.id,
-      className:
-        "whitespace-nowrap px-5 py-4 text-xs font-mono text-neutral-400",
+      className: "whitespace-nowrap px-5 py-4 text-xs font-mono text-neutral-400",
     },
     {
       content: row.name,
-      className:
-        "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
+      className: "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
     },
-    { content: row.address, className: "px-5 py-4 text-right text-sm text-neutral-500" },
+    {
+      content: row.address,
+      className: "px-5 py-4 text-right text-sm text-neutral-500",
+    },
     {
       content: (
         <>
@@ -49,17 +54,15 @@ export const getTableRow = (row: PropertySummary): TableCell[] => {
           </span>
         </>
       ),
-      className:
-        "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-600",
+      className: "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-600",
     },
     {
-      content:
-        row.totalRent > 0 ? `$${row.totalRent.toLocaleString()}/mo` : "—",
-      className:
-        "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
+      content: row.totalRent > 0 ? `$${row.totalRent.toLocaleString()}/mo` : "—",
+      className: "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
     },
     {
       content: <Pill status={row.status} />,
+      sortValue: STATUS_SORT[row.status] ?? 99,
       className: "whitespace-nowrap px-5 py-4 text-right",
     },
     {

@@ -81,6 +81,7 @@ export const ManagerDashboard = () => {
       },
       {
         content: <div className="flex justify-end"><Pill status={row.status} /></div>,
+        sortValue: ({ overdue: 0, outstanding: 1, allPaid: 2, vacant: 3 } as Record<string, number>)[row.status] ?? 99,
         className: "whitespace-nowrap w-28 px-5 py-4",
       },
       {
