@@ -46,6 +46,7 @@ export interface Payment {
   status: PaymentStatus;
   paid_date: string | null;
   method: string | null;
+  last_reminded_on: string | null;
 }
 
 export interface PaymentMethod {

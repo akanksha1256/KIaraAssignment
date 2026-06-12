@@ -6,6 +6,7 @@ import { MoreVertical, Loader2 } from "lucide-react";
 
 export interface RowMenuItem {
   label: string;
+  sublabel?: string;
   onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
@@ -98,10 +99,19 @@ export function RowMenu({ items }: Props) {
                     : "text-neutral-700 hover:bg-neutral-50"
                 }`}
               >
-                {item.label}
-                {item.loading && (
-                  <Loader2 className="ml-auto h-3.5 w-3.5 animate-spin opacity-60" />
-                )}
+                <span className="flex flex-col items-start">
+                  <span className="flex items-center gap-2">
+                    {item.label}
+                    {item.loading && (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin opacity-60" />
+                    )}
+                  </span>
+                  {item.sublabel && (
+                    <span className="text-xs font-normal opacity-70">
+                      {item.sublabel}
+                    </span>
+                  )}
+                </span>
               </button>
             ))}
           </div>,

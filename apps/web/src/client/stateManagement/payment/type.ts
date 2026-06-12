@@ -11,6 +11,7 @@ export interface Payment {
   status: PaymentStatus;
   paidDate: string | null;
   method: string | null;
+  lastRemindedOn: string | null;
 }
 
 export interface PaymentMethod {

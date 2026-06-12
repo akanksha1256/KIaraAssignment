@@ -135,15 +135,17 @@ export const api = {
       }),
     ),
 
-  sendReminder: (
+  sendReminder: async (
     leaseId: string,
     periodMonth: string,
-  ): Promise<{ success: true }> =>
-    request(`/leases/${leaseId}/remind`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ period_month: periodMonth }),
-    }),
+  ): Promise<Payment> =>
+    mapPayment(
+      await request<P.Payment>(`/leases/${leaseId}/remind`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ period_month: periodMonth }),
+      }),
+    ),
 
   getPaymentMethods: async (tenantId: string): Promise<PaymentMethod[]> =>
     (

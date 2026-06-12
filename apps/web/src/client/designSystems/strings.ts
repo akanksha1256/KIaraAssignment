@@ -32,8 +32,11 @@ export const strings = {
     },
     actions: {
       sendReminder: "Send Reminder",
+      lastReminderSent: "Last sent:",
       markPaid: "Mark as Paid",
       markingPaid: "Processing…",
+      reminderToast: (tenantName: string) =>
+        `Reminder sent to ${tenantName} for overdue rent.`,
     },
   },
 

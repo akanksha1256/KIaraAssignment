@@ -40,6 +40,7 @@ export async function POST(
       status: "paid",
       paid_date: paidAt,
       method,
+      last_reminded_on: null,
     };
     db.payments.push(payment);
     return NextResponse.json(payment);

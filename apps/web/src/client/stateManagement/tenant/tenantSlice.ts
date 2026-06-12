@@ -30,7 +30,7 @@ export const managerSendReminder = createAction<{
 }>("tenant/managerSendReminder");
 export const managerSendReminderSuccess = createAction<{
   leaseId: string;
-  periodMonth: string;
+  payment: Payment;
 }>("tenant/managerSendReminderSuccess");
 export const managerSendReminderFailure = createAction<{
   leaseId: string;
@@ -305,9 +305,19 @@ const tenantSlice = createSlice({
       .addCase(managerSendReminder, (state) => {
         state.reminderState = { data: null, loading: true, error: null };
       })
-      .addCase(managerSendReminderSuccess, (state, { payload }) => {
-        state.reminderState = { data: payload, loading: false, error: null };
-      })
+      .addCase(
+        managerSendReminderSuccess,
+        (state, { payload: { leaseId, payment } }) => {
+          state.reminderState = { data: payment, loading: false, error: null };
+          const list = state.payments[leaseId]?.data;
+          if (list) {
+            const idx = list.findIndex(
+              (p) => p.periodMonth === payment.periodMonth,
+            );
+            if (idx !== -1) list[idx] = payment;
+          }
+        },
+      )
       .addCase(managerSendReminderFailure, (state, { payload: { error } }) => {
         state.reminderState = { data: null, loading: false, error };
       });

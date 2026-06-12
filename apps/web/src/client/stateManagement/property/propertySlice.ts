@@ -5,8 +5,8 @@ import type { PropertyState } from "./type";
 
 const initialState: PropertyState = {
   propertyListfetchState: defaultFetchState,
-  propertiesList:         [],
-  propertyDetailById:     {},
+  propertiesList: [],
+  propertyDetailById: {},
 };
 
 const propertySlice = createSlice({
@@ -16,19 +16,25 @@ const propertySlice = createSlice({
     fetchPropertiesSummary: (state) => {
       state.propertyListfetchState = { status: "pending", error: null };
     },
-    fetchPropertiesSummarySuccess: (state, action: PayloadAction<PropertySummary[]>) => {
+    fetchPropertiesSummarySuccess: (
+      state,
+      action: PayloadAction<PropertySummary[]>,
+    ) => {
       state.propertyListfetchState = { status: "completed", error: null };
       state.propertiesList = action.payload;
     },
     fetchPropertiesSummaryFailure: (state, action: PayloadAction<string>) => {
-      state.propertyListfetchState = { status: "failed", error: action.payload };
+      state.propertyListfetchState = {
+        status: "failed",
+        error: action.payload,
+      };
     },
 
     fetchPropertyById: (state, action: PayloadAction<string>) => {
       const id = action.payload;
       state.propertyDetailById[id] = {
         fetchState: { status: "pending", error: null },
-        property:   state.propertyDetailById[id]?.property ?? null,
+        property: state.propertyDetailById[id]?.property ?? null,
       };
     },
     fetchPropertyByIdSuccess: (
@@ -48,14 +54,14 @@ const propertySlice = createSlice({
       const { id, error } = action.payload;
       state.propertyDetailById[id] = {
         fetchState: { status: "failed", error },
-        property:   state.propertyDetailById[id]?.property ?? null,
+        property: state.propertyDetailById[id]?.property ?? null,
       };
     },
 
     clearState: (state) => {
       state.propertyListfetchState = defaultFetchState;
-      state.propertiesList         = [];
-      state.propertyDetailById     = {};
+      state.propertiesList = [];
+      state.propertyDetailById = {};
     },
   },
 });

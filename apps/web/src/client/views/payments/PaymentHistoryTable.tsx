@@ -8,6 +8,10 @@ import { strings } from "@/client/designSystems/strings";
 import type { Payment } from "@/client/stateManagement/payment/type";
 import type { TableCell } from "@/client/commonComponents/DataTable";
 import { formatDate, formatPeriodMonth } from "@/client/helpers/utils";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 const s = strings.paymentTable;
 
@@ -21,6 +25,7 @@ export interface PaymentTableActions {
   onReminder: (periodMonth: string) => void;
   onMarkPaid: (periodMonth: string) => void;
   processingPeriodMonth: string | null;
+  sendingReminderPeriodMonth: string | null;
 }
 
 interface Props {
@@ -83,7 +88,21 @@ function buildRow(
 
   const isThisRowProcessing =
     actions.processingPeriodMonth === payment.periodMonth;
-  const anyRowProcessing = actions.processingPeriodMonth !== null;
+  const isThisRowSendingReminder =
+    actions.sendingReminderPeriodMonth === payment.periodMonth;
+  const anyRowProcessing =
+    actions.processingPeriodMonth !== null ||
+    actions.sendingReminderPeriodMonth !== null;
+
+  const remindedAt = payment.lastRemindedOn
+    ? dayjs.utc(payment.lastRemindedOn)
+    : null;
+  const reminderWithin24h =
+    remindedAt !== null && dayjs.utc().diff(remindedAt, "hour") < 24;
+
+  const reminderSublabel = reminderWithin24h
+    ? `${s.actions.lastReminderSent} ${remindedAt!.local().format("D MMM YYYY, h:mm A")}`
+    : undefined;
 
   const menuItems =
     payment.status === "paid"
@@ -93,8 +112,10 @@ function buildRow(
             ? [
                 {
                   label: s.actions.sendReminder,
+                  sublabel: reminderSublabel,
                   onClick: () => actions.onReminder(payment.periodMonth),
-                  disabled: anyRowProcessing,
+                  disabled: anyRowProcessing || reminderWithin24h,
+                  loading: isThisRowSendingReminder,
                 },
               ]
             : []),

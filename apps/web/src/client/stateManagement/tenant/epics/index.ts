@@ -38,10 +38,10 @@ const managerSendReminderEpic: Epic = (action$) =>
     ofType(managerSendReminder.type),
     mergeMap((action: ReturnType<typeof managerSendReminder>) =>
       from(api.sendReminder(action.payload.leaseId, action.payload.periodMonth)).pipe(
-        mergeMap(() =>
+        mergeMap((payment) =>
           of(managerSendReminderSuccess({
-            leaseId:     action.payload.leaseId,
-            periodMonth: action.payload.periodMonth,
+            leaseId: action.payload.leaseId,
+            payment,
           })),
         ),
         catchError((err: Error) =>

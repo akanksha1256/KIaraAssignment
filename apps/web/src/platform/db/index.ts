@@ -35,34 +35,34 @@ const leases: Lease[] = [
 
 const payments: Payment[] = [
   // Alice – lease-1
-  { id: "pay-1",  lease_id: "lease-1", period_month: "2024-01", amount_due: 1800, amount_paid: 1800, status: "paid",        paid_date: "2024-01-02T00:00:00.000Z", method: "Bank Transfer" },
-  { id: "pay-2",  lease_id: "lease-1", period_month: "2024-02", amount_due: 1800, amount_paid: 1800, status: "paid",        paid_date: "2024-02-01T00:00:00.000Z", method: "Bank Transfer" },
-  { id: "pay-3",  lease_id: "lease-1", period_month: "2024-03", amount_due: 1800, amount_paid: 1800, status: "paid",        paid_date: "2024-03-03T00:00:00.000Z", method: "Bank Transfer" },
-  { id: "pay-4",  lease_id: "lease-1", period_month: "2024-04", amount_due: 1800, amount_paid: 1800, status: "paid",        paid_date: "2024-04-01T00:00:00.000Z", method: "Credit Card"   },
-  { id: "pay-5",  lease_id: "lease-1", period_month: "2024-05", amount_due: 1800, amount_paid: 1800, status: "paid",        paid_date: "2024-05-01T00:00:00.000Z", method: "Bank Transfer" },
-  { id: "pay-6",  lease_id: "lease-1", period_month: "2024-06", amount_due: 1800, amount_paid: 0,    status: "overdue",     paid_date: null,                       method: null            },
-  { id: "pay-7",  lease_id: "lease-1", period_month: "2024-07", amount_due: 1800, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null            },
+  { id: "pay-1",  lease_id: "lease-1", period_month: "2024-01", amount_due: 1800, amount_paid: 1800, status: "paid",        paid_date: "2024-01-02T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
+  { id: "pay-2",  lease_id: "lease-1", period_month: "2024-02", amount_due: 1800, amount_paid: 1800, status: "paid",        paid_date: "2024-02-01T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
+  { id: "pay-3",  lease_id: "lease-1", period_month: "2024-03", amount_due: 1800, amount_paid: 1800, status: "paid",        paid_date: "2024-03-03T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
+  { id: "pay-4",  lease_id: "lease-1", period_month: "2024-04", amount_due: 1800, amount_paid: 1800, status: "paid",        paid_date: "2024-04-01T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
+  { id: "pay-5",  lease_id: "lease-1", period_month: "2024-05", amount_due: 1800, amount_paid: 1800, status: "paid",        paid_date: "2024-05-01T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
+  { id: "pay-6",  lease_id: "lease-1", period_month: "2024-06", amount_due: 1800, amount_paid: 0,    status: "overdue",     paid_date: null,                       method: null,             last_reminded_on: null },
+  { id: "pay-7",  lease_id: "lease-1", period_month: "2024-07", amount_due: 1800, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null,             last_reminded_on: null },
   // Bob – lease-2
-  { id: "pay-8",  lease_id: "lease-2", period_month: "2024-03", amount_due: 2100, amount_paid: 2100, status: "paid",        paid_date: "2024-03-01T00:00:00.000Z", method: "Credit Card"   },
-  { id: "pay-9",  lease_id: "lease-2", period_month: "2024-04", amount_due: 2100, amount_paid: 2100, status: "paid",        paid_date: "2024-04-05T00:00:00.000Z", method: "Credit Card"   },
-  { id: "pay-10", lease_id: "lease-2", period_month: "2024-05", amount_due: 2100, amount_paid: 2100, status: "paid",        paid_date: "2024-05-02T00:00:00.000Z", method: "Credit Card"   },
-  { id: "pay-11", lease_id: "lease-2", period_month: "2024-06", amount_due: 2100, amount_paid: 0,    status: "overdue",     paid_date: null,                       method: null            },
-  { id: "pay-12", lease_id: "lease-2", period_month: "2024-07", amount_due: 2100, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null            },
+  { id: "pay-8",  lease_id: "lease-2", period_month: "2024-03", amount_due: 2100, amount_paid: 2100, status: "paid",        paid_date: "2024-03-01T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
+  { id: "pay-9",  lease_id: "lease-2", period_month: "2024-04", amount_due: 2100, amount_paid: 2100, status: "paid",        paid_date: "2024-04-05T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
+  { id: "pay-10", lease_id: "lease-2", period_month: "2024-05", amount_due: 2100, amount_paid: 2100, status: "paid",        paid_date: "2024-05-02T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
+  { id: "pay-11", lease_id: "lease-2", period_month: "2024-06", amount_due: 2100, amount_paid: 0,    status: "overdue",     paid_date: null,                       method: null,             last_reminded_on: null },
+  { id: "pay-12", lease_id: "lease-2", period_month: "2024-07", amount_due: 2100, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null,             last_reminded_on: null },
   // Carol – lease-3
-  { id: "pay-13", lease_id: "lease-3", period_month: "2024-06", amount_due: 2500, amount_paid: 2500, status: "paid",        paid_date: "2024-06-01T00:00:00.000Z", method: "Bank Transfer" },
-  { id: "pay-14", lease_id: "lease-3", period_month: "2024-07", amount_due: 2500, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null            },
+  { id: "pay-13", lease_id: "lease-3", period_month: "2024-06", amount_due: 2500, amount_paid: 2500, status: "paid",        paid_date: "2024-06-01T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
+  { id: "pay-14", lease_id: "lease-3", period_month: "2024-07", amount_due: 2500, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null,             last_reminded_on: null },
   // David – lease-4
-  { id: "pay-15", lease_id: "lease-4", period_month: "2024-02", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-02-01T00:00:00.000Z", method: "Bank Transfer" },
-  { id: "pay-16", lease_id: "lease-4", period_month: "2024-03", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-03-02T00:00:00.000Z", method: "Bank Transfer" },
-  { id: "pay-17", lease_id: "lease-4", period_month: "2024-04", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-04-01T00:00:00.000Z", method: "Bank Transfer" },
-  { id: "pay-18", lease_id: "lease-4", period_month: "2024-05", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-05-01T00:00:00.000Z", method: "Bank Transfer" },
-  { id: "pay-19", lease_id: "lease-4", period_month: "2024-06", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-06-01T00:00:00.000Z", method: "Bank Transfer" },
-  { id: "pay-20", lease_id: "lease-4", period_month: "2024-07", amount_due: 2800, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null            },
+  { id: "pay-15", lease_id: "lease-4", period_month: "2024-02", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-02-01T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
+  { id: "pay-16", lease_id: "lease-4", period_month: "2024-03", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-03-02T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
+  { id: "pay-17", lease_id: "lease-4", period_month: "2024-04", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-04-01T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
+  { id: "pay-18", lease_id: "lease-4", period_month: "2024-05", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-05-01T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
+  { id: "pay-19", lease_id: "lease-4", period_month: "2024-06", amount_due: 2800, amount_paid: 2800, status: "paid",        paid_date: "2024-06-01T00:00:00.000Z", method: "Bank Transfer", last_reminded_on: null },
+  { id: "pay-20", lease_id: "lease-4", period_month: "2024-07", amount_due: 2800, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null,             last_reminded_on: null },
   // Eva – lease-5
-  { id: "pay-21", lease_id: "lease-5", period_month: "2024-04", amount_due: 3200, amount_paid: 3200, status: "paid",        paid_date: "2024-04-03T00:00:00.000Z", method: "Credit Card"   },
-  { id: "pay-22", lease_id: "lease-5", period_month: "2024-05", amount_due: 3200, amount_paid: 3200, status: "paid",        paid_date: "2024-05-01T00:00:00.000Z", method: "Credit Card"   },
-  { id: "pay-23", lease_id: "lease-5", period_month: "2024-06", amount_due: 3200, amount_paid: 0,    status: "overdue",     paid_date: null,                       method: null            },
-  { id: "pay-24", lease_id: "lease-5", period_month: "2024-07", amount_due: 3200, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null            },
+  { id: "pay-21", lease_id: "lease-5", period_month: "2024-04", amount_due: 3200, amount_paid: 3200, status: "paid",        paid_date: "2024-04-03T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
+  { id: "pay-22", lease_id: "lease-5", period_month: "2024-05", amount_due: 3200, amount_paid: 3200, status: "paid",        paid_date: "2024-05-01T00:00:00.000Z", method: "Credit Card",   last_reminded_on: null },
+  { id: "pay-23", lease_id: "lease-5", period_month: "2024-06", amount_due: 3200, amount_paid: 0,    status: "overdue",     paid_date: null,                       method: null,             last_reminded_on: null },
+  { id: "pay-24", lease_id: "lease-5", period_month: "2024-07", amount_due: 3200, amount_paid: 0,    status: "outstanding", paid_date: null,                       method: null,             last_reminded_on: null },
 ];
 
 const paymentMethods: PaymentMethod[] = [

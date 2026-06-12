@@ -28,6 +28,7 @@ import { UnitDetailProps } from "../helper";
 import { statusConfig } from "@/client/helpers/utils";
 
 const s = strings.manager.unitDetail;
+const st = strings.paymentTable;
 
 export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
   const dispatch = useAppDispatch();
@@ -39,6 +40,7 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
   } = useAppSelector(selectUnitById(propertyId, unitId));
 
   const leaseId = unit?.lease?.id;
+  const tenantName = unit?.tenant?.name ?? "Tenant";
 
   const payments: Payment[] = useAppSelector((state: RootState) =>
     leaseId ? (state.tenant.payments[leaseId]?.data ?? []) : [],
@@ -49,13 +51,15 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
   const markPaidState = useAppSelector(
     (state: RootState) => state.tenant.markPaidState,
   );
+  const reminderState = useAppSelector(
+    (state: RootState) => state.tenant.reminderState,
+  );
 
-  // Track which periodMonth is currently being marked as paid
-  const [processingPeriodMonth, setProcessingPeriodMonth] = useState<
-    string | null
-  >(null);
-  // Ref so the useEffect below can read the latest value without stale closure
+  const [processingPeriodMonth, setProcessingPeriodMonth] = useState<string | null>(null);
   const processingRef = useRef<string | null>(null);
+
+  const [sendingReminderPeriodMonth, setSendingReminderPeriodMonth] = useState<string | null>(null);
+  const reminderRef = useRef<string | null>(null);
 
   useEffect(() => {
     dispatch(fetchPropertyById(propertyId));
@@ -65,10 +69,8 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
     if (leaseId) dispatch(fetchTenantPayments(leaseId));
   }, [dispatch, leaseId]);
 
-  // React to markPaidState changes to show toast and clear loading
   useEffect(() => {
     if (!processingRef.current) return;
-
     if (!markPaidState.loading && markPaidState.data) {
       showToast("Payment marked as paid successfully.", "success");
       setProcessingPeriodMonth(null);
@@ -79,6 +81,19 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
       processingRef.current = null;
     }
   }, [markPaidState, showToast]);
+
+  useEffect(() => {
+    if (!reminderRef.current) return;
+    if (!reminderState.loading && reminderState.data) {
+      showToast(st.actions.reminderToast(tenantName), "success");
+      setSendingReminderPeriodMonth(null);
+      reminderRef.current = null;
+    } else if (!reminderState.loading && reminderState.error) {
+      showToast(reminderState.error ?? "Failed to send reminder.", "error");
+      setSendingReminderPeriodMonth(null);
+      reminderRef.current = null;
+    }
+  }, [reminderState, showToast, tenantName]);
 
   if (status === "pending") return <LoadingState message={s.loading} />;
   if (status === "failed")
@@ -98,6 +113,13 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
     setProcessingPeriodMonth(periodMonth);
     processingRef.current = periodMonth;
     dispatch(managerMarkPaid({ leaseId, periodMonth }));
+  };
+
+  const handleSendReminder = (periodMonth: string) => {
+    if (!leaseId) return;
+    setSendingReminderPeriodMonth(periodMonth);
+    reminderRef.current = periodMonth;
+    dispatch(managerSendReminder({ leaseId, periodMonth }));
   };
 
   return (
@@ -135,11 +157,10 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
             loading={paymentsLoading}
             empty={s.payments.empty}
             actions={{
-              onReminder: (periodMonth) =>
-                leaseId &&
-                dispatch(managerSendReminder({ leaseId, periodMonth })),
+              onReminder: handleSendReminder,
               onMarkPaid: handleMarkPaid,
               processingPeriodMonth,
+              sendingReminderPeriodMonth,
             }}
           />
         </div>

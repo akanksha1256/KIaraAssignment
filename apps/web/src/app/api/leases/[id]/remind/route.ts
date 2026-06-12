@@ -15,8 +15,8 @@ export async function POST(
       (p) => p.lease_id === params.id && p.period_month === period_month,
     );
     if (!payment) return NextResponse.json({ message: "Payment not found" }, { status: 404 });
-    // In production this would send an email/SMS; here we just confirm
-    return NextResponse.json({ success: true });
+    payment.last_reminded_on = new Date().toISOString();
+    return NextResponse.json(payment);
   } catch (e: any) {
     return errorResponse(e.message);
   }

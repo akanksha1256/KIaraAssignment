@@ -46,8 +46,9 @@ export const mapPayment = (p: P.Payment): Payment => ({
   amountDue:   p.amount_due,
   amountPaid:  p.amount_paid,
   status:      p.status,
-  paidDate:    p.paid_date,
-  method:      p.method,
+  paidDate:       p.paid_date,
+  method:         p.method,
+  lastRemindedOn: p.last_reminded_on,
 });
 
 export const mapPaymentMethod = (m: P.PaymentMethod): PaymentMethod => ({
