@@ -6,15 +6,15 @@ import {
   useAppSelector,
 } from "@/client/stateManagement/mainFile";
 import {
-  fetchPaymentMethods,
-  addPaymentMethod,
+  tenantFetchPaymentMethods,
+  tenantAddPaymentMethod,
   tenantPayRent,
-} from "@/client/stateManagement/managerDashboard/payment/paymentSlice";
+} from "@/client/stateManagement/tenantDashboard/payment/tenantPaymentSlice";
 import {
-  selectPaymentMethods,
-  selectPayRentState,
-  selectAddMethodState,
-} from "@/client/stateManagement/managerDashboard/payment/paymentSelectors";
+  selectTenantPaymentMethods,
+  selectTenantPayRentState,
+  selectTenantAddMethodState,
+} from "@/client/stateManagement/tenantDashboard/payment/tenantPaymentSelectors";
 import { useToast } from "@/client/commonComponents/Toast";
 import { strings } from "@/client/designSystems/strings";
 import { formatPeriodMonth } from "@/client/helpers/utils";
@@ -40,10 +40,10 @@ export function PayRentModal({
   const { showToast } = useToast();
 
   const { methods, loading: methodsLoading } = useAppSelector(
-    selectPaymentMethods(tenantId),
+    selectTenantPaymentMethods(tenantId),
   );
-  const payRentState = useAppSelector(selectPayRentState);
-  const addMethodState = useAppSelector(selectAddMethodState);
+  const payRentState = useAppSelector(selectTenantPayRentState);
+  const addMethodState = useAppSelector(selectTenantAddMethodState);
 
   const [selectedMethodId, setSelectedMethodId] = useState<string>("");
   const [newLabel, setNewLabel] = useState("");
@@ -52,7 +52,7 @@ export function PayRentModal({
   const addingRef = useRef(false);
 
   useEffect(() => {
-    if (!methods) dispatch(fetchPaymentMethods(tenantId));
+    if (!methods) dispatch(tenantFetchPaymentMethods(tenantId));
   }, [dispatch, tenantId, methods]);
 
   useEffect(() => {
@@ -87,7 +87,7 @@ export function PayRentModal({
   const handleAddMethod = () => {
     if (!newLabel.trim()) return;
     addingRef.current = true;
-    dispatch(addPaymentMethod({ tenantId, label: newLabel.trim() }));
+    dispatch(tenantAddPaymentMethod({ tenantId, label: newLabel.trim() }));
   };
 
   const handlePay = () => {

@@ -12,11 +12,13 @@ import { leaseReducer } from "./managerDashboard/lease/leaseSlice";
 import { paymentReducer } from "./managerDashboard/payment/paymentSlice";
 import { unitReducer } from "./managerDashboard/unit/unitSlice";
 import { tenantDashboardReducer } from "./tenantDashboard/tenantDashboardSlice";
+import { tenantPaymentReducer } from "./tenantDashboard/payment/tenantPaymentSlice";
 import { managerEpics } from "./managerDashboard/manager/epics";
 import { propertyEpics } from "./managerDashboard/property/epics";
 import { tenantEpics } from "./managerDashboard/tenant/epics";
 import { paymentEpics } from "./managerDashboard/payment/epics";
 import { tenantDashboardEpics } from "./tenantDashboard/epics";
+import { tenantPaymentEpics } from "./tenantDashboard/payment/epics";
 
 export const rootEpic = combineEpics(
   managerEpics,
@@ -24,19 +26,21 @@ export const rootEpic = combineEpics(
   tenantEpics,
   paymentEpics,
   tenantDashboardEpics,
+  tenantPaymentEpics,
 );
 
 const epicMiddleware = createEpicMiddleware();
 
 export const store = configureStore({
   reducer: {
-    manager: managerReducer,
-    property: propertyReducer,
-    tenant: tenantReducer,
-    lease: leaseReducer,
-    payment: paymentReducer,
-    unit: unitReducer,
-    tenantDashboard: tenantDashboardReducer,
+    manager:          managerReducer,
+    property:         propertyReducer,
+    tenant:           tenantReducer,
+    lease:            leaseReducer,
+    payment:          paymentReducer,
+    unit:             unitReducer,
+    tenantDashboard:  tenantDashboardReducer,
+    tenantPayment:    tenantPaymentReducer,
   },
   middleware: (getDefault) => getDefault().concat(epicMiddleware),
 });

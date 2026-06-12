@@ -21,10 +21,7 @@ export interface PaymentMethod {
 }
 
 export type PaymentSliceState = {
-  paymentsByLeaseId:        FetchStateMap<Payment[]>;
-  paymentMethodsByTenantId: FetchStateMap<PaymentMethod[]>;
-  payRent:                  FetchState<Payment>;
-  addMethod:                FetchState<PaymentMethod>;
-  reminderState:            FetchState<Payment>;
-  markPaidState:            FetchState<Payment>;
+  paymentsByLeaseId: FetchStateMap<Payment[]>;
+  reminderState:     FetchState<Payment>;
+  markPaidState:     FetchState<Payment>;
 };

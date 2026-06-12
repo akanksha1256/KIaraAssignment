@@ -1,15 +1,17 @@
 import type { RootState } from "../../mainFile";
 
-export const selectPaymentMethods =
-  (tenantId: string) => (state: RootState) => {
-    const entry = state.payment.paymentMethodsByTenantId[tenantId];
+export const selectManagerPayments =
+  (leaseId: string) => (state: RootState) => {
+    const entry = state.payment.paymentsByLeaseId[leaseId];
     return {
-      methods: entry?.data ?? null,
-      loading: entry?.loading ?? false,
-      error:   entry?.error  ?? null,
+      payments: entry?.data    ?? null,
+      loading:  entry?.loading ?? false,
+      error:    entry?.error   ?? null,
     };
   };
 
-export const selectPayRentState = (state: RootState) => state.payment.payRent;
+export const selectManagerMarkPaidState = (state: RootState) =>
+  state.payment.markPaidState;
 
-export const selectAddMethodState = (state: RootState) => state.payment.addMethod;
+export const selectManagerReminderState = (state: RootState) =>
+  state.payment.reminderState;

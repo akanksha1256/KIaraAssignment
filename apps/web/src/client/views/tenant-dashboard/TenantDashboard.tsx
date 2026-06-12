@@ -7,6 +7,7 @@ import {
 } from "@/client/stateManagement/mainFile";
 import { fetchTenantDashboard } from "@/client/stateManagement/tenantDashboard/tenantDashboardSlice";
 import { selectTenantDashboard } from "@/client/stateManagement/tenantDashboard/tenantDashboardSelectors";
+import { selectTenantPayments } from "@/client/stateManagement/tenantDashboard/payment/tenantPaymentSelectors";
 import { LoadingState } from "@/client/views/LoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
@@ -28,6 +29,9 @@ export const TenantDashboard = ({ tenantId }: Props) => {
   const dispatch = useAppDispatch();
 
   const { status, error, data } = useAppSelector(selectTenantDashboard(tenantId));
+  const leaseId = data?.lease?.id ?? "";
+  const { payments } = useAppSelector(selectTenantPayments(leaseId));
+
   const [payingPeriodMonth, setPayingPeriodMonth] = useState<string | null>(null);
 
   useEffect(() => {
@@ -45,10 +49,11 @@ export const TenantDashboard = ({ tenantId }: Props) => {
   if (!data)
     return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
-  const { tenantName, lease, unit, property, payments } = data;
+  const { tenantName, lease, unit, property } = data;
+  const paymentList = payments ?? [];
 
   const pendingPayment = payingPeriodMonth
-    ? payments.find((p) => p.periodMonth === payingPeriodMonth) ?? null
+    ? paymentList.find((p) => p.periodMonth === payingPeriodMonth) ?? null
     : null;
 
   return (
@@ -69,11 +74,11 @@ export const TenantDashboard = ({ tenantId }: Props) => {
         <div className="mb-3 flex items-center gap-2">
           <CreditCardIcon className="h-4 w-4 text-neutral-400" />
           <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-400">
-            {s.payments.heading(payments.length)}
+            {s.payments.heading(paymentList.length)}
           </h2>
         </div>
         <PaymentHistoryTable
-          payments={payments}
+          payments={paymentList}
           empty={s.payments.empty}
           tenantActions={
             lease

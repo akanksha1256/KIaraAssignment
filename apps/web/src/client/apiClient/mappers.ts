@@ -127,8 +127,10 @@ export const mapTenantDashboard = (d: P.TenantProfileData): TenantDashboardData 
   lease:      d.lease    ? mapLease(d.lease)      : null,
   unit:       d.unit     ? mapUnit(d.unit)         : null,
   property:   d.property ? mapProperty(d.property) : null,
-  payments:   d.payments.map(mapPayment),
 });
+
+export const mapTenantDashboardPayments = (d: P.TenantProfileData): Payment[] =>
+  d.payments.map(mapPayment);
 
 export const mapManagerDashboard = (d: P.ManagerDashboardData): ManagerDashboardData => ({
   stats:            mapDashboardStats(d.stats),

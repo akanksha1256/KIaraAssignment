@@ -7,6 +7,7 @@ import {
   mapTenant,
   mapTenantProfile,
   mapTenantDashboard,
+  mapTenantDashboardPayments,
   mapLease,
   mapPayment,
   mapPaymentMethod,
@@ -77,8 +78,12 @@ export const api = {
   getTenantProfile: async (id: string): Promise<TenantProfile> =>
     mapTenantProfile(await request<P.TenantProfileData>(`/tenants/${id}`)),
 
-  getTenantDashboard: async (id: string): Promise<TenantDashboardData> =>
-    mapTenantDashboard(await request<P.TenantProfileData>(`/tenants/${id}`)),
+  getTenantDashboard: async (
+    id: string,
+  ): Promise<{ dashboard: TenantDashboardData; payments: Payment[] }> => {
+    const raw = await request<P.TenantProfileData>(`/tenants/${id}`);
+    return { dashboard: mapTenantDashboard(raw), payments: mapTenantDashboardPayments(raw) };
+  },
 
   getLease: async (id: string): Promise<Lease> =>
     mapLease(await request<P.Lease>(`/leases/${id}`)),

@@ -2,7 +2,6 @@ import type { FetchStateWithError } from "../../helpers/type";
 import type { Lease } from "../managerDashboard/lease/type";
 import type { Unit } from "../managerDashboard/unit/type";
 import type { Property } from "../managerDashboard/property/type";
-import type { Payment } from "../managerDashboard/payment/type";
 
 export interface TenantDashboardData {
   tenantId:   string;
@@ -10,7 +9,6 @@ export interface TenantDashboardData {
   lease:      Lease    | null;
   unit:       Unit     | null;
   property:   Property | null;
-  payments:   Payment[];
 }
 
 export type TenantDashboardEntry = {

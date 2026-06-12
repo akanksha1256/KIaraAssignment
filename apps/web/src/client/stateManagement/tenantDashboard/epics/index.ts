@@ -8,14 +8,22 @@ import {
   fetchTenantDashboardSuccess,
   fetchTenantDashboardFailure,
 } from "../tenantDashboardSlice";
+import { tenantFetchPaymentsSuccess } from "../payment/tenantPaymentSlice";
 
 const fetchTenantDashboardEpic: Epic = (action$) =>
   action$.pipe(
     ofType(fetchTenantDashboard.type),
     mergeMap((action: ReturnType<typeof fetchTenantDashboard>) =>
       from(api.getTenantDashboard(action.payload)).pipe(
-        mergeMap((data) =>
-          of(fetchTenantDashboardSuccess({ id: action.payload, data })),
+        mergeMap(({ dashboard, payments }) =>
+          of(
+            fetchTenantDashboardSuccess({ id: action.payload, data: dashboard }),
+            // seed the tenant payment slice with payments from the same response
+            tenantFetchPaymentsSuccess({
+              leaseId:  dashboard.lease?.id ?? action.payload,
+              payments,
+            }),
+          ),
         ),
         catchError((err: Error) =>
           of(fetchTenantDashboardFailure({ id: action.payload, error: err.message })),
