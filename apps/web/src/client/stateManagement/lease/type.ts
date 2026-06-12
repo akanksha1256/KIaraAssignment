@@ -1,4 +1,4 @@
-import type { FetchStateWithError } from "../../helpers/type";
+import type { FetchStateMap } from "../types";
 
 export interface Lease {
   id: string;
@@ -12,6 +12,5 @@ export interface Lease {
 }
 
 export type LeaseState = {
-  leaseFetchState: FetchStateWithError;
-  leaseList: Lease[];
+  leaseById: FetchStateMap<Lease>;
 };

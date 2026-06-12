@@ -1,4 +1,4 @@
-import type { FetchStateWithError } from "../../helpers/type";
+import type { FetchState, FetchStateMap } from "../types";
 
 export type PaymentStatus = "paid" | "outstanding" | "overdue";
 
@@ -20,8 +20,11 @@ export interface PaymentMethod {
   label: string;
 }
 
-export type PaymentState = {
-  paymentFetchState: FetchStateWithError;
-  paymentList: Payment[];
-  paymentMethods: PaymentMethod[];
+export type PaymentSliceState = {
+  paymentsByLeaseId:        FetchStateMap<Payment[]>;
+  paymentMethodsByTenantId: FetchStateMap<PaymentMethod[]>;
+  payRent:                  FetchState<Payment>;
+  addMethod:                FetchState<PaymentMethod>;
+  reminderState:            FetchState<Payment>;
+  markPaidState:            FetchState<Payment>;
 };

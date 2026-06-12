@@ -1,6 +1,4 @@
-import type { FetchState, FetchStateMap } from "../types";
-import type { Lease } from "../lease/type";
-import type { Payment, PaymentMethod } from "../payment/type";
+import type { FetchStateWithError } from "../../helpers/type";
 
 export type KycStatus = "verified" | "pending" | "not_submitted";
 
@@ -30,14 +28,11 @@ export interface TenantProfile {
   standing: TenantStanding | null;
 }
 
+export type TenantEntry = {
+  fetchState: FetchStateWithError;
+  data:       TenantProfile | null;
+};
+
 export type TenantState = {
-  detail:         FetchStateMap<Tenant>;
-  lease:          FetchStateMap<Lease>;
-  payments:       FetchStateMap<Payment[]>;
-  paymentMethods: FetchStateMap<PaymentMethod[]>;
-  payRent:        FetchState<Payment>;
-  addMethod:      FetchState<PaymentMethod>;
-  reminderState:  FetchState<{ leaseId: string; periodMonth: string }>;
-  markPaidState:  FetchState<Payment>;
-  profile:        FetchStateMap<TenantProfile>;
+  tenantDataById: Record<string, TenantEntry>;
 };

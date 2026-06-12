@@ -26,7 +26,7 @@ interface Props {
 export const TenantProfile = ({ tenantId }: Props) => {
   const dispatch = useAppDispatch();
 
-  const { loading, error, profile } = useAppSelector(
+  const { status, error, profile } = useAppSelector(
     selectTenantProfile(tenantId),
   );
 
@@ -34,7 +34,7 @@ export const TenantProfile = ({ tenantId }: Props) => {
     dispatch(fetchTenantProfile(tenantId));
   }, [dispatch, tenantId]);
 
-  if (loading) return <LoadingState message={s.loading} />;
+  if (status === "pending") return <LoadingState message={s.loading} />;
   if (error)
     return (
       <ErrorState

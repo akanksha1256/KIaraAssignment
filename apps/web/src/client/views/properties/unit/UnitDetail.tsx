@@ -10,7 +10,7 @@ import {
   fetchTenantPayments,
   managerSendReminder,
   managerMarkPaid,
-} from "@/client/stateManagement/tenant/tenantSlice";
+} from "@/client/stateManagement/payment/paymentSlice";
 import { selectUnitById } from "@/client/stateManagement/unit/unitSelectors";
 import { LoadingState } from "@/client/views/LoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
@@ -43,16 +43,16 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
   const tenantName = unit?.tenant?.name ?? "Tenant";
 
   const payments: Payment[] = useAppSelector((state: RootState) =>
-    leaseId ? (state.tenant.payments[leaseId]?.data ?? []) : [],
+    leaseId ? (state.payment.paymentsByLeaseId[leaseId]?.data ?? []) : [],
   );
   const paymentsLoading = useAppSelector((state: RootState) =>
-    leaseId ? (state.tenant.payments[leaseId]?.loading ?? false) : false,
+    leaseId ? (state.payment.paymentsByLeaseId[leaseId]?.loading ?? false) : false,
   );
   const markPaidState = useAppSelector(
-    (state: RootState) => state.tenant.markPaidState,
+    (state: RootState) => state.payment.markPaidState,
   );
   const reminderState = useAppSelector(
-    (state: RootState) => state.tenant.reminderState,
+    (state: RootState) => state.payment.reminderState,
   );
 
   const [processingPeriodMonth, setProcessingPeriodMonth] = useState<string | null>(null);

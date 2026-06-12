@@ -5,24 +5,34 @@ import {
   useSelector,
   type TypedUseSelectorHook,
 } from "react-redux";
-import { managerReducer } from "./manager/managerSlice";
+import { managerReducer }  from "./manager/managerSlice";
 import { propertyReducer } from "./property/propertySlice";
-import { tenantReducer } from "./tenant/tenantSlice";
-import { unitReducer } from "./unit/unitSlice";
-import { managerEpics } from "./manager/epics";
-import { propertyEpics } from "./property/epics";
-import { tenantEpics } from "./tenant/epics";
+import { tenantReducer }   from "./tenant/tenantSlice";
+import { leaseReducer }    from "./lease/leaseSlice";
+import { paymentReducer }  from "./payment/paymentSlice";
+import { unitReducer }     from "./unit/unitSlice";
+import { managerEpics }    from "./manager/epics";
+import { propertyEpics }   from "./property/epics";
+import { tenantEpics }     from "./tenant/epics";
+import { paymentEpics }    from "./payment/epics";
 
-export const rootEpic = combineEpics(managerEpics, propertyEpics, tenantEpics);
+export const rootEpic = combineEpics(
+  managerEpics,
+  propertyEpics,
+  tenantEpics,
+  paymentEpics,
+);
 
 const epicMiddleware = createEpicMiddleware();
 
 export const store = configureStore({
   reducer: {
-    manager: managerReducer,
+    manager:  managerReducer,
     property: propertyReducer,
-    tenant: tenantReducer,
-    unit: unitReducer,
+    tenant:   tenantReducer,
+    lease:    leaseReducer,
+    payment:  paymentReducer,
+    unit:     unitReducer,
   },
   middleware: (getDefault) => getDefault().concat(epicMiddleware),
 });
