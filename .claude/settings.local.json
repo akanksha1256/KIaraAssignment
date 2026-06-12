@@ -67,7 +67,9 @@
       "Bash(python3 -m json.tool)",
       "Bash(xargs ls -la)",
       "Bash(pnpm type-check *)",
-      "WebFetch(domain:kiara-assignment-web.vercel.app)"
+      "WebFetch(domain:kiara-assignment-web.vercel.app)",
+      "mcp__visualize__read_me",
+      "mcp__visualize__show_widget"
     ]
   }
 }

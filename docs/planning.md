@@ -60,7 +60,11 @@ Multiple managers acting on the same portfolio would see stale data across tabs.
 
 ### Test coverage
 
-No automated tests were written. Unit tests for hooks and mappers, MSW-based integration tests for API routes, and Playwright E2E for the pay-rent and mark-paid flows are the natural next additions — in that priority order.
+Automated tests are in place across three layers:
+
+- **Hook tests** (`packages/data/src/hooks/`) — Vitest + `@testing-library/react` `renderHook` in a `happy-dom` environment. Covers `usePayments` (query caching and deduplication), `useMarkPaid`, and `usePayRent`. The optimistic update and rollback paths are explicitly tested: each mutation test pre-populates the cache, mocks the API to fail, and asserts the cache is restored to its pre-mutation snapshot.
+- **API route integration tests** (`apps/web/src/app/api/__tests__/`) — Vitest Node environment, `NextRequest` constructed directly against the handler functions. The DB is mocked to a controlled object reset in `beforeEach` so mutations don't leak between tests. `withDelay` is mocked to be instant while preserving the `?fail=true` throw. Covers the payments, pay, remind, and payment-methods routes — happy paths, 404s, validation errors, and forced-failure responses.
+- **E2E tests** (`e2e/`) — Playwright against `next dev` via `webServer` in `playwright.config.ts`. Covers the manager dashboard, property and unit detail navigation, mark-paid and send-reminder flows, the tenant dashboard, and the full pay-rent modal sequence (open, select method, pay, success toast).
 
 ---
 
@@ -69,10 +73,9 @@ No automated tests were written. Unit tests for hooks and mappers, MSW-based int
 In priority order:
 
 1. **Create / Edit forms** — property, unit, and lease creation using controlled forms, Zod validation, and the mutation hook pattern already established. Lease editing (end date, rent amount) and tenant KYC update would follow.
-2. **Test suite** — hooks and mappers in `packages/data` are pure enough for unit tests without mocking. API routes can be integration-tested with a reset-db helper. Playwright for the two critical write flows (mark paid, pay rent).
-3. **Authentication** — Next.js middleware route guard, a session cookie or JWT, and a login page. The manager/tenant split in routing maps directly to two roles.
-4. **Pagination** — the payment history tables load all records. `useInfiniteQuery` with cursor-based pagination on the payments endpoint is the right next step once the dataset grows.
-5. **Real-time invalidation** — a lightweight SSE endpoint (`/api/events`) that broadcasts cache-key invalidation events; the client subscribes and calls `queryClient.invalidateQueries` on receipt.
+2. **Authentication** — Next.js middleware route guard, a session cookie or JWT, and a login page. The manager/tenant split in routing maps directly to two roles.
+3. **Pagination** — the payment history tables load all records. `useInfiniteQuery` with cursor-based pagination on the payments endpoint is the right next step once the dataset grows.
+4. **Real-time invalidation** — a lightweight SSE endpoint (`/api/events`) that broadcasts cache-key invalidation events; the client subscribes and calls `queryClient.invalidateQueries` on receipt.
 
 ---
 
