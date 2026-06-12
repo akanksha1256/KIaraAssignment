@@ -1,7 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(pnpm build *)"
+      "Bash(pnpm build *)",
+      "Bash(pnpm dlx *)",
+      "Bash(curl -s \"https://ui.shadcn.com/r/spinner.json\")",
+      "Bash(curl -s \"https://registry.npmjs.org/shadcn\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(list\\(d.get\\('versions',{}\\).keys\\(\\)\\)[-3:]\\)\")",
+      "Bash(curl -s \"https://ui.shadcn.com/r/sonner.json\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('name:', d.get\\('name'\\)\\); print\\('deps:', d.get\\('dependencies', []\\)\\)\")",
+      "Bash(curl -s \"https://ui.shadcn.com/r/styles/default/sonner.json\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('name:', d.get\\('name'\\)\\); print\\('files:', [f.get\\('path',''\\) for f in d.get\\('files',[]\\)]\\); print\\('deps:', d.get\\('dependencies',[]\\)\\)\")"
     ]
   }
 }

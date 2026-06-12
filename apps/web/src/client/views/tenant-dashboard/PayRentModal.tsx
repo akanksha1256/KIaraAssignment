@@ -4,7 +4,7 @@ import { useState } from "react";
 import { usePaymentMethods } from "@repo/data";
 import { usePayRent } from "@repo/data";
 import { useAddPaymentMethod } from "@repo/data";
-import { useToast } from "@repo/ui";
+import { useToast, Button } from "@repo/ui";
 import { strings } from "@repo/tokens";
 import { formatPeriodMonth } from "@repo/ui";
 
@@ -122,32 +122,32 @@ export function PayRentModal({ tenantId, leaseId, periodMonth, amountDue, onClos
               disabled={anyLoading}
               className="flex-1 rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-brand-500 focus:outline-none disabled:opacity-50"
             />
-            <button
+            <Button
+              variant="secondary"
               onClick={handleAddMethod}
               disabled={!newLabel.trim() || anyLoading}
-              className="rounded-lg bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-200 disabled:opacity-40"
             >
               {addMethod.isPending ? s.addMethodLoading : s.addMethodButton}
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* Actions */}
         <div className="flex justify-end gap-3">
-          <button
+          <Button
+            variant="outline"
             onClick={onClose}
             disabled={anyLoading}
-            className="rounded-lg border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-50 disabled:opacity-40"
           >
             {s.cancel}
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="default"
             onClick={handlePay}
             disabled={!selectedMethodId || anyLoading}
-            className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-40"
           >
             {payRent.isPending ? s.payLoading : s.payButton}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
