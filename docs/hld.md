@@ -7,7 +7,7 @@ The Rent Management Portal is a two-sided web application serving two distinct u
 - **Property Manager** — oversees properties, units, leases, tenants, and rent collection
 - **Tenant** — views their own lease, property details, payment history, and can pay rent
 
-The application is built as a Next.js monorepo with an in-memory mock backend. There is no authentication — the manager view and tenant view are separated by route namespace (`/manager` vs `/tenant`).
+The application is built as a pnpm + Turborepo monorepo. The Next.js app is a thin shell that consumes three shared workspace packages. There is no authentication — the manager view and tenant view are separated by route namespace (`/manager` vs `/tenant`).
 
 ---
 
@@ -23,18 +23,18 @@ The application is built as a Next.js monorepo with an in-memory mock backend. T
 │   └────────┬──────────┘       └──────────────┬────────────────┘ │
 │            │                                  │                  │
 │   ┌────────▼──────────────────────────────────▼────────────────┐ │
-│   │           TanStack Query (QueryClientProvider)             │ │
-│   │   useQuery hooks · useMutation hooks · query cache         │ │
+│   │     @repo/ui  (components, Providers, Toaster)             │ │
+│   │     TanStack Query (QueryClientProvider + query cache)     │ │
 │   └────────────────────────────┬───────────────────────────────┘ │
 │                                │                                  │
 │   ┌────────────────────────────▼───────────────────────────────┐ │
-│   │              API Client + Mapper Layer                     │ │
-│   │   snake_case ←→ camelCase boundary                        │ │
+│   │     @repo/data  (hooks · apiClient · types)                │ │
+│   │     snake_case ↔ camelCase boundary (mappers.ts)           │ │
 │   └────────────────────────────┬───────────────────────────────┘ │
 └────────────────────────────────┼─────────────────────────────────┘
                                  │ HTTP (fetch)
 ┌────────────────────────────────▼─────────────────────────────────┐
-│                    Next.js API Route Handlers                     │
+│                    Next.js API Route Handlers  (apps/web)         │
 │              /api/manager/dashboard                               │
 │              /api/properties/[id]                                 │
 │              /api/tenants/[id]                                    │
@@ -45,7 +45,7 @@ The application is built as a Next.js monorepo with an in-memory mock backend. T
 └────────────────────────────────┬─────────────────────────────────┘
                                  │
 ┌────────────────────────────────▼─────────────────────────────────┐
-│                    In-Memory Data Store (db)                      │
+│                    In-Memory Data Store  (apps/web/platform/db)   │
 │         properties | units | tenants | leases                    │
 │         payments | paymentMethods                                 │
 └──────────────────────────────────────────────────────────────────┘
@@ -59,47 +59,48 @@ The application is built as a Next.js monorepo with an in-memory mock backend. T
 |---|---|---|
 | Framework | Next.js 14 (App Router) | Server components for thin pages, file-based routing, co-located API routes |
 | Language | TypeScript | End-to-end type safety across wire format, mappers, and UI |
-| Styling | Tailwind CSS + design tokens | Utility-first with a single semantic color/spacing token source |
-| Data fetching | TanStack Query v5 | Declarative async state, automatic caching, `staleTime`-based deduplication, and first-class optimistic mutation support |
+| Styling | Tailwind CSS v3 + design token preset | Utility-first with a single semantic color/spacing token source (`@repo/tokens`) |
+| Data fetching | TanStack Query v5 | Declarative async state, automatic caching, `staleTime` deduplication, and first-class optimistic mutation support |
+| Component library | shadcn/ui | Accessible primitives (`@base-ui/react`) + `class-variance-authority` for variant composition; variants mapped to project token classes |
+| Toast | Sonner | shadcn's recommended toast solution — `<Toaster />` in `Providers`, imperative `toast()` / `toast.error()` at call sites |
 | Charts | Recharts | Composable, React-native charting for revenue and payment status |
-| Icons | Lucide React | Consistent icon set |
+| Icons | Lucide React | Consistent icon set, also used for the shadcn-style `Spinner` (`Loader2 + animate-spin`) |
 | Mock backend | Next.js route handlers + in-memory store | No real DB needed; artificial delay and forced-failure flags for testability |
-| Build | Turborepo + pnpm workspaces | Monorepo task orchestration with caching |
+| Build | Turborepo + pnpm workspaces | Monorepo task orchestration; packages ship TypeScript source via `transpilePackages` |
 
 ---
 
-## 4. High-Level Module Breakdown
+## 4. Monorepo Package Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                        Application                          │
-│                                                             │
-│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐     │
-│  │  App Router  │   │    Views     │   │    Hooks     │     │
-│  │  (pages)     │   │  (features)  │   │  (TanStack)  │     │
-│  └──────┬───────┘   └──────┬───────┘   └──────┬───────┘     │
-│         │                  │                   │            │
-│  ┌──────▼───────────────────▼───────────────────▼─────────┐ │
-│  │               Common Components                        │ │
-│  │   Card  DataTable  Pill  RowMenu  Toast  StatCard …    │ │
-│  └──────────────────────────┬─────────────────────────────┘ │
-│                             │                               │
-│  ┌──────────────────────────▼─────────────────────────────┐ │
-│  │                  Design System                         │ │
-│  │      colors · fonts · spaces · strings · tailwind      │ │
-│  └────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────┐
-│                      Data Layer                             │
-│                                                             │
-│  ┌──────────────────┐       ┌───────────────────────────┐   │
-│  │   API Client     │       │      Platform Layer       │   │
-│  │  client.ts       │       │  db/ · types/ · utils.ts  │   │
-│  │  mappers.ts      │       │  (in-memory mock)         │   │
-│  └──────────────────┘       └───────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                         apps/web  (Next.js)                         │
+│                                                                      │
+│  ┌─────────────┐   ┌──────────────────┐   ┌──────────────────────┐  │
+│  │ App Router  │   │  View Components  │   │  Platform (API/DB)   │  │
+│  │  (pages)    │   │  ("use client")   │   │  db/ · types/ · utils│  │
+│  └──────┬──────┘   └────────┬─────────┘   └──────────────────────┘  │
+└─────────┼───────────────────┼──────────────────────────────────────-─┘
+          │ imports           │ imports
+          ▼                   ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      Workspace Packages                             │
+│                                                                     │
+│  ┌────────────────┐  ┌────────────────┐  ┌──────────────────────┐  │
+│  │ @repo/tokens   │  │  @repo/data    │  │     @repo/ui         │  │
+│  │                │  │                │  │                      │  │
+│  │ colors.ts      │  │ types/         │  │ Button (shadcn)      │  │
+│  │ strings.ts     │  │ wireTypes.ts   │  │ DataTable            │  │
+│  │ fonts.ts       │◄─┤ apiClient/     │  │ Pill                 │  │
+│  │ spaces.ts      │  │   client.ts    │◄─┤ StatCard             │  │
+│  │ tailwindPreset │  │   mappers.ts   │  │ Card / RowMenu       │  │
+│  └────────────────┘  │ hooks/         │  │ Toast (Sonner)       │  │
+│                      └────────────────┘  │ Nav / Providers      │  │
+│                                          └──────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
 ```
+
+Packages ship TypeScript source directly. `apps/web/next.config.mjs` declares `transpilePackages: ["@repo/tokens", "@repo/ui", "@repo/data"]` — no build step or `dist/` folder required.
 
 ---
 
@@ -123,7 +124,7 @@ Manager Dashboard (/manager)
 │       ├── Tenant info card
 │       ├── Lease details card
 │       └── Payment history table
-│           ├── Mark as Paid (optimistic update + toast)
+│           ├── Mark as Paid (optimistic update + Sonner toast)
 │           └── Send Reminder (24h disable window + last-sent sublabel)
 │
 └── Tenant Profile (/manager/tenants/[id])
@@ -148,7 +149,7 @@ Tenant Dashboard (/tenant)
         └── PayRentModal
             ├── Select saved payment method
             ├── Add new payment method
-            └── Pay (optimistic update + toast)
+            └── Pay (optimistic update + Sonner toast)
 ```
 
 ---
@@ -159,14 +160,14 @@ Tenant Dashboard (/tenant)
 
 ```
 1. Component renders
-   → usePropertyDetail(propertyId) — TanStack useQuery
+   → usePropertyDetail(propertyId) from @repo/data — TanStack useQuery
 
 2. On first call: status = "pending"
    → component renders <LoadingState />
 
 3. TanStack Query calls api.getPropertyDetail(id)
    → fetches /api/properties/[id]
-   → response passes through mappers (snake_case → camelCase)
+   → response passes through mappers.ts (snake_case → camelCase)
    → result stored in query cache under key ["property", "detail", id]
 
 4. On success: isLoading = false, data = PropertyDetailData
@@ -193,12 +194,12 @@ Tenant Dashboard (/tenant)
 
 4a. On success:
     → onSettled: invalidate ["payments", leaseId] → refetch
-    → onSuccess callback: showToast("Payment marked as paid successfully.")
+    → onSuccess callback: toast("Payment marked as paid successfully.")
     → setProcessingPeriodMonth(null)
 
 4b. On error:
     → onError: restore previous data snapshot (rollback)
-    → onError callback: showToast(error.message, "error")
+    → onError callback: toast.error(error.message)
     → setProcessingPeriodMonth(null)
 ```
 
@@ -222,11 +223,11 @@ Tenant Dashboard (/tenant)
 
 5a. On success:
     → onSettled: invalidate ["tenant", "dashboard", tenantId]
-    → showToast("Rent paid successfully.") → modal closes
+    → toast("Rent paid successfully.") → modal closes
 
 5b. On error:
     → onError: restore cache snapshot (rollback)
-    → showToast("Payment failed: <message>", "error")
+    → toast.error("Payment failed: <message>")
 ```
 
 ### Reminder Flow
@@ -241,9 +242,9 @@ Tenant Dashboard (/tenant)
    → Returns updated payment
 
 3. On success:
-   → onSuccess: patch ["payments", leaseId] cache with updated payment
+   → patches ["payments", leaseId] cache with updated payment
    → Button disabled for 24 hours; sublabel shows "Last sent: date time"
-   → showToast("Reminder sent to <tenantName>.")
+   → toast("Reminder sent to <tenantName>.")
 ```
 
 ---
@@ -287,30 +288,30 @@ Several fields returned by the API are derived at query time rather than stored:
 
 ## 9. Design System Architecture
 
-The design system is the single source of truth for all visual decisions:
+Design tokens live in `packages/tokens` and are the single source of truth for all visual decisions:
 
 ```
-designSystems/
+packages/tokens/src/
 ├── colors.ts          Semantic palette: brand, neutral, success, warning, danger, chart
 ├── fonts.ts           Font family definitions
 ├── spaces.ts          Spacing scale
 ├── strings.ts         All UI copy — manager.*, tenant.*, paymentTable.*
-└── tailwindPreset.js  Extends Tailwind with design tokens
+└── tailwindPreset.js  Extends Tailwind with design tokens (consumed by apps/web)
 ```
 
-**Key principle:** no component hardcodes colors, copy, or spacing values. All come from the design system. This means a color change or copy update propagates everywhere from a single file.
+**Key principle:** no component hardcodes colors, copy, or spacing values. All come from `@repo/tokens`. shadcn Button variants are also mapped to token classes (`bg-brand-600`, `bg-danger-500`) rather than CSS variables, keeping the shadcn component architecture while staying within Tailwind v3 token conventions.
 
 ---
 
 ## 10. Routing Structure
 
 ```
-/                                   → redirects to /manager
-/manager                            → ManagerDashboard
-/manager/properties/[id]            → PropertyDetail
+/                                       → redirects to /manager
+/manager                                → ManagerDashboard
+/manager/properties/[id]                → PropertyDetail
 /manager/properties/[id]/units/[unitId] → UnitDetail
-/manager/tenants/[id]               → TenantProfile (manager's view)
-/tenant                             → TenantDashboard (tenant-1 / Alice Johnson)
+/manager/tenants/[id]                   → TenantProfile (manager's view)
+/tenant                                 → TenantDashboard (tenant-1 / Alice Johnson)
 ```
 
 All pages are thin Next.js server components that simply render their corresponding client view component, keeping routing and UI logic separate.
@@ -323,7 +324,7 @@ All pages are thin Next.js server components that simply render their correspond
 |---|---|---|
 | Manager: list properties and units | ✅ | Dashboard → Property → Unit drill-down |
 | Manager: see rent status across leases | ✅ | Status pills, payment history table |
-| Manager: send payment reminder | ✅ | Mocked API, 24h disable, toast feedback |
+| Manager: send payment reminder | ✅ | Mocked API, 24h disable, Sonner toast feedback |
 | Manager: view payment history | ✅ | Per-unit payment table |
 | Manager: tenant detail with standing score | ✅ | On-time payment %, donut chart |
 | Tenant: see lease and terms | ✅ | Lease Details card |
@@ -333,7 +334,9 @@ All pages are thin Next.js server components that simply render their correspond
 | Loading / error / empty states | ✅ | All views covered |
 | Mock delay + forced failure | ✅ | `?fail=true` on any API route |
 | Two-sided navigation | ✅ | `/manager` and `/tenant` routes |
-| TanStack Query | ✅ | All data fetching via `useQuery` / `useMutation` hooks |
+| TanStack Query | ✅ | All data fetching via `useQuery` / `useMutation` hooks in `@repo/data` |
+| Monorepo packages | ✅ | `packages/tokens`, `packages/ui`, `packages/data` |
+| shadcn/ui | ✅ | Button (cva + @base-ui/react), Sonner toast |
 
 ---
 
@@ -342,9 +345,8 @@ All pages are thin Next.js server components that simply render their correspond
 | Area | Current State | With More Time |
 |---|---|---|
 | Authentication | None — views are separated by route only | JWT-based auth with role-based routing |
-| Monorepo packages | Design tokens and components are inside the app | Extract into `packages/ui`, `packages/tokens` as the brief requires |
 | Real-time / sync | Not implemented | WebSocket or SSE for multi-tab sync |
-| Test coverage | None | Unit tests for hooks/mappers, integration tests via MSW, E2E for critical flows |
+| Test coverage | None | Unit tests for hooks/mappers in `@repo/data`, integration tests via MSW, E2E for critical flows |
 | Pagination | All data loaded at once | Cursor-based pagination with TanStack Query's `useInfiniteQuery` |
 | Create / Edit flows | Not implemented | Forms to create properties, units, leases |
 | Optimistic rollback UX | Silent (no "undo" affordance) | Show inline error banner on the affected row with retry |

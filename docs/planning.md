@@ -19,9 +19,19 @@ A two-sided rent management portal covering the full read + action surface requi
 **Infrastructure**
 - In-memory mock backend (Next.js API routes, `withDelay()`, `?fail=true` forced-failure flag)
 - TanStack Query v5 for all data fetching — declarative caching, stale-time deduplication, and first-class optimistic mutations
-- Design system: single `strings.ts` for all copy, `colors.ts` for semantic palette, Tailwind token preset
 - Three-guard loading pattern (loading / error / empty) on every data-fetching view
 - snake_case ↔ camelCase boundary enforced at `mappers.ts` — only file that touches platform types
+
+**Monorepo package split (`packages/`)**
+- `packages/tokens` — design system primitives: `colors.ts`, `fonts.ts`, `spaces.ts`, `strings.ts`, and a `tailwindPreset.js` consumed by `apps/web/tailwind.config.ts`. Single source of truth for all copy and color tokens across the workspace.
+- `packages/data` — all async logic: camelCase client types (`types/index.ts`), API client (`apiClient/client.ts`), snake_case wire types (`wireTypes.ts`, internal only), mappers, and every TanStack Query hook. Any app in the workspace can import `@repo/data` to get fully-typed hooks without knowing about the Next.js API layer.
+- `packages/ui` — all shared components (DataTable, Pill, StatCard, Card, Button, Spinner, Toast, Nav, LoadingState, ErrorState, EmptyState) plus utilities (`cn`, `formatDate`, `formatPeriodMonth`, `statusConfig`). Consumed by `apps/web` via `transpilePackages` — no build step required.
+- `apps/web` is now a thin Next.js shell: route handlers, page server components, and view components that import from the three packages above.
+
+**shadcn/ui integration**
+- shadcn installed (`components.json` at `apps/web/`).
+- `Button` rebuilt using the shadcn pattern: `@base-ui/react/button` as the accessible primitive, `class-variance-authority` for variant composition, variants remapped to project token classes (`brand-*`, `neutral-*`, `danger-*`) to stay compatible with Tailwind v3. All interactive buttons across the app (`PayRentModal`, `UnitDetail`) use this component.
+- Toast system replaced with **Sonner** (shadcn's recommended toast solution) — `<Toaster />` lives in `Providers`, call sites use `toast()` / `toast.error()` from `sonner` directly (no `useToast` context needed).
 
 ---
 
@@ -30,10 +40,6 @@ A two-sided rent management portal covering the full read + action surface requi
 ### Create / Edit flows (properties, units, leases, tenants)
 
 The brief asked for management of properties and leases. The full CRUD surface — create-property forms, edit-unit modals, new-lease wizards — was scoped out in favour of completing the read + action paths end-to-end. The decision was time: building correct form validation, controlled inputs, error surfaces, and the corresponding POST/PATCH API routes for each entity would have consumed the remaining time without producing the more visible read/action behaviour the brief emphasised. The data model and route structure are designed so these forms can be added incrementally (one entity at a time) without restructuring anything.
-
-### shadcn/ui (or any third-party component library)
-
-All UI components (DataTable, Pill, RowMenu, Toast, StatCard, Card, LoadingState, ErrorState, EmptyState) were written from scratch using Tailwind and Lucide. Adding shadcn was considered and rejected for two reasons: (1) it would have introduced a Radix dependency and a generated component layer that adds setup cost and noise before any feature is done; (2) writing the components directly gave full control over the design-token wiring (all colors and copy from a single source of truth) and the specific behaviours needed (portal-based RowMenu dropdown, per-row spinner isolation, fixed-top toast). The result is a smaller, fully-owned component set with no hidden abstractions.
 
 ### Authentication / session management
 
@@ -47,10 +53,6 @@ Multiple managers acting on the same portfolio would see stale data across tabs.
 
 No automated tests were written. Unit tests for hooks and mappers, MSW-based integration tests for API routes, and Playwright E2E for the pay-rent and mark-paid flows are the natural next additions — in that priority order.
 
-### Monorepo package extraction
-
-The brief mentioned extracting a `packages/ui` and `packages/tokens` layer. The `packages/` directory is scaffolded but empty. The design system lives inside `apps/web/src/client/designSystems/` for now. Extraction is straightforward (move files, update tsconfig paths) but was not worth the Turborepo pipeline complexity on a single-consumer monorepo.
-
 ---
 
 ## What Would Be Done Next
@@ -58,16 +60,27 @@ The brief mentioned extracting a `packages/ui` and `packages/tokens` layer. The 
 In priority order:
 
 1. **Create / Edit forms** — property, unit, and lease creation using controlled forms, Zod validation, and the mutation hook pattern already established. Lease editing (end date, rent amount) and tenant KYC update would follow.
-2. **Test suite** — hooks and mappers are pure enough for unit tests without mocking. API routes can be integration-tested with a reset-db helper. Playwright for the two critical write flows (mark paid, pay rent).
+2. **Test suite** — hooks and mappers in `packages/data` are pure enough for unit tests without mocking. API routes can be integration-tested with a reset-db helper. Playwright for the two critical write flows (mark paid, pay rent).
 3. **Authentication** — Next.js middleware route guard, a session cookie or JWT, and a login page. The manager/tenant split in routing maps directly to two roles.
 4. **Pagination** — the payment history tables load all records. `useInfiniteQuery` with cursor-based pagination on the payments endpoint is the right next step once the dataset grows.
-5. **Monorepo package extraction** — move `designSystems/` into `packages/tokens` and `commonComponents/` into `packages/ui`, wire up Turborepo's internal package build pipeline.
-6. **Real-time invalidation** — a lightweight SSE endpoint (`/api/events`) that broadcasts cache-key invalidation events; the client subscribes and calls `queryClient.invalidateQueries` on receipt.
+5. **Real-time invalidation** — a lightweight SSE endpoint (`/api/events`) that broadcasts cache-key invalidation events; the client subscribes and calls `queryClient.invalidateQueries` on receipt.
 
 ---
 
-## Key Technical Decision
+## Key Technical Decisions
 
-**TanStack Query instead of Redux Toolkit + Redux-Observable**
+### TanStack Query as the data layer
 
-The original brief and starter README referenced Redux + epics. After reviewing the feature surface, that stack was replaced with TanStack Query v5. The rationale: every operation in this app is either a read (fetch + cache + stale-time) or a write with optimistic update + rollback + re-fetch. TanStack Query covers that pattern natively — `useQuery`, `useMutation`, `onMutate`/`onError`/`onSettled` — with no reducers, no action creators, no epics, and no selector boilerplate. The resulting hook files are smaller and the data-flow is traceable in a single file per operation. The trade-off is that TanStack Query is not a general-purpose state store, so any genuinely global UI state (e.g. a cross-view notification counter) would need a separate solution — none arose in this scope.
+The stack is Next.js 14, TanStack Query v5, Tailwind CSS, and Recharts — as specified in the brief. Every async operation maps to one of two primitives: `useQuery` for reads (with declarative caching and stale-time deduplication) and `useMutation` for writes (with `onMutate`/`onError`/`onSettled` for optimistic updates and rollback). Query hooks live in `packages/data/src/hooks/` with exported key factories so mutations can reference and invalidate the correct cache entries. The trade-off is that TanStack Query is not a general-purpose state store — any genuinely global UI state would need a separate solution, but none arose in this scope.
+
+### shadcn with Tailwind v3 — variant remapping, not CSS variables
+
+shadcn's default "base-nova" style targets Tailwind v4 (`@theme inline`, CSS variable-based color tokens). This project uses Tailwind v3 with a custom token preset. Rather than upgrading Tailwind or adopting the CSS variable layer, the Button variants were written directly using the existing token classes (`bg-brand-600`, `bg-danger-500`, etc.). This keeps the shadcn component architecture (accessible primitive + `cva` + `cn`) while staying fully within the project's design token conventions. The same pattern applies to any future shadcn component additions.
+
+### `packages/data` wire-type boundary
+
+The `apps/web` API routes and platform DB use a snake_case wire format (`src/platform/types/`). Rather than exposing that internal path across the workspace, `packages/data` carries its own copy of the wire types in `src/wireTypes.ts` (not exported from the package index). Only `apiClient/client.ts` and `apiClient/mappers.ts` import from it — the same single-file boundary that existed inside `apps/web`, now enforced at the package level.
+
+### `transpilePackages` over a build pipeline
+
+Workspace packages (`@repo/tokens`, `@repo/ui`, `@repo/data`) ship TypeScript source directly — no `tsc` build step, no `dist/` folder. Next.js compiles them on the fly via `transpilePackages` in `next.config.mjs`. This eliminates the Turborepo pipeline complexity (no `build` task dependencies, no cache invalidation tuning) for a single-consumer monorepo while preserving the clean package boundary. If a second consumer app were added, a `tsc` build step per package would be the straightforward next step.
