@@ -8,6 +8,8 @@ import {
   mapTenantProfile,
   mapTenantDashboard,
   mapTenantDashboardPayments,
+  mapPaymentListItem,
+  mapTenantListItem,
   mapLease,
   mapPayment,
   mapPaymentMethod,
@@ -15,7 +17,7 @@ import {
 } from "./mappers";
 import type { ManagerDashboardData } from "../types";
 import type { Property, PropertySummary, PropertyDetailData } from "../types";
-import type { TenantProfile } from "../types";
+import type { TenantProfile, TenantListItem, PaymentListItem } from "../types";
 import type { TenantDashboardData } from "../types";
 import type { Unit } from "../types";
 import type { Tenant } from "../types";
@@ -56,6 +58,12 @@ export const api = {
     (await request<P.Unit[]>(`/properties/${propertyId}/units`)).map(mapUnit),
 
   getUnit: async (id: string): Promise<Unit> => mapUnit(await request<P.Unit>(`/units/${id}`)),
+
+  getAllPayments: async (): Promise<PaymentListItem[]> =>
+    (await request<P.PaymentListItem[]>("/manager/payments")).map(mapPaymentListItem),
+
+  getAllTenants: async (): Promise<TenantListItem[]> =>
+    (await request<P.TenantListItem[]>("/tenants")).map(mapTenantListItem),
 
   getTenant: async (id: string): Promise<Tenant> =>
     mapTenant(await request<P.Tenant>(`/tenants/${id}`)),

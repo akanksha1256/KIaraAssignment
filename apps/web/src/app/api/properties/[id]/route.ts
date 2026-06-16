@@ -19,14 +19,17 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         const tenant = lease ? (db.tenants.find((t) => t.id === lease.tenant_id) ?? null) : null;
 
         let payment_status: PaymentStatus | "vacant" = "vacant";
+        let current_period_month: string | null = null;
         if (lease) {
           const payments = db.payments.filter((p) => p.lease_id === lease.id);
-          if (payments.some((p) => p.status === "overdue")) payment_status = "overdue";
-          else if (payments.some((p) => p.status === "outstanding")) payment_status = "outstanding";
+          const overdue = payments.find((p) => p.status === "overdue");
+          const outstanding = payments.find((p) => p.status === "outstanding");
+          if (overdue) { payment_status = "overdue"; current_period_month = overdue.period_month; }
+          else if (outstanding) { payment_status = "outstanding"; current_period_month = outstanding.period_month; }
           else payment_status = "paid";
         }
 
-        return { id: u.id, label: u.label, tenant, lease, payment_status };
+        return { id: u.id, label: u.label, tenant, lease, payment_status, current_period_month };
       });
 
     const data: PropertyDetailData = { property, units };

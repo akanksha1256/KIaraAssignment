@@ -10,7 +10,7 @@ const s = strings.manager.dashboard;
 
 export function MonthlyRevenueSection({ monthlyRevenue }: { monthlyRevenue: MonthlyRevenue[] }) {
   return (
-    <Card className="lg:col-span-3">
+    <Card>
       <CardHeader>
         <CardTitle>{s.revenueChart.title}</CardTitle>
         <p className="text-[13px] text-muted-foreground mt-0.5">{s.revenueChart.subtitle}</p>

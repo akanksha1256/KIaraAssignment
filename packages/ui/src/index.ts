@@ -21,6 +21,7 @@ export { RowMenu } from "./RowMenu";
 export type { RowMenuItem } from "./RowMenu";
 export { Spinner, Skeleton } from "./Spinner";
 export { StatCard } from "./StatCard";
+export { StatTile } from "./StatTile";
 export { ToastProvider, useToast } from "./Toast";
 export type { ToastVariant } from "./Toast";
 export { CommonTooltip } from "./Tooltip";

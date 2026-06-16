@@ -1,9 +1,5 @@
-import { PropertyDetail } from "@/client/views/properties/PropertyDetail";
+import { redirect } from "next/navigation";
 
-interface Props {
-  params: { id: string };
-}
-
-export default function PropertyDetailPage({ params }: Props) {
-  return <PropertyDetail propertyId={params.id} />;
+export default function PropertyDetailPage() {
+  redirect("/manager/properties");
 }

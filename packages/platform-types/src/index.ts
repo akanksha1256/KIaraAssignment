@@ -124,6 +124,7 @@ export interface UnitDetail {
   tenant: Tenant | null;
   lease: Lease | null;
   payment_status: PaymentStatus | "vacant";
+  current_period_month: string | null;
 }
 
 export interface PropertyDetailData {
@@ -138,4 +139,20 @@ export interface TenantProfileData {
   property: Property | null;
   payments: Payment[];
   standing: TenantStanding | null;
+}
+
+export interface PaymentListItem {
+  payment: Payment;
+  lease: Lease;
+  tenant: Tenant;
+  unit: Unit;
+  property: Property;
+}
+
+export interface TenantListItem {
+  tenant: Tenant;
+  lease: Lease | null;
+  unit: Unit | null;
+  property: Property | null;
+  payment_status: PaymentStatus | "vacant";
 }

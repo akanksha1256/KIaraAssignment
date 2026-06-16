@@ -11,6 +11,8 @@ export type {
   Lease,
   TenantStanding,
   TenantProfile,
+  TenantListItem,
+  PaymentListItem,
   TenantDashboardData,
   Payment,
   PaymentMethod,
@@ -21,6 +23,9 @@ export type {
   AtRiskLease,
   ManagerDashboardData,
 } from "./types";
+
+// Status constants
+export { PropertyStatusValues, PaymentStatusValues } from "./types";
 
 // API client
 export { api } from "./apiClient/client";
@@ -42,3 +47,5 @@ export { useMarkPaid } from "./hooks/useMarkPaid";
 export { usePayRent } from "./hooks/usePayRent";
 export { useSendReminder } from "./hooks/useSendReminder";
 export { useAddPaymentMethod } from "./hooks/useAddPaymentMethod";
+export { allTenantsKey, useAllTenants } from "./hooks/useAllTenants";
+export { allPaymentsKey, useAllPayments } from "./hooks/useAllPayments";

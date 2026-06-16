@@ -1,7 +1,7 @@
 import type * as P from "@repo/platform-types";
 import type { Property, PropertySummary, UnitDetailItem, PropertyDetailData } from "../types";
 import type { Unit } from "../types";
-import type { Tenant, TenantStanding, TenantProfile } from "../types";
+import type { Tenant, TenantStanding, TenantProfile, TenantListItem, PaymentListItem } from "../types";
 import type { TenantDashboardData } from "../types";
 import type { Lease } from "../types";
 import type { Payment, PaymentMethod } from "../types";
@@ -116,6 +116,7 @@ export const mapUnitDetail = (u: P.UnitDetail): UnitDetailItem => ({
   tenant: u.tenant ? mapTenant(u.tenant) : null,
   lease: u.lease ? mapLease(u.lease) : null,
   paymentStatus: u.payment_status,
+  currentPeriodMonth: u.current_period_month,
 });
 
 export const mapPropertyDetail = (d: P.PropertyDetailData): PropertyDetailData => ({
@@ -149,6 +150,22 @@ export const mapTenantDashboard = (d: P.TenantProfileData): TenantDashboardData 
 
 export const mapTenantDashboardPayments = (d: P.TenantProfileData): Payment[] =>
   d.payments.map(mapPayment);
+
+export const mapPaymentListItem = (d: P.PaymentListItem): PaymentListItem => ({
+  payment: mapPayment(d.payment),
+  lease: mapLease(d.lease),
+  tenant: mapTenant(d.tenant),
+  unit: mapUnit(d.unit),
+  property: mapProperty(d.property),
+});
+
+export const mapTenantListItem = (d: P.TenantListItem): TenantListItem => ({
+  tenant: mapTenant(d.tenant),
+  lease: d.lease ? mapLease(d.lease) : null,
+  unit: d.unit ? mapUnit(d.unit) : null,
+  property: d.property ? mapProperty(d.property) : null,
+  paymentStatus: d.payment_status,
+});
 
 export const mapManagerDashboard = (d: P.ManagerDashboardData): ManagerDashboardData => ({
   stats: mapDashboardStats(d.stats),

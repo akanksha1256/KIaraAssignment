@@ -38,7 +38,7 @@ export function PaymentStatusSection({ paymentBreakdown }: { paymentBreakdown: P
     : [];
 
   return (
-    <Card className="lg:col-span-2">
+    <Card>
       <CardHeader>
         <CardTitle>{s.paymentChart.title}</CardTitle>
         <p className="text-[13px] text-muted-foreground mt-0.5">{s.paymentChart.subtitle}</p>

@@ -43,6 +43,8 @@ export const strings = {
     dashboard: {
       title: "Manager Dashboard",
       subtitle: "Overview of your portfolio performance.",
+      pageTitle: "Dashboard",
+      pageSubtitlePrefix: "Your portfolio at a glance —",
 
       loading: "Loading dashboard…",
       error: "Could not load dashboard data.",
@@ -53,13 +55,21 @@ export const strings = {
       stats: {
         properties: "Properties",
         propertiesSubtitle: (total: number) => `${total} total units`,
+        propertiesLabel: (units: number) => `Properties · ${units} units`,
         occupancy: "Occupancy",
         occupancySubtitle: (vacant: number) => `${vacant} vacant`,
+        occupancyLabel: (vacant: number) => `Occupied · ${vacant} vacant`,
         monthlyRent: "Monthly Rent",
+        monthlyRentLabel: "Monthly rent",
         monthlyRentSubtitle: "across active leases",
         collectionRate: "Collection Rate",
+        collectionRateLabel: "Collection rate",
         collectionRateSubtitle: (amount: string) => `${amount} collected`,
       },
+
+      propertiesSummary: (count: number) => `${count} properties`,
+      propertiesOverdueCount: (count: number) => `· ${count} overdue`,
+      viewAllProperties: "View all properties",
 
       revenueChart: {
         title: "Monthly Revenue",
@@ -90,6 +100,23 @@ export const strings = {
         viewLink: "View",
         empty: "No properties",
         emptyDescription: "Add your first property to get started.",
+      },
+
+      attentionHero: {
+        label: "Needs attention",
+        outstandingPrefix: "outstanding across",
+        outstandingCycleSuffix: "leases this cycle.",
+        overdueWarning: (count: number) =>
+          `${count} are now overdue — clear these first to protect collection rate.`,
+        overdueLabel: (count: number) => `Overdue · ${count} lease${count !== 1 ? "s" : ""}`,
+        outstandingLabel: (count: number) =>
+          `Outstanding · ${count} lease${count !== 1 ? "s" : ""}`,
+        reviewOverdue: "Review overdue",
+        sendAllReminders: "Send all reminders",
+        atRiskTitle: "At-risk leases",
+        viewAll: "View all",
+        daysOverdue: (days: number) => `${days} days overdue`,
+        outstanding: "Outstanding",
       },
     },
 
@@ -125,6 +152,23 @@ export const strings = {
         empty: "No units found",
         emptyDescription: "This property has no units yet.",
       },
+    },
+
+    paymentsList: {
+      title: "Payments",
+      loading: "Loading payments…",
+      error: "Could not load payments.",
+      emptyTitle: "No payments yet",
+      emptyDescription: "Payments will appear here once leases are active.",
+      tabs: { all: "All", overdue: "Overdue", outstanding: "Outstanding", paid: "Paid" },
+    },
+
+    tenantsList: {
+      title: "Tenants",
+      loading: "Loading tenants…",
+      error: "Could not load tenants.",
+      emptyTitle: "No tenants yet",
+      emptyDescription: "Tenants will appear here once leases are created.",
     },
 
     tenantProfile: {

@@ -2,6 +2,13 @@
 
 export type PropertyStatus = "paid" | "outstanding" | "overdue" | "vacant";
 
+export const PropertyStatusValues = {
+  PAID: "paid",
+  OUTSTANDING: "outstanding",
+  OVERDUE: "overdue",
+  VACANT: "vacant",
+} as const satisfies Record<string, PropertyStatus>;
+
 export interface Property {
   id: string;
   name: string;
@@ -27,6 +34,7 @@ export interface UnitDetailItem {
   tenant: Tenant | null;
   lease: Lease | null;
   paymentStatus: PropertyStatus;
+  currentPeriodMonth: string | null;
 }
 
 export interface PropertyDetailData {
@@ -88,6 +96,12 @@ export interface TenantProfile {
 // ── Payment ──────────────────────────────────────────────────────────────────
 
 export type PaymentStatus = "paid" | "outstanding" | "overdue";
+
+export const PaymentStatusValues = {
+  PAID: "paid",
+  OUTSTANDING: "outstanding",
+  OVERDUE: "overdue",
+} as const satisfies Record<string, PaymentStatus>;
 
 export interface Payment {
   id: string;
@@ -163,4 +177,24 @@ export interface TenantDashboardData {
 export interface TenantDashboardResponse {
   dashboard: TenantDashboardData;
   payments: Payment[];
+}
+
+// ── Payment List ──────────────────────────────────────────────────────────────
+
+export interface PaymentListItem {
+  payment: Payment;
+  lease: Lease;
+  tenant: Tenant;
+  unit: Unit;
+  property: Property;
+}
+
+// ── Tenant List ───────────────────────────────────────────────────────────────
+
+export interface TenantListItem {
+  tenant: Tenant;
+  lease: Lease | null;
+  unit: Unit | null;
+  property: Property | null;
+  paymentStatus: PaymentStatus | "vacant";
 }
