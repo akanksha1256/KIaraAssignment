@@ -10,6 +10,7 @@ import type {
   DashboardStats,
   PaymentBreakdown,
   MonthlyRevenue,
+  AtRiskLease,
 } from "../types";
 
 export const mapProperty = (p: P.Property): Property => ({
@@ -89,6 +90,18 @@ const mapPaymentBreakdown = (b: P.PaymentBreakdown): PaymentBreakdown => ({
   paid: b.paid,
   outstanding: b.outstanding,
   overdue: b.overdue,
+  overdueAmount: b.overdue_amount,
+  outstandingAmount: b.outstanding_amount,
+});
+
+const mapAtRiskLease = (l: P.AtRiskLease): AtRiskLease => ({
+  tenantName: l.tenant_name,
+  propertyName: l.property_name,
+  unitLabel: l.unit_label,
+  amountDue: l.amount_due,
+  daysOverdue: l.days_overdue,
+  leaseId: l.lease_id,
+  status: l.status,
 });
 
 const mapMonthlyRevenue = (r: P.MonthlyRevenue): MonthlyRevenue => ({
@@ -142,4 +155,5 @@ export const mapManagerDashboard = (d: P.ManagerDashboardData): ManagerDashboard
   paymentBreakdown: mapPaymentBreakdown(d.payment_breakdown),
   monthlyRevenue: d.monthly_revenue.map(mapMonthlyRevenue),
   properties: d.properties.map(mapPropertySummary),
+  atRiskLeases: d.at_risk_leases.map(mapAtRiskLease),
 });

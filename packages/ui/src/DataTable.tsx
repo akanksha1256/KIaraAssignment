@@ -111,8 +111,8 @@ export function DataTable({ columns, rows = [], groups }: DataTableProps) {
   }, [rows, groups, sortCol, sortDir]);
 
   return (
-    <div className="rounded-xl border border-sand-400 bg-white overflow-hidden shadow-sm">
-      <table className="w-full table-auto">
+    <div className="rounded-xl border border-sand-400 bg-white overflow-x-auto shadow-sm">
+      <table className="w-full table-auto min-w-[600px]">
         <thead>
           <tr className="bg-sand-100 border-b border-sand-400">
             {columns.map(({ label, align = "left", className, sortable }, i) => (

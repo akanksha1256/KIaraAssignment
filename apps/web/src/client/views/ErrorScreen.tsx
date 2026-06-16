@@ -6,28 +6,21 @@ export function ErrorState({
   onRetry?: () => void;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
-      <div className="rounded-full bg-danger-50 p-4">
-        <svg
-          className="h-6 w-6 text-danger-500"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-          />
+    <div className="flex flex-col items-center text-center py-16 px-6 gap-4">
+      <div className="w-[72px] h-[72px] rounded-xl bg-destructive-bg text-destructive grid place-items-center">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
       </div>
-      <div>
-        <p className="font-medium text-neutral-700">Error</p>
-        <p className="mt-1 text-sm text-neutral-400">{message}</p>
+      <div className="max-w-[42ch]">
+        <h3 className="font-serif text-[22px] font-semibold text-espresso-900">Something went wrong</h3>
+        <p className="mt-1 text-[14px] text-muted-foreground">{message}</p>
       </div>
       {onRetry && (
-        <button onClick={onRetry} className="text-sm text-brand-600 hover:underline">
+        <button
+          onClick={onRetry}
+          className="rounded-full bg-coral-500 text-white px-5 h-10 text-[14px] font-medium hover:bg-coral-600 transition-colors"
+        >
           Try again
         </button>
       )}

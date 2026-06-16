@@ -18,6 +18,7 @@ export type {
   DashboardStats,
   PaymentBreakdown,
   MonthlyRevenue,
+  AtRiskLease,
   ManagerDashboardData,
 } from "./types";
 

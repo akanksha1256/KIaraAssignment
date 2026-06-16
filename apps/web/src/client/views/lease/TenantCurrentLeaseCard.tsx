@@ -1,9 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui";
 import { strings } from "@repo/tokens";
 import { FileText, ExternalLink } from "lucide-react";
-import type { Lease } from "@repo/data";
-import type { Unit } from "@repo/data";
-import type { Property } from "@repo/data";
+import type { Lease, Unit, Property } from "@repo/data";
 import { formatDate } from "@repo/ui";
 
 const s = strings.manager.tenantProfile.lease;
@@ -17,8 +15,10 @@ interface Props {
 export const TenantCurrentLeaseCard = ({ lease, unit, property }: Props) => (
   <Card>
     <CardHeader>
-      <CardTitle className="flex items-center gap-2 text-base">
-        <FileText className="h-4 w-4 text-neutral-400" />
+      <CardTitle className="flex items-center gap-2 text-[15px]">
+        <div className="w-8 h-8 rounded-full bg-sand-200 flex items-center justify-center flex-none">
+          <FileText className="h-4 w-4 text-espresso-700" />
+        </div>
         {s.heading}
       </CardTitle>
     </CardHeader>
@@ -28,42 +28,36 @@ export const TenantCurrentLeaseCard = ({ lease, unit, property }: Props) => (
           {[
             { label: s.property, value: property.name },
             { label: s.unit, value: unit.label },
-            {
-              label: s.monthlyRent,
-              value: `$${lease.monthlyRent.toLocaleString()}/mo`,
-            },
-            {
-              label: s.leaseDate,
-              value: `${formatDate(lease.startDate)} – ${formatDate(lease.endDate)}`,
-            },
+            { label: s.monthlyRent, value: `$${lease.monthlyRent.toLocaleString()}/mo` },
+            { label: s.leaseDate, value: `${formatDate(lease.startDate)} → ${formatDate(lease.endDate)}` },
           ].map(({ label, value }) => (
             <div
               key={label}
-              className="flex justify-between py-2.5 border-b border-neutral-100 last:border-0"
+              className="flex justify-between py-3 border-b border-sand-200 last:border-0"
             >
-              <span className="text-sm text-neutral-500">{label}</span>
-              <span className="text-sm font-medium text-neutral-900">{value}</span>
+              <span className="text-[13px] text-muted-foreground">{label}</span>
+              <span className="text-[13px] font-medium text-espresso-900">{value}</span>
             </div>
           ))}
-          <div className="flex justify-between py-2.5">
-            <span className="text-sm text-neutral-500">{s.leaseDocument}</span>
+          <div className="flex justify-between py-3">
+            <span className="text-[13px] text-muted-foreground">{s.leaseDocument}</span>
             {lease.leaseDocument ? (
               <a
                 href={lease.leaseDocument}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-brand-600 hover:text-brand-700 transition-colors text-sm font-medium"
+                className="inline-flex items-center gap-1 text-maroon-600 hover:underline transition-colors text-[13px] font-medium"
               >
                 {s.leaseDocumentLink}
                 <ExternalLink className="h-3 w-3" />
               </a>
             ) : (
-              <span className="text-sm font-medium text-neutral-400">{s.leaseDocumentNone}</span>
+              <span className="text-[13px] font-medium text-muted-foreground">{s.leaseDocumentNone}</span>
             )}
           </div>
         </>
       ) : (
-        <p className="text-sm text-neutral-400">{s.noLease}</p>
+        <p className="text-[13px] text-muted-foreground">{s.noLease}</p>
       )}
     </CardContent>
   </Card>

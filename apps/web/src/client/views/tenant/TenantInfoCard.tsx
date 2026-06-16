@@ -5,31 +5,43 @@ import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui";
 import { strings } from "@repo/tokens";
 import { formatDate } from "@repo/ui";
 import { colors } from "@repo/tokens";
-import { User, ExternalLink } from "lucide-react";
+import { User, ExternalLink, ShieldCheck, Clock, ShieldOff } from "lucide-react";
 import type { Tenant, KycStatus, TenantStanding } from "@repo/data";
 
 const s = strings.manager.tenantProfile.info;
 const ss = strings.manager.tenantProfile.standing;
 
-const kycBadgeStyle: Record<KycStatus, { bg: string; text: string }> = {
-  verified: { bg: "bg-success-50", text: "text-success-700" },
-  pending: { bg: "bg-warning-50", text: "text-warning-700" },
-  not_submitted: { bg: "bg-neutral-100", text: "text-neutral-500" },
+const kycConfig: Record<KycStatus, { icon: React.ReactNode; label: string; className: string }> = {
+  verified: {
+    icon: <ShieldCheck className="h-3.5 w-3.5" />,
+    label: "KYC Verified",
+    className: "bg-success-bg text-success",
+  },
+  pending: {
+    icon: <Clock className="h-3.5 w-3.5" />,
+    label: "KYC Pending",
+    className: "bg-warning-bg text-warning",
+  },
+  not_submitted: {
+    icon: <ShieldOff className="h-3.5 w-3.5" />,
+    label: "Not Submitted",
+    className: "bg-sand-200 text-espresso-500",
+  },
 };
 
 const scoreColor = (score: number): string =>
-  score >= 90
-    ? colors.chart.paid
-    : score >= 70
-      ? colors.chart.collected
-      : score >= 50
-        ? colors.chart.outstanding
-        : colors.chart.overdue;
+  score >= 90 ? colors.chart.paid
+  : score >= 70 ? colors.chart.collected
+  : score >= 50 ? colors.chart.outstanding
+  : colors.chart.overdue;
+
+const scoreLabel = (score: number) =>
+  score >= 90 ? "Excellent" : score >= 70 ? "Good" : score >= 50 ? "Fair" : "At risk";
 
 const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
-  <div className="flex items-center justify-between py-2 border-b border-neutral-100 last:border-0">
-    <span className="text-sm text-neutral-500">{label}</span>
-    <span className="text-sm font-medium text-neutral-900">{children}</span>
+  <div className="flex items-center justify-between py-3 border-b border-sand-200 last:border-0">
+    <span className="text-[13px] text-muted-foreground">{label}</span>
+    <span className="text-[13px] font-medium text-espresso-900">{children}</span>
   </div>
 );
 
@@ -39,33 +51,34 @@ interface Props {
 }
 
 export const TenantInfoCard = ({ tenant, standing }: Props) => {
-  const { bg, text } = kycBadgeStyle[tenant.kycStatus];
+  const kyc = kycConfig[tenant.kycStatus];
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <User className="h-4 w-4 text-neutral-400" />
+        <CardTitle className="flex items-center gap-2 text-[15px]">
+          <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center flex-none">
+            <User className="h-4 w-4 text-teal-700" />
+          </div>
           {s.heading}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
-          {/* Left: personal details — 60% */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+          {/* Personal details */}
           <div className="lg:col-span-3">
             <Row label={s.name}>{tenant.name}</Row>
             <Row label={s.email}>{tenant.email}</Row>
             <Row label={s.contact}>{tenant.contact}</Row>
             <Row label={s.kycStatus}>
-              <div className="flex flex-col items-end gap-0.5">
-                <span
-                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${bg} ${text}`}
-                >
-                  {s.kycStatusLabels[tenant.kycStatus]}
+              <div className="flex flex-col items-end gap-1">
+                <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[12px] font-semibold ${kyc.className}`}>
+                  {kyc.icon}
+                  {kyc.label}
                 </span>
                 {tenant.kycVerifiedOn && (
-                  <span className="text-xs text-neutral-400">
-                    {s.kycVerifiedOn}: {formatDate(tenant.kycVerifiedOn)}
+                  <span className="text-[11.5px] text-muted-foreground">
+                    Verified {formatDate(tenant.kycVerifiedOn)}
                   </span>
                 )}
               </div>
@@ -76,52 +89,50 @@ export const TenantInfoCard = ({ tenant, standing }: Props) => {
                   href={tenant.kycDocument}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-brand-600 hover:text-brand-700 transition-colors"
+                  className="inline-flex items-center gap-1 text-maroon-600 hover:underline transition-colors text-[13px] font-medium"
                 >
                   {s.kycDocumentLink}
                   <ExternalLink className="h-3 w-3" />
                 </a>
               ) : (
-                <span className="text-neutral-400">{s.kycDocumentNone}</span>
+                <span className="text-muted-foreground">{s.kycDocumentNone}</span>
               )}
             </Row>
           </div>
 
-          {/* Right: risk score donut + on-time — 40% */}
-          <div className="lg:col-span-2 flex items-center justify-center">
-            {standing && (
-              <div className="flex flex-col items-center">
-                <div className="relative">
-                  <PieChart width={110} height={110}>
-                    <Pie
-                      data={[{ value: standing.score }, { value: 100 - standing.score }]}
-                      cx={50}
-                      cy={50}
-                      innerRadius={34}
-                      outerRadius={48}
-                      startAngle={90}
-                      endAngle={-270}
-                      dataKey="value"
-                      strokeWidth={0}
-                    >
-                      <Cell fill={scoreColor(standing.score)} />
-                      <Cell fill="#e5e7eb" />
-                    </Pie>
-                  </PieChart>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-sm font-bold text-neutral-900">{standing.label}</span>
-                    <span className="text-xs text-neutral-400">{standing.score}%</span>
-                  </div>
+          {/* Score ring */}
+          {standing && (
+            <div className="lg:col-span-2 flex flex-col items-center justify-center gap-2">
+              <div className="relative">
+                <PieChart width={120} height={120}>
+                  <Pie
+                    data={[{ value: standing.score }, { value: 100 - standing.score }]}
+                    cx={55}
+                    cy={55}
+                    innerRadius={38}
+                    outerRadius={52}
+                    startAngle={90}
+                    endAngle={-270}
+                    dataKey="value"
+                    strokeWidth={0}
+                  >
+                    <Cell fill={scoreColor(standing.score)} />
+                    <Cell fill="#EBECDC" />
+                  </Pie>
+                </PieChart>
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="text-[15px] font-semibold text-espresso-900">{scoreLabel(standing.score)}</span>
+                  <span className="text-[12px] text-muted-foreground">{standing.score}/100</span>
                 </div>
-                <p className="mt-1 text-xs text-neutral-500">
-                  <span className="font-semibold text-neutral-800">
-                    {standing.onTimePayments}/{standing.totalPayments}
-                  </span>{" "}
-                  {ss.onTime}
-                </p>
               </div>
-            )}
-          </div>
+              <p className="text-[12.5px] text-muted-foreground text-center">
+                <span className="font-semibold text-espresso-900">
+                  {standing.onTimePayments}/{standing.totalPayments}
+                </span>{" "}
+                {ss.onTime}
+              </p>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

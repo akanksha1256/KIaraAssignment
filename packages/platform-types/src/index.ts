@@ -90,6 +90,8 @@ export interface PaymentBreakdown {
   paid: number;
   outstanding: number;
   overdue: number;
+  overdue_amount: number;
+  outstanding_amount: number;
 }
 
 export interface MonthlyRevenue {
@@ -98,11 +100,22 @@ export interface MonthlyRevenue {
   collected: number;
 }
 
+export interface AtRiskLease {
+  tenant_name: string;
+  property_name: string;
+  unit_label: string;
+  amount_due: number;
+  days_overdue: number;
+  lease_id: string;
+  status: "overdue" | "outstanding";
+}
+
 export interface ManagerDashboardData {
   stats: DashboardStats;
   payment_breakdown: PaymentBreakdown;
   monthly_revenue: MonthlyRevenue[];
   properties: PropertySummary[];
+  at_risk_leases: AtRiskLease[];
 }
 
 export interface UnitDetail {

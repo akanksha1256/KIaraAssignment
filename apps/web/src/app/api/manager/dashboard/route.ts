@@ -6,7 +6,19 @@ import type {
   PropertySummary,
   PropertyStatus,
   MonthlyRevenue,
+  AtRiskLease,
 } from "@repo/platform-types";
+
+// June 2 2026 — reference date for "days overdue" calculation
+const REFERENCE_DATE = new Date("2026-06-16T00:00:00.000Z");
+
+function daysOverdue(periodMonth: string): number {
+  const [year, month] = periodMonth.split("-").map(Number);
+  // Payment was due on the 1st of the following month
+  const dueDate = new Date(year, month, 1); // month is 0-indexed, so month = next month
+  const diff = REFERENCE_DATE.getTime() - dueDate.getTime();
+  return Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -48,32 +60,61 @@ export async function GET(req: NextRequest) {
     const occupied_units = allLeases.length;
 
     const total_monthly_rent = allLeases.reduce((s, l) => s + l.monthly_rent, 0);
+
+    // Current period = most recent month in payment records
+    const allPeriods = [...new Set(allPayments.map((p) => p.period_month))].sort();
+    const currentPeriod = allPeriods[allPeriods.length - 1] ?? "";
     const collected_this_month = allPayments
-      .filter((p) => p.status === "paid")
+      .filter((p) => p.period_month === currentPeriod && p.status === "paid")
       .reduce((s, p) => s + p.amount_paid, 0);
 
     // ── Payment breakdown ─────────────────────────────────────────────────────
+    const overduePayments = allPayments.filter((p) => p.status === "overdue");
+    const outstandingPayments = allPayments.filter((p) => p.status === "outstanding");
+
     const payment_breakdown = {
       paid: allPayments.filter((p) => p.status === "paid").length,
-      outstanding: allPayments.filter((p) => p.status === "outstanding").length,
-      overdue: allPayments.filter((p) => p.status === "overdue").length,
+      outstanding: outstandingPayments.length,
+      overdue: overduePayments.length,
+      overdue_amount: overduePayments.reduce((s, p) => s + p.amount_due, 0),
+      outstanding_amount: outstandingPayments.reduce((s, p) => s + p.amount_due, 0),
     };
 
+    // ── At-risk leases ────────────────────────────────────────────────────────
+    const atRiskPayments = allPayments.filter(
+      (p) => p.status === "overdue" || p.status === "outstanding",
+    );
+
+    const at_risk_leases: AtRiskLease[] = atRiskPayments
+      .map((p) => {
+        const lease = db.leases.find((l) => l.id === p.lease_id);
+        if (!lease) return null;
+        const unit = db.units.find((u) => u.id === lease.unit_id);
+        if (!unit) return null;
+        const property = db.properties.find((pr) => pr.id === unit.property_id);
+        if (!property) return null;
+        const tenant = db.tenants.find((t) => t.id === lease.tenant_id);
+        if (!tenant) return null;
+        return {
+          tenant_name: tenant.name,
+          property_name: property.name,
+          unit_label: unit.label,
+          amount_due: p.amount_due,
+          days_overdue: p.status === "overdue" ? daysOverdue(p.period_month) : 0,
+          lease_id: lease.id,
+          status: p.status as "overdue" | "outstanding",
+        };
+      })
+      .filter((x): x is AtRiskLease => x !== null)
+      // Sort overdue first, then by days overdue desc
+      .sort((a, b) => {
+        if (a.status !== b.status) return a.status === "overdue" ? -1 : 1;
+        return b.days_overdue - a.days_overdue;
+      })
+      .slice(0, 6);
+
     // ── Monthly revenue (last 6 months) ───────────────────────────────────────
-    const monthNames = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
+    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     const monthly_revenue: MonthlyRevenue[] = [];
 
     const allMonths = [...new Set(allPayments.map((p) => p.period_month))].sort();
@@ -86,11 +127,7 @@ export async function GET(req: NextRequest) {
         .filter((p) => p.status === "paid")
         .reduce((s, p) => s + p.amount_paid, 0);
       const [, month] = ym.split("-");
-      monthly_revenue.push({
-        month: monthNames[Number(month) - 1],
-        expected,
-        collected,
-      });
+      monthly_revenue.push({ month: monthNames[Number(month) - 1], expected, collected });
     }
 
     const data: ManagerDashboardData = {
@@ -105,6 +142,7 @@ export async function GET(req: NextRequest) {
       payment_breakdown,
       monthly_revenue,
       properties,
+      at_risk_leases,
     };
 
     return NextResponse.json(data);

@@ -1,9 +1,8 @@
 "use client";
 
-import { DataTable } from "@repo/ui";
-import { RowMenu } from "@repo/ui";
+import { DataTable, Badge, RowMenu } from "@repo/ui";
 import { EmptyState } from "@/client/views/EmptyScreen";
-import { LoadingState } from "@/client/views/LoadingScreen";
+import { Skeleton } from "@repo/ui";
 import { strings } from "@repo/tokens";
 import type { Payment } from "@repo/data";
 import type { TableCell } from "@repo/ui";
@@ -14,12 +13,6 @@ import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 
 const s = strings.paymentTable;
-
-const STATUS_CONFIG = {
-  paid: { bg: "bg-success-50", text: "text-success-700" },
-  outstanding: { bg: "bg-warning-50", text: "text-warning-700" },
-  overdue: { bg: "bg-danger-50", text: "text-danger-700" },
-} as const;
 
 export interface PaymentTableActions {
   onReminder: (periodMonth: string) => void;
@@ -40,6 +33,7 @@ interface Props {
   emptyDescription?: string;
   actions?: PaymentTableActions;
   tenantActions?: TenantPaymentActions;
+  flashStates?: Record<string, "success" | "error" | null>;
 }
 
 function buildRow(
@@ -47,39 +41,69 @@ function buildRow(
   actions?: PaymentTableActions,
   tenantActions?: TenantPaymentActions,
 ): TableCell[] {
-  const cfg = STATUS_CONFIG[payment.status] ?? STATUS_CONFIG.outstanding;
+  const statusVariant =
+    payment.status === "paid" ? "paid"
+    : payment.status === "overdue" ? "overdue"
+    : "outstanding";
+
+  const statusLabel =
+    payment.status === "paid" ? "Paid"
+    : payment.status === "overdue" ? "Overdue"
+    : "Outstanding";
 
   const statusCell: TableCell = {
     content: (
-      <span
-        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${cfg.bg} ${cfg.text}`}
-      >
-        {s.statusPill[payment.status]}
-      </span>
+      <div className="flex justify-end">
+        <Badge variant={statusVariant}>{statusLabel}</Badge>
+      </div>
     ),
-    className: "whitespace-nowrap text-right px-5 py-4",
+    className: "whitespace-nowrap text-right",
   };
 
   const baseCells: TableCell[] = [
     {
-      content: formatPeriodMonth(payment.periodMonth),
-      className: "whitespace-nowrap px-5 py-4 text-sm font-mono text-neutral-600",
+      content: (
+        <span className="font-mono text-[13px] font-medium text-espresso-700 bg-sand-100 px-2 py-0.5 rounded">
+          {formatPeriodMonth(payment.periodMonth)}
+        </span>
+      ),
+      className: "whitespace-nowrap",
     },
     {
-      content: `$${payment.amountDue.toLocaleString()}`,
-      className: "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-700",
+      content: (
+        <span className="tabular-nums text-[14px] text-espresso-700">
+          ${payment.amountDue.toLocaleString()}
+        </span>
+      ),
+      className: "whitespace-nowrap text-right",
     },
     {
-      content: payment.amountPaid > 0 ? `$${payment.amountPaid.toLocaleString()}` : s.notPaid,
-      className: "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
+      content: payment.amountPaid > 0 ? (
+        <span className="tabular-nums text-[14px] font-semibold text-espresso-900">
+          ${payment.amountPaid.toLocaleString()}
+        </span>
+      ) : (
+        <span className="text-espresso-300 text-[14px]">{s.notPaid}</span>
+      ),
+      className: "whitespace-nowrap text-right",
     },
     {
-      content: payment.paidDate ? formatDate(payment.paidDate) : s.notPaid,
-      className: "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-500",
+      content: payment.paidDate ? (
+        <span className="text-[13px] text-muted-foreground tabular-nums">
+          {formatDate(payment.paidDate)}
+        </span>
+      ) : (
+        <span className="text-espresso-300 text-[13px]">{s.notPaid}</span>
+      ),
+      className: "whitespace-nowrap text-right",
     },
     {
-      content: payment.method ?? s.notPaid,
-      className: "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-500",
+      content: payment.method ? (
+        <span className="text-[13px] text-muted-foreground">{payment.method}</span>
+      ) : (
+        <span className="text-espresso-300 text-[13px]">{s.notPaid}</span>
+      ),
+      className: "whitespace-nowrap text-right",
     },
     statusCell,
   ];
@@ -93,13 +117,13 @@ function buildRow(
           <div className="flex justify-end">
             <button
               onClick={() => tenantActions.onPayRent(payment.periodMonth)}
-              className="rounded-lg bg-brand-400 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700"
+              className="inline-flex items-center h-8 px-4 rounded-full bg-coral-500 text-white text-[13px] font-medium hover:bg-coral-600 transition-colors"
             >
               {tenantActions.payButtonLabel}
             </button>
           </div>
         ) : null,
-        className: "whitespace-nowrap px-5 py-4 text-right",
+        className: "whitespace-nowrap text-right",
       },
     ];
   }
@@ -145,53 +169,49 @@ function buildRow(
     ...baseCells,
     {
       content: menuItems.length > 0 ? <RowMenu items={menuItems} /> : null,
-      className: "whitespace-nowrap px-5 py-4 text-right",
+      className: "whitespace-nowrap text-right",
     },
   ];
 }
 
-export function PaymentHistoryTable({ payments, loading, empty, emptyDescription, actions, tenantActions }: Props) {
-  if (loading) return <LoadingState message="Loading payments…" />;
+export function PaymentHistoryTable({
+  payments,
+  loading,
+  empty,
+  emptyDescription,
+  actions,
+  tenantActions,
+  flashStates,
+}: Props) {
+  if (loading) {
+    return (
+      <div className="rounded-xl border border-sand-400 bg-white overflow-hidden">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="px-5 py-4 border-b border-sand-200 flex gap-4 items-center">
+            {[70, 80, 80, 90, 100, 70].map((w, j) => (
+              <Skeleton key={j} className={`h-3 w-[${w}px]`} />
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   if (payments.length === 0)
-    return <EmptyState title={empty ?? "No payments recorded"} description={emptyDescription} />;
+    return <EmptyState title={empty ?? "No payments recorded"} description={emptyDescription} icon="payment" />;
 
   const hasActions = !!actions;
   const hasTenantActions = !!tenantActions;
-
   const hasExtraCol = hasActions || hasTenantActions;
 
   const columns = [
-    {
-      label: s.colPeriod,
-      align: "left" as const,
-      className: hasExtraCol ? "w-[12%]" : "w-[15%]",
-    },
-    {
-      label: s.colDue,
-      align: "right" as const,
-      className: hasExtraCol ? "w-[13%]" : "w-[16%]",
-    },
-    {
-      label: s.colPaid,
-      align: "right" as const,
-      className: hasExtraCol ? "w-[13%]" : "w-[16%]",
-    },
-    {
-      label: s.colDate,
-      align: "right" as const,
-      className: hasExtraCol ? "w-[16%]" : "w-[19%]",
-    },
-    {
-      label: s.colMethod,
-      align: "right" as const,
-      className: hasExtraCol ? "w-[20%]" : "w-[19%]",
-    },
-    {
-      label: s.colStatus,
-      align: "right" as const,
-      className: hasExtraCol ? "w-[16%]" : "w-[15%]",
-    },
-    ...(hasExtraCol ? [{ label: "", align: "right" as const, className: "w-[7%]" }] : []),
+    { label: s.colPeriod,  align: "left"  as const },
+    { label: s.colDue,     align: "right" as const },
+    { label: s.colPaid,    align: "right" as const },
+    { label: s.colDate,    align: "right" as const },
+    { label: s.colMethod,  align: "right" as const },
+    { label: s.colStatus,  align: "right" as const },
+    ...(hasExtraCol ? [{ label: "", align: "right" as const }] : []),
   ];
 
   return (
@@ -199,6 +219,8 @@ export function PaymentHistoryTable({ payments, loading, empty, emptyDescription
       columns={columns}
       rows={payments.map((p) => ({
         key: p.id,
+        urgent: p.status === "overdue",
+        flashState: flashStates?.[p.periodMonth] ?? null,
         cells: buildRow(p, actions, tenantActions),
       }))}
     />
