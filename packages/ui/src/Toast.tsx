@@ -30,7 +30,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed top-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none">
+      <div
+        className="fixed top-6 right-6 z-toast flex flex-col gap-3 pointer-events-none"
+        aria-live="polite"
+        aria-label="Notifications"
+      >
         {toasts.map((toast) => (
           <ToastItem
             key={toast.id}
@@ -47,18 +51,24 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
   const isSuccess = toast.variant === "success";
   return (
     <div
-      className={`pointer-events-auto flex items-center gap-3 rounded-lg border px-4 py-3 shadow-lg text-sm font-medium
-        ${isSuccess ? "bg-success-50 border-success-200 text-success-800" : "bg-danger-50 border-danger-200 text-danger-800"}`}
+      role="alert"
+      className={[
+        "pointer-events-auto flex items-center gap-3 rounded-xl border px-4 py-3 shadow-lg text-[13.5px] font-medium",
+        isSuccess
+          ? "bg-teal-100 border-teal-200 text-teal-700"
+          : "bg-destructive-bg border-red-200 text-destructive",
+      ].join(" ")}
     >
       {isSuccess ? (
-        <CheckCircle className="h-4 w-4 shrink-0 text-success-600" />
+        <CheckCircle className="h-4 w-4 shrink-0" />
       ) : (
-        <XCircle className="h-4 w-4 shrink-0 text-danger-600" />
+        <XCircle className="h-4 w-4 shrink-0" />
       )}
       <span>{toast.message}</span>
       <button
         onClick={onDismiss}
-        className="ml-2 rounded p-0.5 opacity-60 hover:opacity-100 transition-opacity"
+        aria-label="Dismiss notification"
+        className="ml-2 rounded-full p-0.5 opacity-60 hover:opacity-100 transition-opacity"
       >
         <X className="h-3.5 w-3.5" />
       </button>

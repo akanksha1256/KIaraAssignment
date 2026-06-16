@@ -1,23 +1,37 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Albert_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@repo/ui";
 import { Nav } from "@repo/ui";
 
-const inter = Inter({ subsets: ["latin"] });
+const albertSans = Albert_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-albert-sans",
+});
 
 export const metadata: Metadata = {
-  title: "RentPortal",
-  description: "Rent management portal",
+  title: "Kiara",
+  description: "AI rental property management",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <head>
+        {/* Sentient serif via Fontshare (not on Google Fonts) */}
+        <link rel="preconnect" href="https://api.fontshare.com" />
+        <link
+          href="https://api.fontshare.com/v2/css?f[]=sentient@500,600&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className={`${albertSans.variable} font-sans`}>
         <Providers>
-          <Nav />
-          <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+          <div className="flex min-h-screen">
+            <Nav />
+            <main className="flex-1 min-w-0">{children}</main>
+          </div>
         </Providers>
       </body>
     </html>

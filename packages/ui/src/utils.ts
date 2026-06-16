@@ -24,23 +24,23 @@ export function cn(...inputs: ClassValue[]) {
 
 export const statusConfig: Record<PropertyStatus, { bg: string; text: string; label: string }> = {
   paid: {
-    bg: "bg-success-50",
-    text: "text-success-700",
+    bg: "bg-success-bg",
+    text: "text-success",
     label: strings.statusPill.paid,
   },
   outstanding: {
-    bg: "bg-warning-50",
-    text: "text-warning-700",
+    bg: "bg-warning-bg",
+    text: "text-warning",
     label: strings.statusPill.outstanding,
   },
   overdue: {
-    bg: "bg-danger-50",
-    text: "text-danger-700",
+    bg: "bg-destructive-bg",
+    text: "text-destructive",
     label: strings.statusPill.overdue,
   },
   vacant: {
-    bg: "bg-neutral-100",
-    text: "text-neutral-500",
+    bg: "bg-sand-200",
+    text: "text-espresso-700",
     label: strings.statusPill.vacant,
   },
 };

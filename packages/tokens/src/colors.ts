@@ -1,51 +1,52 @@
 export const colors = {
-  brand: {
-    50: "#f0f4ff",
-    100: "#e0e9ff",
-    200: "#c0d2fe",
-    300: "#93b0fd",
-    400: "#6084fb",
-    500: "#3b5ff8",
-    600: "#2440ed",
-    700: "#1c31d9",
-    800: "#1c2ab1",
-    900: "#1c278c",
-    950: "#161a5e",
+  coral: {
+    50: "#FFF5F1",
+    100: "#FFE7DE",
+    200: "#FFC9B7",
+    500: "#FF6139",
+    600: "#E84E27",
+    700: "#C53F1E",
   },
-  success: {
-    50: "#f0fdf4",
-    500: "#22c55e",
-    700: "#15803d",
+  maroon: {
+    500: "#8A4140",
+    600: "#733635",
+    700: "#5C2A29",
+  },
+  teal: {
+    100: "#E9F2F2",
+    200: "#CDE2E3",
+    300: "#A1CACC",
+    600: "#5E8E90",
+    700: "#467173",
+  },
+  espresso: {
+    300: "#B9A7A4",
+    500: "#8B716E",
+    700: "#5A3F3C",
+    900: "#371F1D",
+  },
+  sand: {
+    100: "#F3F4E9",
+    200: "#EBECDC",
+    400: "#D9DAC4",
+  },
+  cream: "#F5F5ED",
+  // Status colours (light-mode hex approximations; OKLCH canonical in tokens.css)
+  destructive: {
+    DEFAULT: "#C8341B",
+    bg: "#FCEBE7",
   },
   warning: {
-    50: "#fffbeb",
-    500: "#f59e0b",
-    700: "#b45309",
+    DEFAULT: "#C98A12",
+    bg: "#FBF1DD",
   },
-  danger: {
-    50: "#fef2f2",
-    500: "#ef4444",
-    700: "#b91c1c",
-  },
-  neutral: {
-    0: "#ffffff",
-    50: "#f8fafc",
-    100: "#f1f5f9",
-    200: "#e2e8f0",
-    300: "#cbd5e1",
-    400: "#94a3b8",
-    500: "#64748b",
-    600: "#475569",
-    700: "#334155",
-    800: "#1e293b",
-    900: "#0f172a",
-    950: "#020617",
-  },
+  info: "#5C7196",
+  // Chart palette (draws from brand primitives)
   chart: {
-    paid: "#22c55e",
-    outstanding: "#f59e0b",
-    overdue: "#ef4444",
-    expected: "#c0d2fe",
-    collected: "#2440ed",
+    paid: "#467173",      // teal-700
+    outstanding: "#C98A12", // warning
+    overdue: "#C8341B",   // destructive
+    expected: "#CDE2E3",  // teal-200
+    collected: "#FF6139", // coral-500
   },
 } as const;

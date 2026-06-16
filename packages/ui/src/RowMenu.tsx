@@ -33,9 +33,9 @@ export function RowMenu({ items }: Props) {
     if (!open) return;
     const handleMouseDown = (e: MouseEvent) => {
       const target = e.target as Node;
-      const insideButton = buttonRef.current?.contains(target);
-      const insideDropdown = dropdownRef.current?.contains(target);
-      if (!insideButton && !insideDropdown) setOpen(false);
+      if (!buttonRef.current?.contains(target) && !dropdownRef.current?.contains(target)) {
+        setOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleMouseDown);
     return () => document.removeEventListener("mousedown", handleMouseDown);
@@ -47,14 +47,11 @@ export function RowMenu({ items }: Props) {
       const rect = buttonRef.current.getBoundingClientRect();
       const spaceBelow = window.innerHeight - rect.bottom;
       const rightOffset = window.innerWidth - rect.right;
-      if (spaceBelow < 160) {
-        setPos({
-          bottom: window.innerHeight - rect.top + 4,
-          right: rightOffset,
-        });
-      } else {
-        setPos({ top: rect.bottom + 4, right: rightOffset });
-      }
+      setPos(
+        spaceBelow < 160
+          ? { bottom: window.innerHeight - rect.top + 4, right: rightOffset }
+          : { top: rect.bottom + 4, right: rightOffset },
+      );
     }
     setOpen((v) => !v);
   };
@@ -64,23 +61,18 @@ export function RowMenu({ items }: Props) {
       <button
         ref={buttonRef}
         onClick={handleOpen}
-        className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 transition-colors"
+        aria-label="Row actions"
+        className="flex h-7 w-7 items-center justify-center rounded-md text-espresso-300 hover:bg-sand-200 hover:text-espresso-700 transition-colors duration-fast"
       >
         <MoreVertical className="h-4 w-4" />
       </button>
 
-      {open &&
-        pos &&
+      {open && pos &&
         createPortal(
           <div
             ref={dropdownRef}
-            style={{
-              position: "fixed",
-              top: pos.top,
-              bottom: pos.bottom,
-              right: pos.right,
-            }}
-            className="z-50 w-fit rounded-lg border border-neutral-200 bg-white py-1 shadow-lg"
+            style={{ position: "fixed", top: pos.top, bottom: pos.bottom, right: pos.right }}
+            className="z-dropdown w-fit min-w-[160px] rounded-xl border border-sand-400 bg-white py-1 shadow-md"
           >
             {items.map((item) => (
               <button
@@ -92,12 +84,12 @@ export function RowMenu({ items }: Props) {
                   item.onClick();
                   setOpen(false);
                 }}
-                className={`flex w-full items-center gap-2 px-4 py-2 text-left text-sm transition-colors disabled:opacity-40
-                ${
+                className={[
+                  "flex w-full items-center gap-2 px-4 py-2.5 text-left text-[13.5px] font-medium transition-colors disabled:opacity-40",
                   item.variant === "danger"
-                    ? "text-danger-600 hover:bg-danger-50"
-                    : "text-neutral-700 hover:bg-neutral-50"
-                }`}
+                    ? "text-destructive hover:bg-destructive-bg"
+                    : "text-espresso-700 hover:bg-sand-100",
+                ].join(" ")}
               >
                 <span className="flex flex-col items-start">
                   <span className="flex items-center gap-2">
@@ -105,7 +97,7 @@ export function RowMenu({ items }: Props) {
                     {item.loading && <Loader2 className="h-3.5 w-3.5 animate-spin opacity-60" />}
                   </span>
                   {item.sublabel && (
-                    <span className="text-xs font-normal opacity-70">{item.sublabel}</span>
+                    <span className="text-[12px] font-normal text-muted-foreground">{item.sublabel}</span>
                   )}
                 </span>
               </button>

@@ -18,28 +18,28 @@ export function StatusSection({ stats }: { stats: DashboardStats }) {
         label={s.stats.properties}
         value={String(stats.totalProperties)}
         sub={s.stats.propertiesSubtitle(stats.totalUnits)}
-        accent="brand"
+        accent="neutral"
       />
       <StatCard
         icon={DoorOpen}
         label={s.stats.occupancy}
         value={`${stats.occupiedUnits}/${stats.totalUnits}`}
         sub={s.stats.occupancySubtitle(stats.vacantUnits)}
-        accent="brand"
+        accent="neutral"
       />
       <StatCard
         icon={DollarSign}
         label={s.stats.monthlyRent}
         value={`$${stats.totalMonthlyRent.toLocaleString()}`}
         sub={s.stats.monthlyRentSubtitle}
-        accent="success"
+        accent="teal"
       />
       <StatCard
         icon={TrendingUp}
         label={s.stats.collectionRate}
         value={`${collectionRate}%`}
         sub={s.stats.collectionRateSubtitle(`$${stats.collectedThisMonth.toLocaleString()}`)}
-        accent={collectionRate >= 80 ? "success" : "warning"}
+        accent={collectionRate >= 80 ? "teal" : "warning"}
       />
     </div>
   );

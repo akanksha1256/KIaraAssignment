@@ -2,8 +2,171 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Sentient serif via Fontshare */
+@import url("https://api.fontshare.com/v2/css?f[]=sentient@500,600&display=swap");
+
 @layer base {
+  :root {
+    /* Brand primitives */
+    --coral-50: #FFF5F1;
+    --coral-100: #FFE7DE;
+    --coral-200: #FFC9B7;
+    --coral-500: #FF6139;
+    --coral-600: #E84E27;
+    --coral-700: #C53F1E;
+    --maroon-500: #8A4140;
+    --maroon-600: #733635;
+    --maroon-700: #5C2A29;
+    --teal-100: #E9F2F2;
+    --teal-200: #CDE2E3;
+    --teal-300: #A1CACC;
+    --teal-600: #5E8E90;
+    --teal-700: #467173;
+    --espresso-300: #B9A7A4;
+    --espresso-500: #8B716E;
+    --espresso-700: #5A3F3C;
+    --espresso-900: #371F1D;
+    --sand-100: #F3F4E9;
+    --sand-200: #EBECDC;
+    --sand-400: #D9DAC4;
+    --cream: #F5F5ED;
+
+    /* Semantic tokens */
+    --background: #FFFFFF;
+    --foreground: var(--espresso-900);
+    --card: #FFFFFF;
+    --muted: var(--sand-200);
+    --muted-foreground: var(--espresso-500);
+    --primary: var(--coral-500);
+    --primary-foreground: #FFFFFF;
+    --secondary: var(--sand-200);
+    --secondary-foreground: var(--espresso-900);
+    --accent: var(--teal-100);
+    --accent-foreground: var(--teal-700);
+    --border: var(--sand-400);
+    --heading: var(--maroon-600);
+    --ring: var(--coral-500);
+    --inverse: var(--espresso-900);
+
+    /* Status */
+    --destructive: #C8341B;
+    --destructive-bg: #FCEBE7;
+    --warning: #C98A12;
+    --warning-bg: #FBF1DD;
+    --info: #5C7196;
+    --success: var(--teal-700);
+    --success-bg: var(--teal-100);
+
+    /* Shadows (warm undertone) */
+    --shadow-sm: 0 1px 2px rgba(55,31,29,.05);
+    --shadow-md: 0 4px 14px -4px rgba(55,31,29,.10);
+    --shadow-lg: 0 12px 32px -8px rgba(55,31,29,.16);
+    --shadow-xl: 0 20px 50px -12px rgba(55,31,29,.30);
+
+    /* Motion */
+    --dur-fast: 100ms;
+    --dur-normal: 200ms;
+    --dur-slow: 300ms;
+    --ease: cubic-bezier(0.2, 0, 0, 1);
+    --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
-    @apply bg-neutral-50 text-neutral-900 antialiased;
+    @apply bg-cream text-espresso-900 font-sans antialiased;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  /* Coral 3px focus ring on all interactive elements */
+  *:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Shimmer skeleton animation */
+  @keyframes shimmer {
+    0%   { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
+  }
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--sand-200) 25%,
+      var(--sand-100) 37%,
+      var(--sand-200) 63%
+    );
+    background-size: 400% 100%;
+    animation: shimmer 1.4s ease infinite;
+    border-radius: 6px;
+  }
+
+  /* Teal flash for optimistic success */
+  @keyframes flash-success {
+    0%   { background-color: var(--teal-100); }
+    100% { background-color: transparent; }
+  }
+
+  /* Red flash for optimistic rollback */
+  @keyframes flash-error {
+    0%   { background-color: var(--destructive-bg); }
+    100% { background-color: transparent; }
+  }
+
+  .flash-success { animation: flash-success 600ms var(--ease) forwards; }
+  .flash-error   { animation: flash-error   600ms var(--ease) forwards; }
+
+  /* Type scale utilities */
+  .t-display {
+    font-family: 'Sentient', Georgia, serif;
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .t-h1 { font-size: 36px; font-weight: 600; line-height: 1.1; }
+  .t-h2 { font-size: 28px; font-weight: 600; line-height: 1.2; }
+  .t-h3 { font-size: 22px; font-weight: 600; line-height: 1.3; }
+  .t-h4 { font-size: 18px; font-weight: 600; line-height: 1.3; }
+  .t-body    { font-size: 16px; font-weight: 400; line-height: 1.5; }
+  .t-body-sm { font-size: 14px; font-weight: 400; line-height: 1.4; }
+  .t-label   { font-size: 14px; font-weight: 500; line-height: 1.4; }
+  .t-caption { font-size: 12px; font-weight: 400; line-height: 1.3; color: var(--muted-foreground); }
+  .t-overline {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+  .t-mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* Sentient display for big money figures */
+  .t-money {
+    font-family: 'Sentient', Georgia, serif;
+    font-size: 44px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.02em;
   }
 }

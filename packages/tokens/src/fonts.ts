@@ -1,108 +1,41 @@
+// Kiara type scale — Albert Sans primary, Sentient for display/editorial
+export const fontFamilies = {
+  sans: "'Albert Sans', system-ui, sans-serif",
+  serif: "'Sentient', Georgia, serif",
+  mono: "'JetBrains Mono', monospace",
+} as const;
+
+export const typeScale = {
+  display: { fontSize: "48px", fontWeight: 600, lineHeight: 1.1, fontFamily: "serif" },
+  h1: { fontSize: "36px", fontWeight: 600, lineHeight: 1.1 },
+  h2: { fontSize: "28px", fontWeight: 600, lineHeight: 1.2 },
+  h3: { fontSize: "22px", fontWeight: 600, lineHeight: 1.3 },
+  h4: { fontSize: "18px", fontWeight: 600, lineHeight: 1.3 },
+  body: { fontSize: "16px", fontWeight: 400, lineHeight: 1.5 },
+  "body-sm": { fontSize: "14px", fontWeight: 400, lineHeight: 1.4 },
+  label: { fontSize: "14px", fontWeight: 500, lineHeight: 1.4 },
+  caption: { fontSize: "12px", fontWeight: 400, lineHeight: 1.3 },
+  overline: {
+    fontSize: "13px",
+    fontWeight: 500,
+    lineHeight: 1.2,
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+  },
+} as const;
+
+// Legacy — kept for any remaining references, map to new scale
 export const fontSizes = {
-  extraSmall: "10px",
-  small: "12px",
+  extraSmall: "12px",
+  small: "13px",
   standard: "14px",
   large: "16px",
-  extraLarge: "20px",
+  extraLarge: "18px",
 } as const;
 
 export const fontWeight = {
   regular: 400,
   medium: 500,
+  semibold: 600,
   bold: 700,
-};
-
-export const lineHeights = {
-  extraSmall: "14px",
-  small: "16px",
-  standard: "20px",
-  large: "22px",
-  extraLarge: "28px",
 } as const;
-
-export const fonts = {
-  // Extra Small - 10px
-  extraSmallRegular: {
-    fontSize: fontSizes.extraSmall,
-    lineHeight: lineHeights.extraSmall,
-    fontWeight: fontWeight.regular,
-  },
-  extraSmallMedium: {
-    fontSize: fontSizes.extraSmall,
-    lineHeight: lineHeights.extraSmall,
-    fontWeight: fontWeight.medium,
-  },
-  extraSmallBold: {
-    fontSize: fontSizes.extraSmall,
-    lineHeight: lineHeights.extraSmall,
-    fontWeight: fontWeight.bold,
-  },
-
-  // Small - 12px
-  smallRegular: {
-    fontSize: fontSizes.small,
-    lineHeight: lineHeights.small,
-    fontWeight: fontWeight.regular,
-  },
-  smallMedium: {
-    fontSize: fontSizes.small,
-    lineHeight: lineHeights.small,
-    fontWeight: fontWeight.medium,
-  },
-  smallBold: {
-    fontSize: fontSizes.small,
-    lineHeight: lineHeights.small,
-    fontWeight: fontWeight.bold,
-  },
-
-  // Standard - 14px
-  standardRegular: {
-    fontSize: fontSizes.standard,
-    lineHeight: lineHeights.standard,
-    fontWeight: fontWeight.regular,
-  },
-  standardMedium: {
-    fontSize: fontSizes.standard,
-    lineHeight: lineHeights.standard,
-    fontWeight: fontWeight.medium,
-  },
-  standardBold: {
-    fontSize: fontSizes.standard,
-    lineHeight: lineHeights.standard,
-    fontWeight: fontWeight.bold,
-  },
-
-  // Large - 16px
-  largeRegular: {
-    fontSize: fontSizes.large,
-    lineHeight: lineHeights.large,
-    fontWeight: fontWeight.regular,
-  },
-  largeMedium: {
-    fontSize: fontSizes.large,
-    lineHeight: lineHeights.large,
-    fontWeight: fontWeight.medium,
-  },
-  largeBold: {
-    fontSize: fontSizes.large,
-    lineHeight: lineHeights.large,
-    fontWeight: fontWeight.bold,
-  },
-
-  // Extra Large - 20px
-  extraLargeRegular: {
-    fontSize: fontSizes.extraLarge,
-    lineHeight: lineHeights.extraLarge,
-    fontWeight: fontWeight.regular,
-  },
-  extraLargeMedium: {
-    fontSize: fontSizes.extraLarge,
-    lineHeight: lineHeights.extraLarge,
-    fontWeight: fontWeight.medium,
-  },
-  extraLargeBold: {
-    fontSize: fontSizes.extraLarge,
-    lineHeight: lineHeights.extraLarge,
-    fontWeight: fontWeight.bold,
-  },
-};

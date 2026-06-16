@@ -1,18 +1,22 @@
 import type { ElementType } from "react";
 
-export type AccentType = "brand" | "success" | "warning" | "danger";
+export type AccentType = "coral" | "teal" | "warning" | "destructive" | "neutral";
 
 export interface StatCardProps {
   icon: ElementType;
   label: string;
   value: string;
   sub?: string;
-  accent: AccentType;
+  accent?: AccentType;
+  trend?: { direction: "up" | "down" | "flat"; label: string };
+  alert?: boolean;
+  progress?: number; // 0-100
 }
 
 export const accentMap: Record<AccentType, { bg: string; text: string }> = {
-  brand: { bg: "bg-brand-50", text: "text-brand-600" },
-  success: { bg: "bg-success-50", text: "text-success-700" },
-  warning: { bg: "bg-warning-50", text: "text-warning-700" },
-  danger: { bg: "bg-danger-50", text: "text-danger-700" },
+  coral:       { bg: "bg-coral-50",        text: "text-coral-600" },
+  teal:        { bg: "bg-teal-100",        text: "text-teal-700" },
+  warning:     { bg: "bg-warning-bg",      text: "text-warning" },
+  destructive: { bg: "bg-destructive-bg",  text: "text-destructive" },
+  neutral:     { bg: "bg-sand-100",        text: "text-maroon-600" },
 };

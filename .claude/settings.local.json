@@ -69,7 +69,9 @@
       "Bash(pnpm type-check *)",
       "WebFetch(domain:kiara-assignment-web.vercel.app)",
       "mcp__visualize__read_me",
-      "mcp__visualize__show_widget"
+      "mcp__visualize__show_widget",
+      "Bash(pnpm --filter @repo/tokens build)",
+      "Bash(pnpm --filter web build)"
     ]
   }
 }
