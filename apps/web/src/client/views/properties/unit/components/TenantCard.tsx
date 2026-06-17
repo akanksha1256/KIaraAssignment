@@ -30,6 +30,7 @@ export const TenantCard = ({ tenant }: { tenant: Tenant | null }) => {
         {tenant ? (
           <>
             <DetailRow label={s.name} value={tenant.name} />
+            <DetailRow label={s.email} value={tenant.email} />
             <DetailRow label={s.contact} value={tenant.contact} />
             <div className="pt-3">
               <button

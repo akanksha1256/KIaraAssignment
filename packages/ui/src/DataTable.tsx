@@ -129,9 +129,7 @@ export function DataTable({ columns, rows = [], groups }: DataTableProps) {
                   .join(" ")}
               >
                 {sortable ? (
-                  <span
-                    className={`inline-flex items-center gap-1 ${align === "right" ? "flex-row-reverse" : ""}`}
-                  >
+                  <span className="inline-flex items-center gap-1">
                     {label}
                     {sortCol === i ? (
                       sortDir === "asc" ? (

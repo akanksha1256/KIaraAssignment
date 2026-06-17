@@ -8,6 +8,7 @@ import type { Payment, PaymentMethod } from "../types";
 import type {
   ManagerDashboardData,
   DashboardStats,
+  StatsTrend,
   PaymentBreakdown,
   MonthlyRevenue,
   AtRiskLease,
@@ -84,6 +85,12 @@ const mapDashboardStats = (s: P.DashboardStats): DashboardStats => ({
   vacantUnits: s.vacant_units,
   totalMonthlyRent: s.total_monthly_rent,
   collectedThisMonth: s.collected_this_month,
+});
+
+const mapStatsTrend = (t: P.StatsTrend): StatsTrend => ({
+  newLeasesThisMonth: t.new_leases_this_month,
+  rentAddedThisMonth: t.rent_added_this_month,
+  prevCollectionRate: t.prev_collection_rate,
 });
 
 const mapPaymentBreakdown = (b: P.PaymentBreakdown): PaymentBreakdown => ({
@@ -170,6 +177,7 @@ export const mapTenantListItem = (d: P.TenantListItem): TenantListItem => ({
 
 export const mapManagerDashboard = (d: P.ManagerDashboardData): ManagerDashboardData => ({
   stats: mapDashboardStats(d.stats),
+  statsTrend: mapStatsTrend(d.stats_trend),
   paymentBreakdown: mapPaymentBreakdown(d.payment_breakdown),
   monthlyRevenue: d.monthly_revenue.map(mapMonthlyRevenue),
   properties: d.properties.map(mapPropertySummary),

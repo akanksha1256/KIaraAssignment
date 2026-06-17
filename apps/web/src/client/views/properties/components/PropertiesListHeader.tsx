@@ -17,15 +17,23 @@ export const PropertiesListHeader = ({
   vacantCount: number;
   onAdd: () => void;
 }) => (
-  <div className="mb-8 flex items-start justify-between">
+  <div className="mb-6 flex items-start justify-between">
     <div>
       <SectionTitle>{spl.title}</SectionTitle>
       <MutedText className="mt-1">
-        {spl.subtitle(count)}
+        <span>{spl.subtitle(count)}</span>
         {overdueCount > 0 && (
-          <> ·{" "}<span className="text-destructive font-medium">{spl.overdueCount(overdueCount)}</span></>
+          <>
+            <span className="mx-1.5 text-sand-400">•</span>
+            <span className="text-destructive font-medium">{spl.overdueCount(overdueCount)}</span>
+          </>
         )}
-        {vacantCount > 0 && <> · {spl.vacantCount(vacantCount)}</>}
+        {vacantCount > 0 && (
+          <>
+            <span className="mx-1.5 text-sand-400">•</span>
+            <span>{spl.vacantCount(vacantCount)}</span>
+          </>
+        )}
       </MutedText>
     </div>
     <Button size="sm" className="rounded-lg gap-2 font-semibold" onClick={onAdd}>

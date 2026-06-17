@@ -86,11 +86,9 @@ export const PaymentsTable = ({
             <th className="px-5 py-3 text-left">
               <Overline>{s.cols.tenant}</Overline>
             </th>
-            <th className="px-5 py-3 text-left">
-              <Overline>{s.cols.propertyUnit}</Overline>
-            </th>
-            <SortableHeader col="period" label={s.cols.period} sortCol={sortCol} sortDir={sortDir} onSort={onSort} />
+            <SortableHeader col="property" label={s.cols.propertyUnit} sortCol={sortCol} sortDir={sortDir} onSort={onSort} />
             <SortableHeader col="amount" label={s.cols.amount} align="right" sortCol={sortCol} sortDir={sortDir} onSort={onSort} />
+            <SortableHeader col="period" label={s.cols.period} sortCol={sortCol} sortDir={sortDir} onSort={onSort} />
             <SortableHeader col="paidOn" label={s.cols.paidOn} sortCol={sortCol} sortDir={sortDir} onSort={onSort} />
             <SortableHeader col="status" label={s.cols.status} align="right" sortCol={sortCol} sortDir={sortDir} onSort={onSort} />
             <th />
@@ -113,14 +111,14 @@ export const PaymentsTable = ({
                 <MutedText className="text-espresso-900 font-medium">{item.property.name}</MutedText>
                 <Caption className="font-mono">{item.unit.label}</Caption>
               </td>
-              <td className="px-5 py-3.5">
-                <MutedText className="text-espresso-700 font-medium">
-                  {formatPeriod(item.payment.periodMonth)}
-                </MutedText>
-              </td>
               <td className="px-5 py-3.5 text-right">
                 <MutedText className="text-espresso-900 font-semibold tabular-nums">
                   ${item.payment.amountDue.toLocaleString()}
+                </MutedText>
+              </td>
+              <td className="px-5 py-3.5">
+                <MutedText className="text-espresso-700 font-medium">
+                  {formatPeriod(item.payment.periodMonth)}
                 </MutedText>
               </td>
               <td className="px-5 py-3.5">

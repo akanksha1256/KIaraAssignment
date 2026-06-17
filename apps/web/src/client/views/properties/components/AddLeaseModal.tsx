@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useCreateLease, useCreateTenant, useAllTenants } from "@repo/data";
 import type { UnitDetailItem } from "@repo/data";
-import { Skeleton, useToast, MutedText, StateTitle, CloseButton, LabeledTextField, FieldLabel, Button } from "@repo/ui";
+import { Skeleton, useToast, MutedText, StateTitle, CloseButton, LabeledTextField, FieldLabel, Button, Select } from "@repo/ui";
+import type { SelectOption } from "@repo/ui";
 import { strings } from "@repo/tokens";
 
 const sl = strings.manager.addLease;
@@ -104,11 +105,6 @@ export const AddLeaseModal = ({
     }
   };
 
-  const inputCls = (field: string) =>
-    `h-10 w-full rounded-lg border px-3 text-[13.5px] text-espresso-900 bg-white placeholder:text-espresso-300 focus:outline-none focus:ring-2 focus:ring-coral-500/30 transition-colors ${
-      errors[field] ? "border-destructive" : "border-sand-400"
-    }`;
-
   const tenantsWithLease = new Set(
     (tenants ?? []).filter((t) => t.lease !== null).map((t) => t.tenant.id),
   );
@@ -158,23 +154,23 @@ export const AddLeaseModal = ({
                 {tenantsLoading ? (
                   <Skeleton className="h-10 w-full rounded-lg" />
                 ) : (
-                  <select
+                  <Select
                     value={tenantId}
-                    onChange={(e) => {
-                      setTenantId(e.target.value);
+                    onChange={(val) => {
+                      setTenantId(val);
                       setErrors((er) => ({ ...er, tenantId: "" }));
                     }}
-                    className={`${inputCls("tenantId")} cursor-pointer`}
+                    options={(tenants ?? []).map<SelectOption>((t) => ({
+                      value: t.tenant.id,
+                      label: tenantsWithLease.has(t.tenant.id)
+                        ? `${t.tenant.name} ${sl.fieldTenantHasLease}`
+                        : t.tenant.name,
+                      disabled: tenantsWithLease.has(t.tenant.id),
+                    }))}
+                    placeholder={sl.fieldTenantPlaceholder}
+                    className={`h-10 ${errors.tenantId ? "border-destructive" : ""}`}
                     disabled={isPending}
-                  >
-                    <option value="">{sl.fieldTenantPlaceholder}</option>
-                    {(tenants ?? []).map((t) => (
-                      <option key={t.tenant.id} value={t.tenant.id}>
-                        {t.tenant.name}
-                        {tenantsWithLease.has(t.tenant.id) ? ` ${sl.fieldTenantHasLease}` : ""}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 )}
                 {errors.tenantId && (
                   <p className="text-[11.5px] text-destructive">{errors.tenantId}</p>

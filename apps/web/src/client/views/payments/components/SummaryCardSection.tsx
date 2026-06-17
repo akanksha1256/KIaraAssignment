@@ -14,7 +14,7 @@ const SummaryCard = ({
   valueClassName: string;
   sublabel: string;
 }) => (
-  <div className="rounded-xl border border-sand-400 bg-white px-5 py-4">
+  <div className="rounded-xl border border-sand-400 bg-white px-5 py-4 flex flex-col justify-between">
     <Overline className="mb-1">{label}</Overline>
     <StatValue className={valueClassName}>{value}</StatValue>
     <Caption className="mt-0.5">{sublabel}</Caption>

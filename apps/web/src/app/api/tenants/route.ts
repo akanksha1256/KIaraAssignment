@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       name: name.trim(),
       email: email.trim(),
       contact: contact?.trim() ?? "",
-      kyc_status: "pending" as const,
+      kyc_status: "not_submitted" as const,
       kyc_verified_on: null,
       kyc_document: null,
     };
@@ -41,11 +41,15 @@ export async function GET(req: NextRequest) {
       let paymentStatus: TenantListItem["payment_status"] = "vacant";
       if (lease) {
         const now = new Date();
-        const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-        const payment = db.payments.find(
-          (p) => p.lease_id === lease.id && p.period_month === currentMonth,
-        );
-        paymentStatus = payment ? resolvePaymentStatus(payment) : "outstanding";
+        if (new Date(lease.start_date) > now) {
+          paymentStatus = "upcoming";
+        } else {
+          const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+          const payment = db.payments.find(
+            (p) => p.lease_id === lease.id && p.period_month === currentMonth,
+          );
+          paymentStatus = payment ? resolvePaymentStatus(payment) : "outstanding";
+        }
       }
 
       return { tenant, lease, unit, property, payment_status: paymentStatus };

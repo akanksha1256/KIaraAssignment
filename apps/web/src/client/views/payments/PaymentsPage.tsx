@@ -2,9 +2,7 @@
 
 import { useState, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {
-  useAllPayments,
-} from "@repo/data";
+import { useAllPayments } from "@repo/data";
 import type {
   PaymentsListSortCol as SortCol,
   SortDir,
@@ -47,9 +45,8 @@ function amountFn(value: string): (n: number) => boolean {
   return () => true;
 }
 
-
 // ── Main view ─────────────────────────────────────────────────────────────────
-export const PaymentsList = () => {
+export const PaymentsPage = () => {
   const router = useRouter();
   const { data, isLoading, isError, error, refetch } = useAllPayments();
 
@@ -113,6 +110,7 @@ export const PaymentsList = () => {
       if (sortCol === "status")
         cmp = (statusRank[a.payment.status] ?? 0) - (statusRank[b.payment.status] ?? 0);
       if (sortCol === "amount") cmp = a.payment.amountDue - b.payment.amountDue;
+      if (sortCol === "property") cmp = a.property.name.localeCompare(b.property.name);
       return sortDir === "asc" ? cmp : -cmp;
     });
   }, [data, appliedFilterRows, search, sortCol, sortDir]);

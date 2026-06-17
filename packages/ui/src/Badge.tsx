@@ -11,6 +11,7 @@ const badgeVariants = cva(
         outstanding: "bg-warning-bg text-warning",
         paid: "bg-success-bg text-success",
         vacant: "bg-sand-200 text-espresso-700",
+        upcoming: "bg-sky-100 text-sky-700",
         info: "bg-teal-100 text-teal-700",
         default: "bg-sand-200 text-espresso-700",
       },

@@ -13,7 +13,7 @@ interface Props {
 }
 
 export const TenantCurrentLeaseCard = ({ lease, unit, property }: Props) => (
-  <Card>
+  <Card className="h-full">
     <CardHeader>
       <CardTitle className="flex items-center gap-2 text-[15px]">
         <div className="w-8 h-8 rounded-full bg-sand-200 flex items-center justify-center flex-none">

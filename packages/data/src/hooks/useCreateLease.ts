@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../apiClient/client";
 import { MANAGER_DASHBOARD_KEY } from "./useManagerDashboard";
 import { propertyDetailKey } from "./usePropertyDetail";
+import { allTenantsKey } from "./useAllTenants";
 
 export function useCreateLease(propertyId: string) {
   const queryClient = useQueryClient();
@@ -13,6 +14,7 @@ export function useCreateLease(propertyId: string) {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: propertyDetailKey(propertyId) });
       queryClient.invalidateQueries({ queryKey: MANAGER_DASHBOARD_KEY });
+      queryClient.invalidateQueries({ queryKey: allTenantsKey() });
     },
   });
 }

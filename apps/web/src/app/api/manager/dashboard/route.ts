@@ -8,6 +8,7 @@ import type {
   PropertyStatus,
   MonthlyRevenue,
   AtRiskLease,
+  StatsTrend,
 } from "@repo/platform-types";
 
 export async function GET(req: NextRequest) {
@@ -23,6 +24,8 @@ export async function GET(req: NextRequest) {
       const total_rent = leases.reduce((s, l) => s + l.monthly_rent, 0);
       const hasOverdue = payments.some((p) => p.status === "overdue");
       const hasOutstanding = payments.some((p) => p.status === "outstanding");
+      const now = new Date();
+      const hasStartedLease = leases.some((l) => new Date(l.start_date) <= now);
 
       const status: PropertyStatus = hasOverdue
         ? "overdue"
@@ -30,7 +33,9 @@ export async function GET(req: NextRequest) {
           ? "outstanding"
           : leases.length === 0
             ? "vacant"
-            : "paid";
+            : !hasStartedLease
+              ? "upcoming"
+              : "paid";
 
       return {
         id: prop.id,
@@ -104,22 +109,42 @@ export async function GET(req: NextRequest) {
       })
       .slice(0, 6);
 
-    // ── Monthly revenue (last 6 months) ───────────────────────────────────────
+    // ── Monthly revenue (last 12 months, always 12 slots with zeros for empty) ─
     const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     const monthly_revenue: MonthlyRevenue[] = [];
 
-    const allMonths = [...new Set(allPayments.map((p) => p.period_month))].sort();
-    const last6 = allMonths.slice(-6);
-
-    for (const ym of last6) {
+    const now2 = new Date();
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now2.getFullYear(), now2.getMonth() - i, 1);
+      const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
       const monthPayments = allPayments.filter((p) => p.period_month === ym);
       const expected = monthPayments.reduce((s, p) => s + p.amount_due, 0);
       const collected = monthPayments
         .filter((p) => p.status === "paid")
         .reduce((s, p) => s + p.amount_paid, 0);
-      const [, month] = ym.split("-");
-      monthly_revenue.push({ month: monthNames[Number(month) - 1], expected, collected });
+      monthly_revenue.push({ month: monthNames[d.getMonth()], expected, collected });
     }
+
+    // ── Stats trends (month-over-month) ──────────────────────────────────────
+    const now = new Date();
+    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const newLeasesThisMonth = db.leases.filter((l) => l.start_date >= thisMonthStart);
+    const rent_added_this_month = newLeasesThisMonth.reduce((s, l) => s + l.monthly_rent, 0);
+
+    const prevPeriod = allPeriods[allPeriods.length - 2] ?? "";
+    const prevPeriodPayments = allPayments.filter((p) => p.period_month === prevPeriod);
+    const prevExpected = prevPeriodPayments.reduce((s, p) => s + p.amount_due, 0);
+    const prevCollected = prevPeriodPayments
+      .filter((p) => p.status === "paid")
+      .reduce((s, p) => s + p.amount_paid, 0);
+    const prev_collection_rate =
+      prevExpected > 0 ? Math.round((prevCollected / prevExpected) * 100) : 0;
+
+    const stats_trend: StatsTrend = {
+      new_leases_this_month: newLeasesThisMonth.length,
+      rent_added_this_month,
+      prev_collection_rate,
+    };
 
     const data: ManagerDashboardData = {
       stats: {
@@ -130,6 +155,7 @@ export async function GET(req: NextRequest) {
         total_monthly_rent,
         collected_this_month,
       },
+      stats_trend,
       payment_breakdown,
       monthly_revenue,
       properties,

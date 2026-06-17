@@ -32,6 +32,7 @@ export const strings = {
     outstanding: "Outstanding",
     overdue: "Overdue",
     vacant: "Vacant",
+    upcoming: "Upcoming",
   },
 
   paymentTable: {
@@ -93,10 +94,15 @@ export const strings = {
 
       revenueChart: {
         title: "Monthly Revenue",
-        subtitle: "Expected vs collected over last 6 months",
+        subtitle: (months: number) => `Expected vs collected over last ${months} months`,
         barExpected: "Expected",
         barCollected: "Collected",
         empty: "No revenue data",
+        periodOptions: {
+          months3: "Last 3 months",
+          months6: "Last 6 months",
+          months12: "Last 12 months",
+        },
       },
 
       paymentChart: {
@@ -163,7 +169,8 @@ export const strings = {
         rentSub: "across active leases",
       },
 
-      overdueAlert: (count: number) => `${count} unit${count !== 1 ? "s" : ""} overdue — action needed`,
+      overdueAlert: (count: number) =>
+        `${count} unit${count !== 1 ? "s" : ""} overdue — action needed`,
 
       unitMixBar: {
         heading: "Unit status breakdown",
@@ -245,8 +252,8 @@ export const strings = {
     propertiesList: {
       title: "Properties",
       subtitle: (count: number) => `${count} properties`,
-      overdueCount: (count: number) => `· ${count} overdue`,
-      vacantCount: (count: number) => `· ${count} vacant`,
+      overdueCount: (count: number) => `${count} overdue`,
+      vacantCount: (count: number) => `${count} vacant`,
       addPropertyButton: "Add Property",
       error: "Failed to load properties.",
       emptyTitle: "No properties yet",
@@ -260,11 +267,19 @@ export const strings = {
         rentPerMonth: "Rent/mo",
         status: "Status",
       },
+      tabs: {
+        all: "All",
+        overdue: "Overdue",
+        outstanding: "Outstanding",
+        paid: "Paid",
+        vacant: "Vacant",
+      },
       groups: {
         overdue: "Overdue",
         outstanding: "Outstanding",
         paid: "Paid",
         vacant: "Vacant",
+        upcoming: "Upcoming",
       },
       unitMenu: {
         addLease: "Add lease",
@@ -406,10 +421,10 @@ export const strings = {
       },
 
       standing: {
-        heading: "Payment Standing",
+        heading: "Payment Reliability Score",
         score: "Score",
         totalPayments: "Total Payments",
-        onTime: "On Time Payments",
+        onTime: "on time payments",
         noData: "No payment history yet",
         labelColors: {
           Excellent: { bg: "bg-success-50", text: "text-success-700" },
@@ -465,6 +480,7 @@ export const strings = {
       tenant: {
         heading: "Tenant",
         name: "Name",
+        email: "Email",
         contact: "Contact",
         noTenant: "No tenant assigned",
         viewProfile: "View Tenant Profile",

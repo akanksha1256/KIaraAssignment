@@ -1,4 +1,4 @@
-import { Badge, RowMenu, BodyText, MutedText, PrimaryLabelSemibold, Button } from "@repo/ui";
+import { Badge, RowMenu, BodyText, MutedText, Button } from "@repo/ui";
 import type { TableCell } from "@repo/ui";
 import { formatDate, formatPeriodMonth } from "@repo/ui";
 import { strings } from "@repo/tokens";
@@ -49,18 +49,6 @@ export const buildPaymentRow = (
       ),
       className: "whitespace-nowrap text-right",
       sortValue: payment.amountDue,
-    },
-    {
-      content:
-        payment.amountPaid > 0 ? (
-          <PrimaryLabelSemibold className="tabular-nums">
-            ${payment.amountPaid.toLocaleString()}
-          </PrimaryLabelSemibold>
-        ) : (
-          <MutedText className="text-espresso-300">{s.notPaid}</MutedText>
-        ),
-      className: "whitespace-nowrap text-right",
-      sortValue: payment.amountPaid,
     },
     {
       content: payment.paidDate ? (

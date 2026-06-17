@@ -14,7 +14,7 @@ let unitRowId = 1;
 const unitInputCls =
   "h-10 w-full rounded-lg border border-sand-400 px-3 text-[13.5px] text-espresso-900 bg-white placeholder:text-espresso-300 focus:outline-none focus:ring-2 focus:ring-coral-500/30 transition-colors";
 
-export const AddPropertyModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+export const AddPropertyModal = ({ onClose }: { onClose: () => void }) => {
   const { showToast } = useToast();
   const createProperty = useCreateProperty();
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -25,25 +25,12 @@ export const AddPropertyModal = ({ open, onClose }: { open: boolean; onClose: ()
   const [unitRows, setUnitRows] = useState<{ id: number; label: string }[]>([]);
 
   useEffect(() => {
-    if (open) {
-      setName("");
-      setAddress("");
-      setNameErr("");
-      setAddressErr("");
-      setUnitRows([]);
-    }
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
-
-  if (!open) return null;
+  }, [onClose]);
 
   const addUnit = () => setUnitRows((r) => [...r, { id: unitRowId++, label: "" }]);
   const removeUnit = (id: number) => setUnitRows((r) => r.filter((u) => u.id !== id));

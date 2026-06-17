@@ -58,7 +58,7 @@ export interface PaymentMethod {
   label: string;
 }
 
-export type PropertyStatus = "paid" | "outstanding" | "overdue" | "vacant";
+export type PropertyStatus = "paid" | "outstanding" | "overdue" | "vacant" | "upcoming";
 
 export interface PropertySummary {
   id: string;
@@ -84,6 +84,12 @@ export interface DashboardStats {
   vacant_units: number;
   total_monthly_rent: number;
   collected_this_month: number;
+}
+
+export interface StatsTrend {
+  new_leases_this_month: number;
+  rent_added_this_month: number;
+  prev_collection_rate: number;
 }
 
 export interface PaymentBreakdown {
@@ -113,6 +119,7 @@ export interface AtRiskLease {
 
 export interface ManagerDashboardData {
   stats: DashboardStats;
+  stats_trend: StatsTrend;
   payment_breakdown: PaymentBreakdown;
   monthly_revenue: MonthlyRevenue[];
   properties: PropertySummary[];

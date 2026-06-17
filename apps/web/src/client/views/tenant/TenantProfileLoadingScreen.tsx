@@ -1,34 +1,83 @@
 import { Skeleton } from "@repo/ui";
+import { PaymentHistoryTableSkeleton } from "@/client/views/payments/PaymentHistoryTableLoadingScreen";
+
+const CardRow = ({ labelWidth, valueWidth }: { labelWidth: string; valueWidth: string }) => (
+  <div className="flex justify-between items-center py-3 border-b border-sand-200 last:border-0">
+    <Skeleton className={`h-3 ${labelWidth}`} />
+    <Skeleton className={`h-3 ${valueWidth}`} />
+  </div>
+);
 
 export const TenantProfileSkeleton = () => (
-  <div className="p-8 max-w-[1180px] space-y-8">
-    <Skeleton className="h-4 w-28" />
-    <div className="space-y-2">
-      <Skeleton className="h-9 w-48" />
-      <Skeleton className="h-4 w-32" />
-    </div>
-    <div className="grid grid-cols-5 gap-5">
-      <div className="col-span-3 rounded-xl border border-sand-400 bg-white p-5 space-y-3">
-        <Skeleton className="h-4 w-28" />
-        {[1, 2, 3, 4, 5].map((i) => (
-          <Skeleton key={i} className="h-3 w-full" />
-        ))}
-      </div>
-      <div className="col-span-2 rounded-xl border border-sand-400 bg-white p-5 space-y-3">
-        <Skeleton className="h-4 w-24" />
-        {[1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-3 w-full" />
-        ))}
+  <div className="p-8 max-w-[1180px]">
+    {/* Back button */}
+    <Skeleton className="h-3.5 w-24 mb-6" />
+
+    {/* Header: Avatar + name/email */}
+    <div className="flex items-center gap-5 mb-8">
+      <Skeleton className="w-14 h-14 rounded-full flex-none" />
+      <div className="space-y-2">
+        <Skeleton className="h-7 w-44" />
+        <Skeleton className="h-3.5 w-48" />
       </div>
     </div>
-    <div className="rounded-xl border border-sand-400 bg-white overflow-hidden">
-      {[1, 2, 3, 4].map((i) => (
-        <div key={i} className="px-5 py-4 border-b border-sand-200 flex gap-4 items-center">
-          {[70, 80, 80, 90, 100, 70].map((w, j) => (
-            <Skeleton key={j} className={`h-3 w-[${w}px]`} />
-          ))}
+
+    {/* Info cards */}
+    <div className="grid gap-5 lg:grid-cols-5 mb-8">
+
+      {/* TenantInfoCard — col-span-3 */}
+      <div className="lg:col-span-3 rounded-xl border border-sand-400 bg-white">
+        <div className="flex items-center gap-2 p-6">
+          <Skeleton className="w-8 h-8 rounded-full flex-none" />
+          <Skeleton className="h-4 w-24" />
         </div>
-      ))}
+        <div className="px-6 pb-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+            {/* Rows: Name, Email, Contact, KYC Status, KYC Document */}
+            <div className="lg:col-span-3">
+              <CardRow labelWidth="w-12" valueWidth="w-28" />
+              <CardRow labelWidth="w-12" valueWidth="w-40" />
+              <CardRow labelWidth="w-16" valueWidth="w-24" />
+              <CardRow labelWidth="w-20" valueWidth="w-20" />
+              <CardRow labelWidth="w-24" valueWidth="w-16" />
+            </div>
+            {/* ScoreRing */}
+            <div className="lg:col-span-2 flex flex-col items-center justify-center gap-3">
+              <Skeleton className="h-3 w-32" />
+              <Skeleton className="w-[120px] h-[120px] rounded-full" />
+              <div className="flex flex-col items-center gap-1.5">
+                <Skeleton className="h-3.5 w-16" />
+                <Skeleton className="h-3 w-28" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* TenantCurrentLeaseCard — col-span-2 */}
+      <div className="lg:col-span-2 rounded-xl border border-sand-400 bg-white">
+        <div className="flex items-center gap-2 p-6">
+          <Skeleton className="w-8 h-8 rounded-full flex-none" />
+          <Skeleton className="h-4 w-28" />
+        </div>
+        {/* Property, Unit, Monthly Rent, Lease Date, Lease Document */}
+        <div className="px-6 pb-6">
+          <CardRow labelWidth="w-16" valueWidth="w-32" />
+          <CardRow labelWidth="w-10" valueWidth="w-16" />
+          <CardRow labelWidth="w-24" valueWidth="w-20" />
+          <CardRow labelWidth="w-20" valueWidth="w-36" />
+          <CardRow labelWidth="w-28" valueWidth="w-16" />
+        </div>
+      </div>
+    </div>
+
+    {/* Payment history */}
+    <div>
+      <div className="flex items-center gap-2 mb-4">
+        <Skeleton className="h-4 w-4 rounded" />
+        <Skeleton className="h-4 w-36" />
+      </div>
+      <PaymentHistoryTableSkeleton />
     </div>
   </div>
 );

@@ -19,9 +19,11 @@ export const StatusMixBar = ({ property }: { property: PropertySummary }) => {
       ? `${overdueW > 0 ? 1 : 0}/${total} ${spl.groups.overdue.toLowerCase()}`
       : property.status === "outstanding"
         ? `${outstandW > 0 ? 1 : 0}/${total} ${spl.groups.outstanding.toLowerCase()}`
-        : property.leasedCount === 0
-          ? "No active leases"
-          : `${total}/${total} ${spl.groups.paid.toLowerCase()}`;
+        : property.status === "upcoming"
+          ? spl.groups.upcoming
+          : property.leasedCount === 0
+            ? "No active leases"
+            : `${total}/${total} ${spl.groups.paid.toLowerCase()}`;
 
   return (
     <div className="flex flex-col gap-1.5 items-end">
@@ -33,7 +35,9 @@ export const StatusMixBar = ({ property }: { property: PropertySummary }) => {
               ? "outstanding"
               : property.status === "paid"
                 ? "paid"
-                : "vacant"
+                : property.status === "upcoming"
+                  ? "upcoming"
+                  : "vacant"
         }
       >
         {statusLabel}

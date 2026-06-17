@@ -46,7 +46,7 @@ const KYC_LABEL: Record<string, string> = {
 };
 
 // ── Add tenant modal ─────────────────────────────────────────────────────────
-const AddTenantModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+const AddTenantModal = ({ onClose }: { onClose: () => void }) => {
   const { showToast } = useToast();
   const createTenant = useCreateTenant();
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -57,24 +57,12 @@ const AddTenantModal = ({ open, onClose }: { open: boolean; onClose: () => void 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (open) {
-      setName("");
-      setEmail("");
-      setContact("");
-      setErrors({});
-    }
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
-
-  if (!open) return null;
+  }, [onClose]);
 
   const inputCls = (field: string) =>
     `h-10 w-full rounded-lg border px-3 text-[13.5px] text-espresso-900 bg-white placeholder:text-espresso-300 focus:outline-none focus:ring-2 focus:ring-coral-500/30 transition-colors ${
@@ -221,6 +209,7 @@ const PAYMENT_OPTIONS = [
   { value: "overdue", label: "Overdue" },
   { value: "outstanding", label: "Outstanding" },
   { value: "paid", label: "Paid" },
+  { value: "upcoming", label: "Upcoming" },
   { value: "vacant", label: "No lease" },
 ];
 
@@ -231,7 +220,7 @@ const KYC_OPTIONS = [
 ];
 
 
-const PAYMENT_RANK: Record<string, number> = { overdue: 0, outstanding: 1, paid: 2, vacant: 3 };
+const PAYMENT_RANK: Record<string, number> = { overdue: 0, outstanding: 1, paid: 2, upcoming: 3, vacant: 4 };
 const KYC_RANK: Record<string, number> = { not_submitted: 0, pending: 1, verified: 2 };
 
 const SortIcon = ({ active, dir }: { active: boolean; dir: SortDir }) => {
@@ -305,7 +294,9 @@ const TenantRow = ({ item }: { item: TenantListItem }) => {
                   ? "outstanding"
                   : paymentStatus === "paid"
                     ? "paid"
-                    : "vacant"
+                    : paymentStatus === "upcoming"
+                      ? "upcoming"
+                      : "vacant"
             }
             size="sm"
           >
@@ -315,7 +306,9 @@ const TenantRow = ({ item }: { item: TenantListItem }) => {
                 ? "Overdue"
                 : paymentStatus === "outstanding"
                   ? "Outstanding"
-                  : "Paid"}
+                  : paymentStatus === "upcoming"
+                    ? "Upcoming"
+                    : "Paid"}
           </Badge>
         </div>
       </td>
@@ -411,7 +404,7 @@ export const TenantsList = () => {
   const pendingKyc = data.filter((t) => t.tenant.kycStatus !== "verified").length;
   return (
     <>
-      <AddTenantModal open={addOpen} onClose={() => setAddOpen(false)} />
+      {addOpen && <AddTenantModal onClose={() => setAddOpen(false)} />}
       <div className="h-screen flex flex-col overflow-hidden">
         {/* Static top section */}
         <div className="px-8 pt-8 pb-4 flex-none">

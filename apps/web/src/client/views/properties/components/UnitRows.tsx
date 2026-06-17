@@ -73,7 +73,9 @@ export const UnitRows = ({
                       ? "outstanding"
                       : unit.paymentStatus === "paid"
                         ? "paid"
-                        : "vacant"
+                        : unit.paymentStatus === "upcoming"
+                          ? "upcoming"
+                          : "vacant"
                 }
                 size="sm"
               >
@@ -83,7 +85,9 @@ export const UnitRows = ({
                     ? spl.groups.overdue
                     : unit.paymentStatus === "outstanding"
                       ? spl.groups.outstanding
-                      : spl.groups.paid}
+                      : unit.paymentStatus === "upcoming"
+                        ? spl.groups.upcoming
+                        : spl.groups.paid}
               </Badge>
             </div>
           </td>

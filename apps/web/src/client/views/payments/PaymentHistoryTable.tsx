@@ -34,11 +34,13 @@ export const PaymentHistoryTable = ({
     return (
       <>
         {header}
-        <EmptyState
-          title={empty ?? s.emptyTitle}
-          description={emptyDescription ?? s.emptyDescription}
-          icon="payment"
-        />
+        <div className="rounded-xl border border-sand-400 bg-white">
+          <EmptyState
+            title={empty ?? s.emptyTitle}
+            description={emptyDescription ?? s.emptyDescription}
+            icon="payment"
+          />
+        </div>
       </>
     );
 
@@ -49,7 +51,6 @@ export const PaymentHistoryTable = ({
   const columns = [
     { label: s.colPeriod, align: "left" as const, sortable: true },
     { label: s.colDue, align: "right" as const, sortable: true },
-    { label: s.colPaid, align: "right" as const, sortable: true },
     { label: s.colDate, align: "right" as const, sortable: true },
     { label: s.colMethod, align: "right" as const, sortable: true },
     { label: s.colStatus, align: "right" as const, sortable: true },

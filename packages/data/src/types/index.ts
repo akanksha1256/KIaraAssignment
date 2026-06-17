@@ -1,6 +1,6 @@
 // ── Property ─────────────────────────────────────────────────────────────────
 
-export type PropertyStatus = "paid" | "outstanding" | "overdue" | "vacant";
+export type PropertyStatus = "paid" | "outstanding" | "overdue" | "vacant" | "upcoming";
 
 export const PropertyStatusValues = {
   PAID: "paid",
@@ -132,6 +132,12 @@ export interface DashboardStats {
   collectedThisMonth: number;
 }
 
+export interface StatsTrend {
+  newLeasesThisMonth: number;
+  rentAddedThisMonth: number;
+  prevCollectionRate: number;
+}
+
 export interface PaymentBreakdown {
   paid: number;
   outstanding: number;
@@ -159,6 +165,7 @@ export interface AtRiskLease {
 
 export interface ManagerDashboardData {
   stats: DashboardStats;
+  statsTrend: StatsTrend;
   paymentBreakdown: PaymentBreakdown;
   monthlyRevenue: MonthlyRevenue[];
   properties: PropertySummary[];
@@ -227,7 +234,8 @@ export interface PaymentHistoryTableProps {
   flashStates?: Record<string, "success" | "error" | null>;
 }
 
-export type PaymentsListSortCol = "period" | "paidOn" | "status" | "amount";
+export type PaymentsListSortCol = "period" | "paidOn" | "status" | "amount" | "property";
+export type PropSortCol = "rent" | "status";
 export type SortDir = "asc" | "desc";
 
 export type PaymentsListFilterColKey = "status" | "property" | "period" | "amount";
@@ -236,4 +244,16 @@ export interface PaymentsListFilterRow {
   id: number;
   col: PaymentsListFilterColKey;
   value: string;
+}
+
+export interface PropertiesTableProps {
+  properties: PropertySummary[];
+  expanded: Set<string>;
+  onToggle: (id: string) => void;
+  onUnitNav: (propertyId: string, unitId: string) => void;
+  onAddLease: (unit: UnitDetailItem, propertyId: string) => void;
+  sortCol: PropSortCol | null;
+  sortDir: SortDir;
+  onSort: (col: PropSortCol) => void;
+  canSortStatus: boolean;
 }

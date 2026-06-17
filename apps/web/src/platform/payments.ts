@@ -1,17 +1,20 @@
 import type { Payment, PaymentStatus } from "@repo/platform-types";
 
-const DUE_DAY = 5;
+/** Rent is due on the 15th of each month. */
+const DUE_DATE = 15;
+/** Tenant has a 5-day grace window (15th–20th) before the payment becomes overdue. */
+const GRACE_DAYS = 5;
 
 const startOfDay = (date: Date): Date =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-/** Last calendar day of the rent due window (inclusive) for a period month. */
+/** Last day of the grace window (inclusive) for a period month — the 20th. */
 export const getDueWindowEnd = (periodMonth: string): Date => {
   const [year, month] = periodMonth.split("-").map(Number);
-  return new Date(year, month - 1, DUE_DAY);
+  return new Date(year, month - 1, DUE_DATE + GRACE_DAYS);
 };
 
-/** True when today is past the due window (i.e. from the 6th onward). */
+/** True when today is past the grace window (i.e. from the 21st onward). */
 export const isOverdue = (periodMonth: string, now: Date = new Date()): boolean =>
   startOfDay(now) > startOfDay(getDueWindowEnd(periodMonth));
 

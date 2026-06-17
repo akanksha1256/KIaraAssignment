@@ -25,7 +25,7 @@ export const ManagerDashboard = () => {
     return <ErrorState message={(error as Error)?.message ?? s.error} onRetry={() => refetch()} />;
   if (!data) return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
-  const { stats, paymentBreakdown, monthlyRevenue, properties, atRiskLeases } = data;
+  const { stats, statsTrend, paymentBreakdown, monthlyRevenue, properties, atRiskLeases } = data;
 
   const totalAtRisk = paymentBreakdown.overdueAmount + paymentBreakdown.outstandingAmount;
 
@@ -59,7 +59,7 @@ export const ManagerDashboard = () => {
       )}
 
       {/* Secondary KPI row */}
-      <StatusSection stats={stats} />
+      <StatusSection stats={stats} trend={statsTrend} />
 
       {/* Charts */}
       <div className="grid grid-cols-[1.5fr_1fr] gap-4 mb-6">

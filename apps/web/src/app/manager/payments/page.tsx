@@ -1,5 +1,5 @@
-import { PaymentsList } from "@/client/views/payments/PaymentsList";
+import { PaymentsPage } from "@/client/views/payments/PaymentsPage";
 
 export default function Page() {
-  return <PaymentsList />;
+  return <PaymentsPage />;
 }

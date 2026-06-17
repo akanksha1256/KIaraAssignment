@@ -18,6 +18,7 @@ export type {
   PaymentMethod,
   PaymentStatus,
   DashboardStats,
+  StatsTrend,
   PaymentBreakdown,
   MonthlyRevenue,
   AtRiskLease,
@@ -27,9 +28,11 @@ export type {
   TenantPaymentActions,
   PaymentHistoryTableProps,
   PaymentsListSortCol,
+  PropSortCol,
   SortDir,
   PaymentsListFilterColKey,
   PaymentsListFilterRow,
+  PropertiesTableProps,
 } from "./types";
 
 // Status constants

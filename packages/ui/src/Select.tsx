@@ -7,6 +7,7 @@ import { ChevronDown, Check } from "lucide-react";
 export interface SelectOption {
   value: string;
   label: string;
+  disabled?: boolean;
 }
 
 interface SelectProps {
@@ -15,9 +16,10 @@ interface SelectProps {
   options: SelectOption[];
   placeholder?: string;
   className?: string;
+  disabled?: boolean;
 }
 
-export const Select = ({ value, onChange, options, placeholder, className = "" }: SelectProps) => {
+export const Select = ({ value, onChange, options, placeholder, className = "", disabled = false }: SelectProps) => {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<{ top: number; left: number; width: number } | null>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -34,7 +36,7 @@ export const Select = ({ value, onChange, options, placeholder, className = "" }
   }, [open]);
 
   const handleOpen = () => {
-    if (!triggerRef.current) return;
+    if (disabled || !triggerRef.current) return;
     const rect = triggerRef.current.getBoundingClientRect();
     const spaceBelow = window.innerHeight - rect.bottom;
     if (spaceBelow < 260) {
@@ -53,7 +55,8 @@ export const Select = ({ value, onChange, options, placeholder, className = "" }
         ref={triggerRef}
         type="button"
         onClick={handleOpen}
-        className={`h-9 w-full flex items-center justify-between gap-2 px-3 rounded-lg border border-sand-400 bg-white text-[13px] focus:outline-none focus:ring-2 focus:ring-coral-500/30 transition-colors ${
+        disabled={disabled}
+        className={`h-9 w-full flex items-center justify-between gap-2 px-3 rounded-lg border border-sand-400 bg-white text-[13px] focus:outline-none focus:ring-2 focus:ring-coral-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
           value ? "text-espresso-900" : "text-muted-foreground"
         } ${className}`}
       >
@@ -80,12 +83,13 @@ export const Select = ({ value, onChange, options, placeholder, className = "" }
               <button
                 key={opt.value}
                 type="button"
+                disabled={opt.disabled}
                 onMouseDown={(e) => e.stopPropagation()}
                 onClick={() => {
                   onChange(opt.value);
                   setOpen(false);
                 }}
-                className={`w-full flex items-center justify-between gap-2 px-3 py-2 text-left text-[13px] transition-colors ${
+                className={`w-full flex items-center justify-between gap-2 px-3 py-2 text-left text-[13px] transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
                   opt.value === value
                     ? "text-coral-600 bg-coral-50 font-medium"
                     : "text-espresso-800 hover:bg-sand-100"

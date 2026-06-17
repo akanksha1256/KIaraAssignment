@@ -1,7 +1,8 @@
 "use client";
 
+import React from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import { Card, CardHeader, CardTitle, CardContent, CommonTooltip, MutedText } from "@repo/ui";
+import { Card, CardTitle, CardContent, CommonTooltip, MutedText } from "@repo/ui";
 import { EmptyState } from "@/client/views/EmptyScreen";
 
 export interface BarDefinition {
@@ -24,6 +25,7 @@ interface BarChartCardProps {
   title?: string;
   subtitle?: string;
   emptyMessage?: string;
+  headerRight?: React.ReactNode;
 }
 
 const LegendItem = ({ fill, label }: { fill: string; label: string }) => (
@@ -45,13 +47,17 @@ export const BarChartCard = ({
   title,
   subtitle,
   emptyMessage,
+  headerRight,
 }: BarChartCardProps) => (
   <Card>
-    {(title || subtitle) && (
-      <CardHeader>
-        {title && <CardTitle>{title}</CardTitle>}
-        {subtitle && <MutedText className="mt-0.5">{subtitle}</MutedText>}
-      </CardHeader>
+    {(title || subtitle || headerRight) && (
+      <div className="flex items-start justify-between gap-4 p-6">
+        <div className="flex flex-col gap-1">
+          {title && <CardTitle>{title}</CardTitle>}
+          {subtitle && <MutedText className="mt-0.5">{subtitle}</MutedText>}
+        </div>
+        {headerRight}
+      </div>
     )}
     <CardContent>
       {data.length === 0 ? (

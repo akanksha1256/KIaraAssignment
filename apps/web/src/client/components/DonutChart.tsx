@@ -63,6 +63,10 @@ export const DonutChart = ({
         ) : (
           <div className="flex flex-col items-center gap-5">
             <div className="relative" style={{ width: size, height: size }}>
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <MetricValue>{centerValue}</MetricValue>
+                <Overline className="!text-[10px]">{centerLabel}</Overline>
+              </div>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -81,10 +85,6 @@ export const DonutChart = ({
                   <Tooltip content={<PieTooltip />} />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <MetricValue>{centerValue}</MetricValue>
-                <Overline className="!text-[10px]">{centerLabel}</Overline>
-              </div>
             </div>
 
             {showMetricCount && (

@@ -22,12 +22,16 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         let payment_status: PaymentStatus | "vacant" = "vacant";
         let current_period_month: string | null = null;
         if (lease) {
-          const payments = resolvePayments(db.payments.filter((p) => p.lease_id === lease.id));
-          const overdue = payments.find((p) => p.status === "overdue");
-          const outstanding = payments.find((p) => p.status === "outstanding");
-          if (overdue) { payment_status = "overdue"; current_period_month = overdue.period_month; }
-          else if (outstanding) { payment_status = "outstanding"; current_period_month = outstanding.period_month; }
-          else payment_status = "paid";
+          if (new Date(lease.start_date) > new Date()) {
+            payment_status = "upcoming";
+          } else {
+            const payments = resolvePayments(db.payments.filter((p) => p.lease_id === lease.id));
+            const overdue = payments.find((p) => p.status === "overdue");
+            const outstanding = payments.find((p) => p.status === "outstanding");
+            if (overdue) { payment_status = "overdue"; current_period_month = overdue.period_month; }
+            else if (outstanding) { payment_status = "outstanding"; current_period_month = outstanding.period_month; }
+            else payment_status = "paid";
+          }
         }
 
         return { id: u.id, label: u.label, tenant, lease, payment_status, current_period_month };
