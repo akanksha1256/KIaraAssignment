@@ -70,9 +70,9 @@ export const PaymentsTable = ({
   }
 
   return (
-    <div className="flex-1 min-h-0 rounded-xl border border-sand-400 bg-white shadow-sm overflow-hidden">
+    <div className="flex-1 min-h-0 rounded-xl border border-sand-400 bg-white shadow-sm overflow-hidden flex flex-col">
       {/* Mobile: card view */}
-      <div className="sm:hidden divide-y divide-sand-200">
+      <div className="sm:hidden flex-1 overflow-y-auto divide-y divide-sand-200">
         {items.map((item) => (
           <div
             key={item.payment.id}
@@ -110,7 +110,7 @@ export const PaymentsTable = ({
       </div>
 
       {/* Desktop: table view */}
-      <div className="hidden sm:block overflow-y-auto h-full">
+      <div className="hidden sm:flex flex-col flex-1 overflow-y-auto">
       <table className="w-full table-auto min-w-[700px]">
         <colgroup>
           <col style={{ width: "22%" }} />

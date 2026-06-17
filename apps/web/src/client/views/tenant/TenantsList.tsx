@@ -527,7 +527,7 @@ export const TenantsList = () => {
           ) : (
             <>
             {/* Mobile: card view */}
-            <div className="sm:hidden rounded-xl border border-sand-400 bg-white shadow-sm overflow-hidden">
+            <div className="sm:hidden flex-1 min-h-0 rounded-xl border border-sand-400 bg-white shadow-sm overflow-y-auto">
               {filtered.map((item) => (
                 <TenantCard key={item.tenant.id} item={item} />
               ))}
