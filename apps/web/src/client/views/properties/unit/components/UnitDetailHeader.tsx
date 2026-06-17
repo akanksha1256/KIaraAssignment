@@ -11,7 +11,7 @@ export const UnitDetailHeader = ({
 }: {
   label: string;
   propertyName: string;
-  paymentStatus: PaymentStatus | "vacant";
+  paymentStatus: PaymentStatus | "vacant" | "upcoming";
 }) => (
   <div className="flex items-center justify-between mb-8">
     <div>

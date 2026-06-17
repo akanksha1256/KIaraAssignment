@@ -131,7 +131,7 @@ export interface UnitDetail {
   label: string;
   tenant: Tenant | null;
   lease: Lease | null;
-  payment_status: PaymentStatus | "vacant";
+  payment_status: PaymentStatus | "vacant" | "upcoming";
   current_period_month: string | null;
 }
 
@@ -162,5 +162,5 @@ export interface TenantListItem {
   lease: Lease | null;
   unit: Unit | null;
   property: Property | null;
-  payment_status: PaymentStatus | "vacant";
+  payment_status: PaymentStatus | "vacant" | "upcoming";
 }

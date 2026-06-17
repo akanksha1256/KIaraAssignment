@@ -53,4 +53,9 @@ export const statusConfig: Record<PropertyStatus, { bg: string; text: string; la
     text: "text-espresso-700",
     label: strings.statusPill.vacant,
   },
+  upcoming: {
+    bg: "bg-sky-100",
+    text: "text-sky-700",
+    label: strings.statusPill.upcoming,
+  },
 };

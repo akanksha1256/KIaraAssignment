@@ -19,7 +19,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         const lease = db.leases.find((l) => l.unit_id === u.id) ?? null;
         const tenant = lease ? (db.tenants.find((t) => t.id === lease.tenant_id) ?? null) : null;
 
-        let payment_status: PaymentStatus | "vacant" = "vacant";
+        let payment_status: PaymentStatus | "vacant" | "upcoming" = "vacant";
         let current_period_month: string | null = null;
         if (lease) {
           if (new Date(lease.start_date) > new Date()) {

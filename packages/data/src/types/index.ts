@@ -204,7 +204,7 @@ export interface TenantListItem {
   lease: Lease | null;
   unit: Unit | null;
   property: Property | null;
-  paymentStatus: PaymentStatus | "vacant";
+  paymentStatus: PaymentStatus | "vacant" | "upcoming";
 }
 
 // ── UI shared types ───────────────────────────────────────────────────────────

@@ -2,17 +2,19 @@ import { strings } from "../../../../../../packages/tokens/src/strings";
 import type { PaymentStatus } from "@repo/data";
 
 export const getUnitStatusVariant = (
-  status: PaymentStatus | "vacant",
-): "overdue" | "outstanding" | "paid" | "vacant" =>
+  status: PaymentStatus | "vacant" | "upcoming",
+): "overdue" | "outstanding" | "paid" | "vacant" | "upcoming" =>
   status === "overdue"
     ? "overdue"
     : status === "outstanding"
       ? "outstanding"
       : status === "vacant"
         ? "vacant"
-        : "paid";
+        : status === "upcoming"
+          ? "upcoming"
+          : "paid";
 
-export const getUnitStatusLabel = (status: PaymentStatus | "vacant"): string => {
+export const getUnitStatusLabel = (status: PaymentStatus | "vacant" | "upcoming"): string => {
   const sp = strings.statusPill;
   return status === "overdue"
     ? sp.overdue
@@ -20,7 +22,9 @@ export const getUnitStatusLabel = (status: PaymentStatus | "vacant"): string => 
       ? sp.outstanding
       : status === "vacant"
         ? sp.vacant
-        : sp.paid;
+        : status === "upcoming"
+          ? sp.upcoming
+          : sp.paid;
 };
 
 export interface DetailRowProps {
