@@ -9,7 +9,17 @@ import { Badge, SectionTitle, MutedText, useToast } from "@repo/ui";
 import { TenantsListSkeleton } from "./TenantsListLoadingScreen";
 import { strings } from "@repo/tokens";
 import type { TenantListItem } from "@repo/data";
-import { ShieldCheck, Clock, ShieldOff, ChevronRight, Plus, X, ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
+import {
+  ShieldCheck,
+  Clock,
+  ShieldOff,
+  ChevronRight,
+  Plus,
+  X,
+  ChevronUp,
+  ChevronDown,
+  ChevronsUpDown,
+} from "lucide-react";
 
 const s = strings.manager.tenantsList;
 const sa = strings.manager.tenantsList.addTenant;
@@ -45,12 +55,19 @@ const AddTenantModal = ({ open, onClose }: { open: boolean; onClose: () => void 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (open) { setName(""); setEmail(""); setContact(""); setErrors({}); }
+    if (open) {
+      setName("");
+      setEmail("");
+      setContact("");
+      setErrors({});
+    }
   }, [open]);
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
@@ -67,7 +84,10 @@ const AddTenantModal = ({ open, onClose }: { open: boolean; onClose: () => void 
     const errs: Record<string, string> = {};
     if (!name.trim()) errs.name = sc.validation.required;
     if (!email.trim()) errs.email = sc.validation.required;
-    if (Object.keys(errs).length) { setErrors(errs); return; }
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      return;
+    }
 
     createTenant.mutate(
       { name: name.trim(), email: email.trim(), contact: contact.trim() },
@@ -85,7 +105,9 @@ const AddTenantModal = ({ open, onClose }: { open: boolean; onClose: () => void 
     <div
       ref={overlayRef}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]"
-      onMouseDown={(e) => { if (e.target === overlayRef.current) onClose(); }}
+      onMouseDown={(e) => {
+        if (e.target === overlayRef.current) onClose();
+      }}
     >
       <div className="relative w-full max-w-[440px] mx-4 bg-white rounded-2xl shadow-2xl border border-sand-300 flex flex-col max-h-[90vh]">
         {/* Header */}
@@ -94,54 +116,87 @@ const AddTenantModal = ({ open, onClose }: { open: boolean; onClose: () => void 
             <p className="font-serif text-[20px] font-semibold text-maroon-600">{sa.title}</p>
             <MutedText className="mt-0.5">{sa.subtitle}</MutedText>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-muted-foreground hover:text-espresso-900 hover:bg-sand-100 transition-colors mt-0.5">
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-espresso-900 hover:bg-sand-100 transition-colors mt-0.5"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Body */}
-        <form id="add-tenant-form" onSubmit={handleSubmit} className="overflow-y-auto px-6 py-5 flex-1 space-y-4">
+        <form
+          id="add-tenant-form"
+          onSubmit={handleSubmit}
+          className="overflow-y-auto px-6 py-5 flex-1 space-y-4"
+        >
           <div className="space-y-1.5">
-            <label className="block text-[12.5px] font-semibold text-espresso-700">{sa.fieldName}</label>
+            <label className="block text-[12.5px] font-semibold text-espresso-700">
+              {sa.fieldName}
+            </label>
             <input
-              type="text" value={name}
-              onChange={(e) => { setName(e.target.value); setErrors((er) => ({ ...er, name: "" })); }}
+              type="text"
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+                setErrors((er) => ({ ...er, name: "" }));
+              }}
               placeholder={sa.fieldNamePlaceholder}
-              className={inputCls("name")} disabled={createTenant.isPending}
+              className={inputCls("name")}
+              disabled={createTenant.isPending}
             />
             {errors.name && <p className="text-[11.5px] text-destructive">{errors.name}</p>}
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-[12.5px] font-semibold text-espresso-700">{sa.fieldEmail}</label>
+            <label className="block text-[12.5px] font-semibold text-espresso-700">
+              {sa.fieldEmail}
+            </label>
             <input
-              type="email" value={email}
-              onChange={(e) => { setEmail(e.target.value); setErrors((er) => ({ ...er, email: "" })); }}
+              type="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setErrors((er) => ({ ...er, email: "" }));
+              }}
               placeholder={sa.fieldEmailPlaceholder}
-              className={inputCls("email")} disabled={createTenant.isPending}
+              className={inputCls("email")}
+              disabled={createTenant.isPending}
             />
             {errors.email && <p className="text-[11.5px] text-destructive">{errors.email}</p>}
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-[12.5px] font-semibold text-espresso-700">{sa.fieldContact}</label>
+            <label className="block text-[12.5px] font-semibold text-espresso-700">
+              {sa.fieldContact}
+            </label>
             <input
-              type="text" value={contact}
+              type="text"
+              value={contact}
               onChange={(e) => setContact(e.target.value)}
               placeholder={sa.fieldContactPlaceholder}
-              className={inputCls("contact")} disabled={createTenant.isPending}
+              className={inputCls("contact")}
+              disabled={createTenant.isPending}
             />
           </div>
         </form>
 
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-sand-200 flex-none">
-          <button type="button" onClick={onClose} disabled={createTenant.isPending}
-            className="h-9 px-4 rounded-lg border border-sand-400 text-[13px] font-medium text-espresso-700 hover:bg-sand-100 transition-colors disabled:opacity-50">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={createTenant.isPending}
+            className="h-9 px-4 rounded-lg border border-sand-400 text-[13px] font-medium text-espresso-700 hover:bg-sand-100 transition-colors disabled:opacity-50"
+          >
             {sa.cancel}
           </button>
-          <button type="submit" form="add-tenant-form" disabled={createTenant.isPending}
-            className="h-9 px-5 rounded-lg bg-coral-500 hover:bg-coral-600 text-white text-[13px] font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+          <button
+            type="submit"
+            form="add-tenant-form"
+            disabled={createTenant.isPending}
+            className="h-9 px-5 rounded-lg bg-coral-500 hover:bg-coral-600 text-white text-[13px] font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          >
             {createTenant.isPending ? sa.submitting : sa.submit}
           </button>
         </div>
@@ -175,7 +230,7 @@ const TenantRow = ({ item }: { item: TenantListItem }) => {
       {/* Avatar + name */}
       <td className="px-5 py-3.5">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-coral-500 to-maroon-600 text-white grid place-items-center text-[12px] font-semibold flex-none select-none">
+          <div className="w-8 h-8 rounded-full bg-maroon-600 text-white grid place-items-center text-[12px] font-semibold flex-none select-none">
             {tenant.name
               .split(" ")
               .map((n) => n[0])
@@ -260,8 +315,7 @@ const TenantRow = ({ item }: { item: TenantListItem }) => {
       </td>
     </tr>
   );
-}
-
+};
 
 export const TenantsList = () => {
   const { data, isLoading, isError, error, refetch } = useAllTenants();
@@ -271,8 +325,26 @@ export const TenantsList = () => {
 
   const toggleSort = (col: SortCol) => {
     if (sortCol === col) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    else { setSortCol(col); setSortDir("asc"); }
+    else {
+      setSortCol(col);
+      setSortDir("asc");
+    }
   };
+
+  const sorted = useMemo(() => {
+    if (!data) return [];
+    if (!sortCol) return data;
+    return [...data].sort((a, b) => {
+      let cmp = 0;
+      if (sortCol === "name") cmp = a.tenant.name.localeCompare(b.tenant.name);
+      if (sortCol === "rent") cmp = (a.lease?.monthlyRent ?? 0) - (b.lease?.monthlyRent ?? 0);
+      if (sortCol === "payment")
+        cmp = (PAYMENT_RANK[a.paymentStatus] ?? 0) - (PAYMENT_RANK[b.paymentStatus] ?? 0);
+      if (sortCol === "kyc")
+        cmp = (KYC_RANK[a.tenant.kycStatus] ?? 0) - (KYC_RANK[b.tenant.kycStatus] ?? 0);
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+  }, [data, sortCol, sortDir]);
 
   if (isLoading) return <TenantsListSkeleton />;
   if (isError)
@@ -330,26 +402,46 @@ export const TenantsList = () => {
                 </colgroup>
                 <thead className="sticky top-0 z-10">
                   <tr className="bg-sand-100 border-b border-sand-400">
-                    <th className="px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
-                      Tenant
+                    <th // sortable: name
+                      onClick={() => toggleSort("name")}
+                      className={`px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] cursor-pointer select-none transition-colors ${sortCol === "name" ? "text-espresso-900" : "text-muted-foreground hover:text-espresso-700"}`}
+                    >
+                      <span className="inline-flex items-center gap-1">
+                        Tenant <SortIcon active={sortCol === "name"} dir={sortDir} />
+                      </span>
                     </th>
                     <th className="px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
                       Property / Unit
                     </th>
-                    <th className="px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
-                      Rent/mo
+                    <th // sortable: rent
+                      onClick={() => toggleSort("rent")}
+                      className={`px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] cursor-pointer select-none transition-colors ${sortCol === "rent" ? "text-espresso-900" : "text-muted-foreground hover:text-espresso-700"}`}
+                    >
+                      <span className="inline-flex items-center gap-1 justify-end w-full">
+                        Rent/mo <SortIcon active={sortCol === "rent"} dir={sortDir} />
+                      </span>
                     </th>
-                    <th className="px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
-                      Payment
+                    <th // sortable: payment
+                      onClick={() => toggleSort("payment")}
+                      className={`px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] cursor-pointer select-none transition-colors ${sortCol === "payment" ? "text-espresso-900" : "text-muted-foreground hover:text-espresso-700"}`}
+                    >
+                      <span className="inline-flex items-center gap-1 justify-end w-full">
+                        Payment <SortIcon active={sortCol === "payment"} dir={sortDir} />
+                      </span>
                     </th>
-                    <th className="px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
-                      KYC
+                    <th // sortable: kyc
+                      onClick={() => toggleSort("kyc")}
+                      className={`px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] cursor-pointer select-none transition-colors ${sortCol === "kyc" ? "text-espresso-900" : "text-muted-foreground hover:text-espresso-700"}`}
+                    >
+                      <span className="inline-flex items-center gap-1 justify-end w-full">
+                        KYC <SortIcon active={sortCol === "kyc"} dir={sortDir} />
+                      </span>
                     </th>
                     <th />
                   </tr>
                 </thead>
                 <tbody>
-                  {data.map((item) => (
+                  {sorted.map((item) => (
                     <TenantRow key={item.tenant.id} item={item} />
                   ))}
                 </tbody>
@@ -360,4 +452,4 @@ export const TenantsList = () => {
       </div>
     </>
   );
-}
+};
