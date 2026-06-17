@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, generateId } from "@/platform/db";
+import { resolvePaymentStatus } from "@/platform/payments";
 import { withDelay, errorResponse } from "@/platform/utils";
 import type { TenantListItem } from "@repo/platform-types";
 
@@ -44,7 +45,7 @@ export async function GET(req: NextRequest) {
         const payment = db.payments.find(
           (p) => p.lease_id === lease.id && p.period_month === currentMonth,
         );
-        paymentStatus = payment ? payment.status : "outstanding";
+        paymentStatus = payment ? resolvePaymentStatus(payment) : "outstanding";
       }
 
       return { tenant, lease, unit, property, payment_status: paymentStatus };

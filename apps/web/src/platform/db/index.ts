@@ -283,7 +283,7 @@ const leases: Lease[] = [
     id: "lease-10",
     unit_id: "unit-15",
     tenant_id: "tenant-10",
-    start_date: "2026-07-01T00:00:00.000Z",
+    start_date: "2026-06-01T00:00:00.000Z",
     end_date: "2027-06-30T00:00:00.000Z",
     monthly_rent: 3500,
     terms: "12-month lease. No pets. Concierge service included. $1,200 security deposit.",
@@ -371,17 +371,6 @@ const payments: Payment[] = [
     method: null,
     last_reminded_on: null,
   },
-  {
-    id: "pay-7",
-    lease_id: "lease-1",
-    period_month: "2026-07",
-    amount_due: 1800,
-    amount_paid: 0,
-    status: "outstanding",
-    paid_date: null,
-    method: null,
-    last_reminded_on: null,
-  },
   // Bob – lease-2
   {
     id: "pay-8",
@@ -427,17 +416,6 @@ const payments: Payment[] = [
     method: null,
     last_reminded_on: null,
   },
-  {
-    id: "pay-12",
-    lease_id: "lease-2",
-    period_month: "2026-07",
-    amount_due: 2100,
-    amount_paid: 0,
-    status: "outstanding",
-    paid_date: null,
-    method: null,
-    last_reminded_on: null,
-  },
   // Carol – lease-3
   {
     id: "pay-13",
@@ -448,17 +426,6 @@ const payments: Payment[] = [
     status: "paid",
     paid_date: "2026-06-01T00:00:00.000Z",
     method: "Bank Transfer",
-    last_reminded_on: null,
-  },
-  {
-    id: "pay-14",
-    lease_id: "lease-3",
-    period_month: "2026-07",
-    amount_due: 2500,
-    amount_paid: 0,
-    status: "outstanding",
-    paid_date: null,
-    method: null,
     last_reminded_on: null,
   },
   // David – lease-4
@@ -517,17 +484,6 @@ const payments: Payment[] = [
     method: "Bank Transfer",
     last_reminded_on: null,
   },
-  {
-    id: "pay-20",
-    lease_id: "lease-4",
-    period_month: "2026-07",
-    amount_due: 2800,
-    amount_paid: 2800,
-    status: "paid",
-    paid_date: "2026-07-01T00:00:00.000Z",
-    method: "Bank Transfer",
-    last_reminded_on: null,
-  },
   // Eva – lease-5
   {
     id: "pay-21",
@@ -562,17 +518,6 @@ const payments: Payment[] = [
     method: null,
     last_reminded_on: null,
   },
-  {
-    id: "pay-24",
-    lease_id: "lease-5",
-    period_month: "2026-07",
-    amount_due: 3200,
-    amount_paid: 0,
-    status: "outstanding",
-    paid_date: null,
-    method: null,
-    last_reminded_on: null,
-  },
   // Frank – lease-6 (Sunset Villas, Villa 1)
   {
     id: "pay-25",
@@ -593,17 +538,6 @@ const payments: Payment[] = [
     amount_paid: 2200,
     status: "paid",
     paid_date: "2026-06-01T00:00:00.000Z",
-    method: "Bank Transfer",
-    last_reminded_on: null,
-  },
-  {
-    id: "pay-27",
-    lease_id: "lease-6",
-    period_month: "2026-07",
-    amount_due: 2200,
-    amount_paid: 2200,
-    status: "paid",
-    paid_date: "2026-07-01T00:00:00.000Z",
     method: "Bank Transfer",
     last_reminded_on: null,
   },
@@ -641,17 +575,6 @@ const payments: Payment[] = [
     method: "Credit Card",
     last_reminded_on: null,
   },
-  {
-    id: "pay-31",
-    lease_id: "lease-7",
-    period_month: "2026-07",
-    amount_due: 2400,
-    amount_paid: 2400,
-    status: "paid",
-    paid_date: "2026-07-01T00:00:00.000Z",
-    method: "Credit Card",
-    last_reminded_on: null,
-  },
   // Henry – lease-8 (Parkview Terrace, Unit 1A)
   {
     id: "pay-32",
@@ -662,17 +585,6 @@ const payments: Payment[] = [
     status: "paid",
     paid_date: "2026-06-02T00:00:00.000Z",
     method: "Bank Transfer",
-    last_reminded_on: null,
-  },
-  {
-    id: "pay-33",
-    lease_id: "lease-8",
-    period_month: "2026-07",
-    amount_due: 1950,
-    amount_paid: 0,
-    status: "outstanding",
-    paid_date: null,
-    method: null,
     last_reminded_on: null,
   },
   // Isla – lease-9 (Parkview Terrace, Unit 2B)
@@ -720,25 +632,14 @@ const payments: Payment[] = [
     method: null,
     last_reminded_on: null,
   },
-  {
-    id: "pay-38",
-    lease_id: "lease-9",
-    period_month: "2026-07",
-    amount_due: 2050,
-    amount_paid: 0,
-    status: "outstanding",
-    paid_date: null,
-    method: null,
-    last_reminded_on: null,
-  },
   // Jake – lease-10 (Harbor View, Suite 01)
   {
     id: "pay-39",
     lease_id: "lease-10",
-    period_month: "2026-07",
+    period_month: "2026-06",
     amount_due: 3500,
     amount_paid: 0,
-    status: "outstanding",
+    status: "overdue",
     paid_date: null,
     method: null,
     last_reminded_on: null,
@@ -764,17 +665,6 @@ const payments: Payment[] = [
     status: "paid",
     paid_date: "2026-06-03T00:00:00.000Z",
     method: "Bank Transfer",
-    last_reminded_on: null,
-  },
-  {
-    id: "pay-42",
-    lease_id: "lease-11",
-    period_month: "2026-07",
-    amount_due: 3800,
-    amount_paid: 0,
-    status: "outstanding",
-    paid_date: null,
-    method: null,
     last_reminded_on: null,
   },
 ];
@@ -807,11 +697,6 @@ export const db: ReturnType<typeof createDb> =
 export function getCurrentPeriodMonth(): string {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-}
-
-export function isOverdue(period_month: string): boolean {
-  const [year, month] = period_month.split("-").map(Number);
-  return new Date() > new Date(year, month - 1, 5);
 }
 
 let nextId = 100;

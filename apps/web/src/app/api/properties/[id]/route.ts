@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/platform/db";
+import { resolvePayments } from "@/platform/payments";
 import { withDelay, errorResponse } from "@/platform/utils";
 import type { PropertyDetailData, UnitDetail, PaymentStatus } from "@repo/platform-types";
 
@@ -21,7 +22,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         let payment_status: PaymentStatus | "vacant" = "vacant";
         let current_period_month: string | null = null;
         if (lease) {
-          const payments = db.payments.filter((p) => p.lease_id === lease.id);
+          const payments = resolvePayments(db.payments.filter((p) => p.lease_id === lease.id));
           const overdue = payments.find((p) => p.status === "overdue");
           const outstanding = payments.find((p) => p.status === "outstanding");
           if (overdue) { payment_status = "overdue"; current_period_month = overdue.period_month; }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/platform/db";
+import { withResolvedStatus } from "@/platform/payments";
 import { withDelay, errorResponse } from "@/platform/utils";
 import type { PaymentListItem } from "@repo/platform-types";
 
@@ -19,7 +20,13 @@ export async function GET(req: NextRequest) {
       const tenant = db.tenants.find((t) => t.id === lease.tenant_id);
       if (!tenant) continue;
 
-      items.push({ payment, lease, unit, property, tenant });
+      items.push({
+        payment: withResolvedStatus(payment),
+        lease,
+        unit,
+        property,
+        tenant,
+      });
     }
 
     // Sort: overdue first, then outstanding, then paid desc by period

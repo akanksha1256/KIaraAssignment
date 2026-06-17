@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, generateId } from "@/platform/db";
+import { withResolvedStatus } from "@/platform/payments";
 import { withDelay, errorResponse } from "@/platform/utils";
 import type { Payment } from "@repo/platform-types";
 
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       existing.amount_paid = existing.amount_due;
       existing.paid_date = paidAt;
       existing.method = method;
-      return NextResponse.json(existing);
+      return NextResponse.json(withResolvedStatus(existing));
     }
 
     const payment: Payment = {
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       last_reminded_on: null,
     };
     db.payments.push(payment);
-    return NextResponse.json(payment);
+    return NextResponse.json(withResolvedStatus(payment));
   } catch (e: any) {
     return errorResponse(e.message);
   }
