@@ -1,9 +1,9 @@
 import { Skeleton } from "@repo/ui";
 
-const TwoLineCell = ({ topWidth, bottomWidth }: { topWidth: string; bottomWidth: string }) => (
+const TwoLineCell = ({ topCls, bottomCls }: { topCls: string; bottomCls: string }) => (
   <td className="px-5 py-3.5">
-    <Skeleton className={`h-3.5 ${topWidth} mb-1.5`} />
-    <Skeleton className={`h-2.5 ${bottomWidth}`} />
+    <Skeleton className={topCls} />
+    <Skeleton className={bottomCls} />
   </td>
 );
 
@@ -19,13 +19,21 @@ export const PaymentsListSkeleton = () => (
 
       {/* Summary cards */}
       <div className="grid grid-cols-3 gap-4 mb-4">
-        {[["w-28", "w-36"], ["w-32", "w-36"], ["w-16", "w-40"]].map(([valW, subW], i) => (
-          <div key={i} className="rounded-xl border border-sand-400 bg-white px-5 py-4 flex flex-col gap-2">
-            <Skeleton className="h-3 w-24" />
-            <Skeleton className={`h-7 ${valW}`} />
-            <Skeleton className={`h-3 ${subW}`} />
-          </div>
-        ))}
+        <div className="rounded-xl border border-sand-400 bg-white px-5 py-4 flex flex-col gap-2">
+          <Skeleton className="h-3 w-24" />
+          <Skeleton className="h-7 w-28" />
+          <Skeleton className="h-3 w-36" />
+        </div>
+        <div className="rounded-xl border border-sand-400 bg-white px-5 py-4 flex flex-col gap-2">
+          <Skeleton className="h-3 w-24" />
+          <Skeleton className="h-7 w-32" />
+          <Skeleton className="h-3 w-36" />
+        </div>
+        <div className="rounded-xl border border-sand-400 bg-white px-5 py-4 flex flex-col gap-2">
+          <Skeleton className="h-3 w-24" />
+          <Skeleton className="h-7 w-16" />
+          <Skeleton className="h-3 w-40" />
+        </div>
       </div>
 
       {/* Filter / search bar */}
@@ -63,8 +71,8 @@ export const PaymentsListSkeleton = () => (
           <tbody>
             {[1, 2, 3, 4, 5, 6, 7].map((i) => (
               <tr key={i} className="border-t border-sand-200">
-                <TwoLineCell topWidth="w-28" bottomWidth="w-32" />
-                <TwoLineCell topWidth="w-24" bottomWidth="w-12" />
+                <TwoLineCell topCls="h-3.5 w-28 mb-1.5" bottomCls="h-2.5 w-32" />
+                <TwoLineCell topCls="h-3.5 w-24 mb-1.5" bottomCls="h-2.5 w-12" />
                 <td className="px-5 py-3.5 text-right">
                   <Skeleton className="h-3 w-16 ml-auto" />
                 </td>

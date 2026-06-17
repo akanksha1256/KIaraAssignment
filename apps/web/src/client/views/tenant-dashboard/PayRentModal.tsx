@@ -19,7 +19,7 @@ interface Props {
   onClose: () => void;
 }
 
-export function PayRentModal({ tenantId, leaseId, periodMonth, amountDue, onClose }: Props) {
+export const PayRentModal = ({ tenantId, leaseId, periodMonth, amountDue, onClose }: Props) => {
   const { showToast } = useToast();
   const backdropRef = useRef<HTMLDivElement>(null);
 
@@ -113,7 +113,7 @@ export function PayRentModal({ tenantId, leaseId, periodMonth, amountDue, onClos
             </div>
             <button
               onClick={onClose}
-              className="mt-2 inline-flex h-10 px-8 items-center rounded-full bg-teal-600 text-white text-[14px] font-medium hover:bg-teal-700 transition-colors"
+              className="mt-2 inline-flex h-10 px-8 items-center rounded-full bg-teal-600 text-white text-[14px] font-medium hover:bg-teal-700 transition-colors duration-normal ease-kiara focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               Done
             </button>
@@ -132,7 +132,7 @@ export function PayRentModal({ tenantId, leaseId, periodMonth, amountDue, onClos
               <button
                 onClick={onClose}
                 disabled={modalState === "processing"}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-sand-100 transition-colors mt-1 disabled:opacity-40"
+                className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-sand-100 transition-colors duration-normal ease-kiara mt-1 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label="Close"
               >
                 <X className="h-4 w-4" />
@@ -160,7 +160,7 @@ export function PayRentModal({ tenantId, leaseId, periodMonth, amountDue, onClos
                         onClick={() => setSelectedMethodId(m.id)}
                         disabled={modalState === "processing"}
                         className={[
-                          "w-full flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all",
+                          "w-full flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-normal ease-kiara focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                           isSelected
                             ? "border-coral-500 bg-coral-50 ring-1 ring-coral-500"
                             : "border-sand-400 hover:border-espresso-300 hover:bg-sand-100",
@@ -187,7 +187,7 @@ export function PayRentModal({ tenantId, leaseId, periodMonth, amountDue, onClos
                     <button
                       onClick={() => setShowAddForm(true)}
                       disabled={modalState === "processing"}
-                      className="w-full flex items-center gap-3 rounded-xl border border-dashed border-sand-400 px-4 py-3 text-[13.5px] text-muted-foreground hover:border-espresso-300 hover:bg-sand-100 transition-colors disabled:opacity-50"
+                      className="w-full flex items-center gap-3 rounded-xl border border-dashed border-sand-400 px-4 py-3 text-[13.5px] text-muted-foreground hover:border-espresso-300 hover:bg-sand-100 transition-colors duration-normal ease-kiara disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <Plus className="h-4 w-4" />
                       Add new method
@@ -208,7 +208,7 @@ export function PayRentModal({ tenantId, leaseId, periodMonth, amountDue, onClos
                         <button
                           onClick={handleAddMethod}
                           disabled={!newLabel.trim() || addMethod.isPending}
-                          className="inline-flex items-center h-8 px-4 rounded-full bg-espresso-900 text-white text-[13px] font-medium hover:bg-espresso-700 transition-colors disabled:opacity-40"
+                          className="inline-flex items-center h-8 px-4 rounded-full bg-espresso-900 text-white text-[13px] font-medium hover:bg-espresso-700 transition-colors duration-normal ease-kiara disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         >
                           {addMethod.isPending ? (
                             <><Loader2 className="h-3 w-3 animate-spin mr-1.5" /> Adding…</>
@@ -216,7 +216,7 @@ export function PayRentModal({ tenantId, leaseId, periodMonth, amountDue, onClos
                         </button>
                         <button
                           onClick={() => { setShowAddForm(false); setNewLabel(""); }}
-                          className="inline-flex items-center h-8 px-4 rounded-full text-muted-foreground text-[13px] hover:bg-sand-100 transition-colors"
+                          className="inline-flex items-center h-8 px-4 rounded-full text-muted-foreground text-[13px] hover:bg-sand-100 transition-colors duration-normal ease-kiara focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         >
                           Cancel
                         </button>
@@ -232,14 +232,14 @@ export function PayRentModal({ tenantId, leaseId, periodMonth, amountDue, onClos
               <button
                 onClick={onClose}
                 disabled={modalState === "processing"}
-                className="inline-flex h-10 px-5 items-center rounded-full text-[14px] font-medium text-espresso-700 hover:bg-sand-100 transition-colors disabled:opacity-40"
+                className="inline-flex h-10 px-5 items-center rounded-full text-[14px] font-medium text-espresso-700 hover:bg-sand-100 transition-colors duration-normal ease-kiara disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 Cancel
               </button>
               <button
                 onClick={handlePay}
                 disabled={!selectedMethodId || modalState === "processing"}
-                className="inline-flex items-center gap-2 h-10 px-6 rounded-full bg-coral-500 text-white text-[14px] font-medium hover:bg-coral-600 transition-colors shadow-sm disabled:opacity-40"
+                className="inline-flex items-center gap-2 h-10 px-6 rounded-full bg-coral-500 text-white text-[14px] font-medium hover:bg-coral-600 transition-colors duration-normal ease-kiara shadow-sm disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 {modalState === "processing" ? (
                   <><Loader2 className="h-4 w-4 animate-spin" /> Processing…</>

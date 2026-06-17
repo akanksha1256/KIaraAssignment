@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./utils";
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 font-medium whitespace-nowrap transition-all outline-none select-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 active:scale-[.97]",
+  "inline-flex shrink-0 items-center justify-center gap-2 font-medium whitespace-nowrap transition-all duration-normal ease-kiara outline-none select-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 active:scale-[.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
   {
     variants: {
       variant: {
@@ -28,19 +28,17 @@ const buttonVariants = cva(
 
 export type ButtonProps = ButtonPrimitive.Props & VariantProps<typeof buttonVariants>;
 
-export function Button({
+export const Button = ({
   className,
   variant = "default",
   size = "default",
   ...props
-}: ButtonProps) {
-  return (
-    <ButtonPrimitive
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  );
-}
+}: ButtonProps) => (
+  <ButtonPrimitive
+    data-slot="button"
+    className={cn(buttonVariants({ variant, size, className }))}
+    {...props}
+  />
+);
 
 export { buttonVariants };

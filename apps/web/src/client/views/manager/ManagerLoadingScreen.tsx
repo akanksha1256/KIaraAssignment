@@ -61,15 +61,21 @@ export const ManagerDashboardSkeleton = () => {
       {/* Table */}
       <div className="rounded-xl border border-sand-400 bg-white overflow-hidden">
         <div className="bg-sand-100 px-5 py-3 flex gap-4">
-          {[120, 80, 160, 60, 80, 100].map((w, i) => (
-            <Skeleton key={i} className={`h-3 w-[${w}px]`} />
-          ))}
+          <Skeleton className="h-3 w-[120px]" />
+          <Skeleton className="h-3 w-20" />
+          <Skeleton className="h-3 w-40" />
+          <Skeleton className="h-3 w-16" />
+          <Skeleton className="h-3 w-20" />
+          <Skeleton className="h-3 w-24" />
         </div>
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="px-5 py-4 border-b border-sand-200 flex gap-4 items-center">
-            {[120, 80, 200, 60, 80, 100].map((w, j) => (
-              <Skeleton key={j} className={`h-3 w-[${w}px]`} />
-            ))}
+            <Skeleton className="h-3 w-[120px]" />
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-3 w-48" />
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-3 w-24" />
           </div>
         ))}
       </div>

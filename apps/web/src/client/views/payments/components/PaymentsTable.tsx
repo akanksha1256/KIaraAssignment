@@ -71,7 +71,7 @@ export const PaymentsTable = ({
 
   return (
     <div className="flex-1 min-h-0 rounded-xl border border-sand-400 bg-white overflow-y-auto shadow-sm">
-      <table className="w-full table-fixed min-w-[700px]">
+      <table className="w-full table-auto min-w-[700px]">
         <colgroup>
           <col style={{ width: "22%" }} />
           <col style={{ width: "20%" }} />

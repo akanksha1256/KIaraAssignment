@@ -29,7 +29,7 @@ export const NeedsAttentionSection = ({
   };
 
   return (
-    <div className="bg-white p-6 bg-gradient-to-br from-white to-coral-50">
+    <div className="bg-gradient-to-br from-white to-coral-50 p-6">
       <div className="flex items-center gap-2 mb-4">
         <span className="w-2 h-2 rounded-full bg-destructive flex-none" />
         <Overline className="text-destructive">{s.label}</Overline>

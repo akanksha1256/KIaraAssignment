@@ -1,10 +1,10 @@
 import { Skeleton } from "@repo/ui";
 import { PaymentHistoryTableSkeleton } from "@/client/views/payments/PaymentHistoryTableLoadingScreen";
 
-const CardRow = ({ labelWidth, valueWidth }: { labelWidth: string; valueWidth: string }) => (
+const CardRow = ({ labelCls, valueCls }: { labelCls: string; valueCls: string }) => (
   <div className="flex justify-between items-center py-3 border-b border-sand-200 last:border-0">
-    <Skeleton className={`h-3 ${labelWidth}`} />
-    <Skeleton className={`h-3 ${valueWidth}`} />
+    <Skeleton className={labelCls} />
+    <Skeleton className={valueCls} />
   </div>
 );
 
@@ -35,11 +35,11 @@ export const TenantProfileSkeleton = () => (
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
             {/* Rows: Name, Email, Contact, KYC Status, KYC Document */}
             <div className="lg:col-span-3">
-              <CardRow labelWidth="w-12" valueWidth="w-28" />
-              <CardRow labelWidth="w-12" valueWidth="w-40" />
-              <CardRow labelWidth="w-16" valueWidth="w-24" />
-              <CardRow labelWidth="w-20" valueWidth="w-20" />
-              <CardRow labelWidth="w-24" valueWidth="w-16" />
+              <CardRow labelCls="h-3 w-12" valueCls="h-3 w-28" />
+              <CardRow labelCls="h-3 w-12" valueCls="h-3 w-40" />
+              <CardRow labelCls="h-3 w-16" valueCls="h-3 w-24" />
+              <CardRow labelCls="h-3 w-20" valueCls="h-3 w-20" />
+              <CardRow labelCls="h-3 w-24" valueCls="h-3 w-16" />
             </div>
             {/* ScoreRing */}
             <div className="lg:col-span-2 flex flex-col items-center justify-center gap-3">
@@ -62,11 +62,11 @@ export const TenantProfileSkeleton = () => (
         </div>
         {/* Property, Unit, Monthly Rent, Lease Date, Lease Document */}
         <div className="px-6 pb-6">
-          <CardRow labelWidth="w-16" valueWidth="w-32" />
-          <CardRow labelWidth="w-10" valueWidth="w-16" />
-          <CardRow labelWidth="w-24" valueWidth="w-20" />
-          <CardRow labelWidth="w-20" valueWidth="w-36" />
-          <CardRow labelWidth="w-28" valueWidth="w-16" />
+          <CardRow labelCls="h-3 w-16" valueCls="h-3 w-32" />
+          <CardRow labelCls="h-3 w-10" valueCls="h-3 w-16" />
+          <CardRow labelCls="h-3 w-24" valueCls="h-3 w-20" />
+          <CardRow labelCls="h-3 w-20" valueCls="h-3 w-36" />
+          <CardRow labelCls="h-3 w-28" valueCls="h-3 w-16" />
         </div>
       </div>
     </div>

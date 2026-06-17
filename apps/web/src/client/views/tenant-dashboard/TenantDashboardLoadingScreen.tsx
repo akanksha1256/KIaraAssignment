@@ -1,30 +1,26 @@
 import { Skeleton } from "@repo/ui";
 import { PaymentHistoryTableSkeleton } from "@/client/views/payments/PaymentHistoryTableLoadingScreen";
 
-const CardRow = ({ labelWidth, valueWidth }: { labelWidth: string; valueWidth: string }) => (
+const CardRow = ({ labelCls, valueCls }: { labelCls: string; valueCls: string }) => (
   <div className="flex justify-between items-center py-2.5 border-b border-neutral-100 last:border-0">
-    <Skeleton className={`h-3 ${labelWidth}`} />
-    <Skeleton className={`h-3 ${valueWidth}`} />
+    <Skeleton className={labelCls} />
+    <Skeleton className={valueCls} />
   </div>
 );
 
 const InfoCard = ({
-  titleWidth,
-  rows,
+  titleCls,
+  children,
 }: {
-  titleWidth: string;
-  rows: [string, string][];
+  titleCls: string;
+  children: React.ReactNode;
 }) => (
   <div className="rounded-xl border border-sand-400 bg-white">
     <div className="flex items-center gap-2 p-6">
       <Skeleton className="h-4 w-4 rounded flex-none" />
-      <Skeleton className={`h-4 ${titleWidth}`} />
+      <Skeleton className={titleCls} />
     </div>
-    <div className="px-6 pb-6">
-      {rows.map(([labelW, valueW], i) => (
-        <CardRow key={i} labelWidth={labelW} valueWidth={valueW} />
-      ))}
-    </div>
+    <div className="px-6 pb-6">{children}</div>
   </div>
 );
 
@@ -50,18 +46,22 @@ export const TenantDashboardSkeleton = () => (
 
     {/* Info cards: Property (3 rows), Manager (3 rows), Lease (4 rows) */}
     <div className="grid gap-4 lg:grid-cols-3 mb-8">
-      <InfoCard
-        titleWidth="w-28"
-        rows={[["w-12", "w-28"], ["w-8", "w-12"], ["w-16", "w-40"]]}
-      />
-      <InfoCard
-        titleWidth="w-24"
-        rows={[["w-12", "w-24"], ["w-12", "w-36"], ["w-16", "w-24"]]}
-      />
-      <InfoCard
-        titleWidth="w-20"
-        rows={[["w-24", "w-20"], ["w-20", "w-36"], ["w-12", "w-28"], ["w-28", "w-16"]]}
-      />
+      <InfoCard titleCls="h-4 w-28">
+        <CardRow labelCls="h-3 w-12" valueCls="h-3 w-28" />
+        <CardRow labelCls="h-3 w-8" valueCls="h-3 w-12" />
+        <CardRow labelCls="h-3 w-16" valueCls="h-3 w-40" />
+      </InfoCard>
+      <InfoCard titleCls="h-4 w-24">
+        <CardRow labelCls="h-3 w-12" valueCls="h-3 w-24" />
+        <CardRow labelCls="h-3 w-12" valueCls="h-3 w-36" />
+        <CardRow labelCls="h-3 w-16" valueCls="h-3 w-24" />
+      </InfoCard>
+      <InfoCard titleCls="h-4 w-20">
+        <CardRow labelCls="h-3 w-24" valueCls="h-3 w-20" />
+        <CardRow labelCls="h-3 w-20" valueCls="h-3 w-36" />
+        <CardRow labelCls="h-3 w-12" valueCls="h-3 w-28" />
+        <CardRow labelCls="h-3 w-28" valueCls="h-3 w-16" />
+      </InfoCard>
     </div>
 
     {/* Payment history */}
