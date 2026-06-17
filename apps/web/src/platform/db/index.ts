@@ -786,14 +786,23 @@ const paymentMethods: PaymentMethod[] = [
   { id: "pm-4", tenant_id: "tenant-5", label: "Mastercard ••••5555" },
 ];
 
-export const db = {
+// globalThis ensures a single shared instance across Next.js route handler bundles in dev
+const createDb = () => ({
   properties: [...properties],
   units: [...units],
   tenants: [...tenants],
   leases: [...leases],
   payments: [...payments],
   paymentMethods: [...paymentMethods],
-};
+});
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __kiara_db: ReturnType<typeof createDb> | undefined;
+}
+
+export const db: ReturnType<typeof createDb> =
+  globalThis.__kiara_db ?? (globalThis.__kiara_db = createDb());
 
 export function getCurrentPeriodMonth(): string {
   const now = new Date();
