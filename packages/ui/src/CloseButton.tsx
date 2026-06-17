@@ -1,20 +1,18 @@
+import React from "react";
 import { X as XIcon } from "lucide-react";
 import { cn } from "./utils";
 
 export const CloseButton = ({
-  onClick,
   className,
-}: {
-  onClick: () => void;
-  className?: string;
-}) => (
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
   <button
     type="button"
-    onClick={onClick}
     className={cn(
-      "p-1.5 rounded-lg text-muted-foreground hover:text-espresso-900 hover:bg-sand-100 transition-colors",
+      "p-1.5 rounded-lg text-muted-foreground hover:text-espresso-900 hover:bg-sand-100 transition-colors disabled:opacity-40",
       className,
     )}
+    {...props}
   >
     <XIcon className="h-4 w-4" />
   </button>

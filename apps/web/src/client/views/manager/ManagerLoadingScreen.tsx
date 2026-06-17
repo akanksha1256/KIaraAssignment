@@ -55,13 +55,13 @@ export const ManagerDashboardSkeleton = () => {
         </div>
         <div className="rounded-xl border border-sand-400 bg-white p-6 space-y-4">
           <Skeleton className="h-4 w-32" />
-          <Skeleton className="h-[160px] w-[160px] rounded-full mx-auto" />
+          <Skeleton className="h-40 w-40 rounded-full mx-auto" />
         </div>
       </div>
       {/* Table */}
       <div className="rounded-xl border border-sand-400 bg-white overflow-hidden">
         <div className="bg-sand-100 px-5 py-3 flex gap-4">
-          <Skeleton className="h-3 w-[120px]" />
+          <Skeleton className="h-3 w-28" />
           <Skeleton className="h-3 w-20" />
           <Skeleton className="h-3 w-40" />
           <Skeleton className="h-3 w-16" />
@@ -70,7 +70,7 @@ export const ManagerDashboardSkeleton = () => {
         </div>
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="px-5 py-4 border-b border-sand-200 flex gap-4 items-center">
-            <Skeleton className="h-3 w-[120px]" />
+            <Skeleton className="h-3 w-28" />
             <Skeleton className="h-3 w-20" />
             <Skeleton className="h-3 w-48" />
             <Skeleton className="h-3 w-16" />

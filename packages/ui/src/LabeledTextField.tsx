@@ -6,7 +6,7 @@ import { StatusLabel } from "./Typography";
 const inputCls = (error?: string, prefix?: string, className?: string) =>
   cn(
     "h-10 w-full rounded-lg border px-3 text-[13.5px] text-espresso-900 bg-white",
-    "placeholder:text-espresso-300 focus:outline-none focus:ring-2 focus:ring-coral-500/30 transition-colors",
+    "placeholder:text-espresso-500 focus:outline-none focus:ring-2 focus:ring-coral-500/30 transition-colors",
     prefix && "pl-6",
     error ? "border-destructive" : "border-sand-400",
     className,

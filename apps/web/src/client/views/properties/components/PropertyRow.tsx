@@ -54,7 +54,7 @@ export const PropertyRow = ({
               <span className="text-muted-foreground font-normal text-[12px]">/mo</span>
             </span>
           ) : (
-            <span className="text-espresso-300">-</span>
+            <span className="text-espresso-500">-</span>
           )}
         </td>
         <td className="px-4 py-4 text-right">

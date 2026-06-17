@@ -94,7 +94,7 @@ export const Nav = () => {
 
       {/* Nav items */}
       <nav className="flex flex-col gap-0.5 flex-1" aria-label="Main navigation">
-        <p className="hidden md:block text-[11px] font-semibold tracking-[0.09em] uppercase text-espresso-300 px-3 py-2 mt-2">
+        <p className="hidden md:block text-[11px] font-semibold tracking-[0.09em] uppercase text-espresso-500 px-3 py-2 mt-2">
           Management
         </p>
         {managerNav.map(({ href, label, icon }) => {
@@ -135,7 +135,7 @@ export const Nav = () => {
           </button>
           <button
             onClick={() => router.push("/tenant")}
-            className="flex-1 text-[12.5px] font-medium rounded-full py-1.5 text-muted-foreground hover:text-espresso-900 transition-all duration-normal"
+            className="flex-1 text-[12.5px] font-medium rounded-full py-1.5 text-espresso-700 hover:text-espresso-900 transition-all duration-normal"
           >
             Tenant
           </button>

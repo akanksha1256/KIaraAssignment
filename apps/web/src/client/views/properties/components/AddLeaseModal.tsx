@@ -251,7 +251,7 @@ export const AddLeaseModal = ({
               onChange={(e) => setTerms(e.target.value)}
               placeholder={sl.fieldTermsPlaceholder}
               rows={3}
-              className="w-full rounded-lg border border-sand-400 px-3 py-2.5 text-[13.5px] text-espresso-900 bg-white placeholder:text-espresso-300 focus:outline-none focus:ring-2 focus:ring-coral-500/30 transition-colors resize-none"
+              className="w-full rounded-lg border border-sand-400 px-3 py-2.5 text-[13.5px] text-espresso-900 bg-white placeholder:text-espresso-500 focus:outline-none focus:ring-2 focus:ring-coral-500/30 transition-colors resize-none"
               disabled={isPending}
             />
           </div>

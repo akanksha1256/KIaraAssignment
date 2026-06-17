@@ -112,7 +112,7 @@ export const TenantInfoCard = ({ tenant, standing }: Props) => {
                 <Caption className="text-center">{ss.onTime}</Caption>
               </div>
             ) : (
-              <Caption className="text-center text-espresso-300">{ss.noData}</Caption>
+              <Caption className="text-center text-espresso-500">{ss.noData}</Caption>
             )}
           </div>
         </div>

@@ -2,10 +2,20 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { usePaymentMethods, usePayRent, useAddPaymentMethod } from "@repo/data";
-import { useToast } from "@repo/ui";
+import {
+  useToast,
+  StateTitle,
+  BodyText,
+  Button,
+  Overline,
+  ModalHeading,
+  MutedText,
+  CloseButton,
+  cn,
+} from "@repo/ui";
 import { strings } from "@repo/tokens";
 import { formatPeriodMonth } from "@repo/ui";
-import { X, CreditCard, CheckCircle2, Plus, Loader2 } from "lucide-react";
+import { CreditCard, CheckCircle2, Plus, Loader2 } from "lucide-react";
 
 const s = strings.tenant.payRentModal;
 
@@ -105,72 +115,72 @@ export const PayRentModal = ({ tenantId, leaseId, periodMonth, amountDue, onClos
               <CheckCircle2 className="h-8 w-8 text-teal-600" />
             </div>
             <div>
-              <h2 className="font-serif text-[24px] font-semibold text-espresso-900">Payment sent!</h2>
-              <p className="text-[14px] text-muted-foreground mt-2">
-                ${amountDue.toLocaleString()} for {formatPeriodMonth(periodMonth)} has been processed
-                {selectedMethod ? ` via ${selectedMethod.label}` : ""}.
-              </p>
+              <StateTitle>{s.successTitle}</StateTitle>
+              <BodyText className="text-muted-foreground mt-2">
+                {s.successBody(
+                  amountDue.toLocaleString(),
+                  formatPeriodMonth(periodMonth),
+                  selectedMethod?.label,
+                )}
+              </BodyText>
             </div>
-            <button
-              onClick={onClose}
-              className="mt-2 inline-flex h-10 px-8 items-center rounded-full bg-teal-600 text-white text-[14px] font-medium hover:bg-teal-700 transition-colors duration-normal ease-kiara focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
+            <Button variant="teal" onClick={onClose} className="mt-2 px-8">
               Done
-            </button>
+            </Button>
           </div>
         ) : (
           <>
             {/* Header */}
             <div className="px-6 pt-6 pb-4 border-b border-sand-200 flex items-start justify-between">
               <div>
-                <p className="t-overline text-muted-foreground mb-1">{formatPeriodMonth(periodMonth)}</p>
-                <h2 id="modal-title" className="font-serif text-[28px] font-semibold text-espresso-900 leading-tight">
-                  ${amountDue.toLocaleString()}
-                </h2>
-                <p className="text-[13px] text-muted-foreground mt-0.5">Amount due this period</p>
+                <Overline className="mb-1">{formatPeriodMonth(periodMonth)}</Overline>
+                <ModalHeading id="modal-title">${amountDue.toLocaleString()}</ModalHeading>
+                <MutedText className="mt-0.5">{s.amountSubtitle}</MutedText>
               </div>
-              <button
+              <CloseButton
                 onClick={onClose}
                 disabled={modalState === "processing"}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-sand-100 transition-colors duration-normal ease-kiara mt-1 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label="Close"
-              >
-                <X className="h-4 w-4" />
-              </button>
+                className="mt-1 rounded-full"
+              />
             </div>
 
             {/* Body */}
             <div className="px-6 py-5">
-              <p className="text-[13px] font-semibold text-espresso-700 mb-3 t-overline">
-                Payment method
-              </p>
+              <Overline className="mb-3 text-espresso-700">{s.selectMethod}</Overline>
 
               {methodsLoading ? (
-                <div className="flex items-center gap-2 py-4 text-muted-foreground text-[14px]">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Loading methods…
+                <div className="flex items-center gap-2 py-4">
+                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                  <MutedText>{s.methodsLoading}</MutedText>
                 </div>
               ) : (
                 <div className="space-y-2">
                   {methods.map((m) => {
                     const isSelected = selectedMethodId === m.id;
                     return (
-                      <button
+                      <Button
                         key={m.id}
+                        variant="outline"
                         onClick={() => setSelectedMethodId(m.id)}
                         disabled={modalState === "processing"}
-                        className={[
-                          "w-full flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-normal ease-kiara focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                        className={cn(
+                          "w-full justify-start rounded-xl h-auto px-4 py-3 text-espresso-900",
                           isSelected
                             ? "border-coral-500 bg-coral-50 ring-1 ring-coral-500"
                             : "border-sand-400 hover:border-espresso-300 hover:bg-sand-100",
-                          "disabled:opacity-50",
-                        ].join(" ")}
+                        )}
                       >
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-none ${isSelected ? "bg-coral-500" : "bg-sand-200"}`}>
-                          <CreditCard className={`h-4 w-4 ${isSelected ? "text-white" : "text-espresso-500"}`} />
+                        <div
+                          className={`w-8 h-8 rounded-full flex items-center justify-center flex-none ${isSelected ? "bg-coral-500" : "bg-sand-200"}`}
+                        >
+                          <CreditCard
+                            className={`h-4 w-4 ${isSelected ? "text-white" : "text-espresso-500"}`}
+                          />
                         </div>
-                        <span className={`text-[14px] font-medium ${isSelected ? "text-espresso-900" : "text-espresso-700"}`}>
+                        <span
+                          className={`text-[14px] font-medium ${isSelected ? "text-espresso-900" : "text-espresso-700"}`}
+                        >
                           {m.label}
                         </span>
                         {isSelected && (
@@ -178,7 +188,7 @@ export const PayRentModal = ({ tenantId, leaseId, periodMonth, amountDue, onClos
                             <div className="w-1.5 h-1.5 rounded-full bg-white" />
                           </div>
                         )}
-                      </button>
+                      </Button>
                     );
                   })}
 
@@ -205,21 +215,24 @@ export const PayRentModal = ({ tenantId, leaseId, periodMonth, amountDue, onClos
                         className="w-full text-[14px] text-espresso-900 placeholder:text-muted-foreground bg-transparent border-0 outline-none focus:ring-0"
                       />
                       <div className="flex gap-2 pt-1">
-                        <button
+                        <Button
+                          size="sm"
                           onClick={handleAddMethod}
                           disabled={!newLabel.trim() || addMethod.isPending}
-                          className="inline-flex items-center h-8 px-4 rounded-full bg-espresso-900 text-white text-[13px] font-medium hover:bg-espresso-700 transition-colors duration-normal ease-kiara disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          className="bg-espresso-900 hover:bg-espresso-700"
                         >
-                          {addMethod.isPending ? (
-                            <><Loader2 className="h-3 w-3 animate-spin mr-1.5" /> Adding…</>
-                          ) : "Add method"}
-                        </button>
-                        <button
+                          {addMethod.isPending
+                            ? <><Loader2 className="h-3 w-3 animate-spin" />{s.addMethodLoading}</>
+                            : s.addMethodButton}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => { setShowAddForm(false); setNewLabel(""); }}
-                          className="inline-flex items-center h-8 px-4 rounded-full text-muted-foreground text-[13px] hover:bg-sand-100 transition-colors duration-normal ease-kiara focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          className="text-muted-foreground"
                         >
-                          Cancel
-                        </button>
+                          {s.cancel}
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -229,28 +242,27 @@ export const PayRentModal = ({ tenantId, leaseId, periodMonth, amountDue, onClos
 
             {/* Footer */}
             <div className="px-6 pb-6 pt-2 flex items-center justify-between gap-3">
-              <button
+              <Button
+                variant="ghost"
                 onClick={onClose}
                 disabled={modalState === "processing"}
-                className="inline-flex h-10 px-5 items-center rounded-full text-[14px] font-medium text-espresso-700 hover:bg-sand-100 transition-colors duration-normal ease-kiara disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="text-espresso-700"
               >
-                Cancel
-              </button>
-              <button
+                {s.cancel}
+              </Button>
+              <Button
                 onClick={handlePay}
                 disabled={!selectedMethodId || modalState === "processing"}
-                className="inline-flex items-center gap-2 h-10 px-6 rounded-full bg-coral-500 text-white text-[14px] font-medium hover:bg-coral-600 transition-colors duration-normal ease-kiara shadow-sm disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="px-6"
               >
-                {modalState === "processing" ? (
-                  <><Loader2 className="h-4 w-4 animate-spin" /> Processing…</>
-                ) : (
-                  <>Pay ${amountDue.toLocaleString()}</>
-                )}
-              </button>
+                {modalState === "processing"
+                  ? <><Loader2 className="h-4 w-4 animate-spin" />{s.payLoading}</>
+                  : <>Pay ${amountDue.toLocaleString()}</>}
+              </Button>
             </div>
           </>
         )}
       </div>
     </div>
   );
-}
+};

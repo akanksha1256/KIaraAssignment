@@ -54,7 +54,7 @@ export const buildPaymentRow = (
       content: payment.paidDate ? (
         <MutedText className="tabular-nums">{formatDate(payment.paidDate)}</MutedText>
       ) : (
-        <MutedText className="text-espresso-300">{s.notPaid}</MutedText>
+        <MutedText className="text-espresso-500">{s.notPaid}</MutedText>
       ),
       className: "whitespace-nowrap text-right",
       sortValue: payment.paidDate ?? "",
@@ -63,7 +63,7 @@ export const buildPaymentRow = (
       content: payment.method ? (
         <MutedText>{payment.method}</MutedText>
       ) : (
-        <MutedText className="text-espresso-300">{s.notPaid}</MutedText>
+        <MutedText className="text-espresso-500">{s.notPaid}</MutedText>
       ),
       className: "whitespace-nowrap text-right",
       sortValue: payment.method ?? "",

@@ -12,7 +12,7 @@ const spl = strings.manager.propertiesList;
 let unitRowId = 1;
 
 const unitInputCls =
-  "h-10 w-full rounded-lg border border-sand-400 px-3 text-[13.5px] text-espresso-900 bg-white placeholder:text-espresso-300 focus:outline-none focus:ring-2 focus:ring-coral-500/30 transition-colors";
+  "h-10 w-full rounded-lg border border-sand-400 px-3 text-[13.5px] text-espresso-900 bg-white placeholder:text-espresso-500 focus:outline-none focus:ring-2 focus:ring-coral-500/30 transition-colors";
 
 export const AddPropertyModal = ({ onClose }: { onClose: () => void }) => {
   const { showToast } = useToast();

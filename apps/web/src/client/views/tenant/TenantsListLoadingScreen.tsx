@@ -57,7 +57,7 @@ export const TenantsListSkeleton = () => (
       <div className="flex items-center gap-3 mb-2">
         <Skeleton className="h-9 w-28 rounded-lg" />
         <div className="flex-1" />
-        <Skeleton className="h-9 w-[260px] rounded-lg" />
+        <Skeleton className="h-9 w-64 rounded-lg" />
       </div>
     </div>
 

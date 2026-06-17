@@ -62,7 +62,7 @@ export function RowMenu({ items }: Props) {
         ref={buttonRef}
         onClick={handleOpen}
         aria-label="Row actions"
-        className="flex h-7 w-7 items-center justify-center rounded-md text-espresso-300 hover:bg-sand-200 hover:text-espresso-700 transition-colors duration-fast"
+        className="flex h-7 w-7 items-center justify-center rounded-md text-espresso-500 hover:bg-sand-200 hover:text-espresso-700 transition-colors duration-fast"
       >
         <MoreVertical className="h-4 w-4" />
       </button>

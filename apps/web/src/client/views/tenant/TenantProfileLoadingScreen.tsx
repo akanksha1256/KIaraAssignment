@@ -44,7 +44,7 @@ export const TenantProfileSkeleton = () => (
             {/* ScoreRing */}
             <div className="lg:col-span-2 flex flex-col items-center justify-center gap-3">
               <Skeleton className="h-3 w-32" />
-              <Skeleton className="w-[120px] h-[120px] rounded-full" />
+              <Skeleton className="w-28 h-28 rounded-full" />
               <div className="flex flex-col items-center gap-1.5">
                 <Skeleton className="h-3.5 w-16" />
                 <Skeleton className="h-3 w-28" />

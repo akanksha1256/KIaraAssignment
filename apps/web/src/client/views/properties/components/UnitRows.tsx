@@ -50,7 +50,7 @@ export const UnitRows = ({
             {unit.tenant ? (
               <span className="text-[13px] font-medium text-maroon-600">{unit.tenant.name}</span>
             ) : (
-              <span className="text-[13px] text-espresso-300 italic">{spl.vacant}</span>
+              <span className="text-[13px] text-espresso-500 italic">{spl.vacant}</span>
             )}
           </td>
           <td className="px-4 py-2.5 text-right">
@@ -60,7 +60,7 @@ export const UnitRows = ({
                 <span className="text-muted-foreground font-normal text-[11px]">/mo</span>
               </span>
             ) : (
-              <span className="text-espresso-300 text-[13px]">-</span>
+              <span className="text-espresso-500 text-[13px]">-</span>
             )}
           </td>
           <td className="px-4 py-2.5 text-right">

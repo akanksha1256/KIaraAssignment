@@ -577,6 +577,7 @@ export const strings = {
     payRentModal: {
       title: (period: string) => `Pay Rent - ${period}`,
       amount: "Amount Due",
+      amountSubtitle: "Amount due this period",
       selectMethod: "Payment Method",
       noMethods: "No payment methods saved.",
       methodsLoading: "Loading…",
@@ -587,6 +588,9 @@ export const strings = {
       payButton: "Pay Now",
       payLoading: "Processing…",
       cancel: "Cancel",
+      successTitle: "Payment sent!",
+      successBody: (amount: string, period: string, method?: string) =>
+        `$${amount} for ${period} has been processed${method ? ` via ${method}` : ""}.`,
       successToast: "Rent paid successfully.",
       errorPrefix: "Payment failed:",
     },

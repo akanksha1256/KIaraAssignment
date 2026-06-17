@@ -435,21 +435,22 @@ import { toast } from "sonner";
 `Button` uses `@base-ui/react/button` as the accessible primitive and `class-variance-authority` for variant composition. Variants map to project token classes - no CSS variables required (Tailwind v3 compatible):
 
 ```ts
-const buttonVariants = cva("inline-flex ... focus-visible:ring-brand-500 disabled:opacity-50", {
+const buttonVariants = cva("inline-flex ... focus-visible:ring-ring disabled:opacity-50", {
   variants: {
     variant: {
-      default:     "bg-brand-600 text-white hover:bg-brand-700",
-      secondary:   "bg-neutral-100 text-neutral-800 hover:bg-neutral-200",
-      outline:     "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50",
-      ghost:       "text-neutral-700 hover:bg-neutral-100",
-      destructive: "bg-danger-500 text-white hover:bg-danger-700",
-      link:        "text-brand-600 underline-offset-4 hover:underline",
+      default:     "rounded-full bg-coral-500 text-white shadow-sm hover:bg-coral-600",
+      secondary:   "rounded-full bg-sand-200 text-espresso-900 hover:bg-sand-400",
+      outline:     "rounded-full border border-sand-400 bg-white text-maroon-600 hover:bg-sand-100",
+      ghost:       "rounded-full bg-transparent text-maroon-600 hover:bg-sand-100",
+      teal:        "rounded-full bg-teal-600 text-white hover:bg-teal-700",
+      destructive: "rounded-full bg-destructive text-white hover:bg-red-800",
+      link:        "text-coral-500 underline-offset-4 hover:underline rounded-md",
     },
     size: {
-      default: "h-9 px-4",
-      sm:      "h-8 px-3 text-xs",
-      lg:      "h-10 px-6",
-      icon:    "h-9 w-9",
+      default: "h-control-md px-5 text-[14px]",
+      sm:      "h-control-sm px-4 text-[13px]",
+      lg:      "h-control-lg px-6 text-[15px]",
+      icon:    "h-control-md w-control-md rounded-full",
     },
   },
   defaultVariants: { variant: "default", size: "default" },
@@ -640,7 +641,7 @@ export const colors = {
 };
 ```
 
-Components use Tailwind class names for static colors (`text-neutral-900`, `bg-brand-600`) and `colors.ts` only for dynamic/programmatic values (chart fills, status-based styles passed as props).
+Components use Tailwind class names for static colors (`text-espresso-900`, `bg-coral-500`) and `colors.ts` only for dynamic/programmatic values (chart fills, status-based styles passed as props).
 
 ---
 
@@ -668,4 +669,4 @@ Navigating between property detail and unit detail (and back) would trigger unne
 
 ### Why shadcn variants are mapped to token classes (not CSS variables)?
 
-shadcn's default "base-nova" style uses `@theme inline` and CSS variable-based tokens - a Tailwind v4 feature. This project uses Tailwind v3. Rather than upgrading or introducing a CSS variable layer, Button variants are written directly with token classes (`bg-brand-600`, `bg-danger-500`). The shadcn architecture (accessible primitive + `cva` + `cn`) is preserved while staying within the existing Tailwind v3 token conventions.
+shadcn's default "base-nova" style uses `@theme inline` and CSS variable-based tokens - a Tailwind v4 feature. This project uses Tailwind v3. Rather than upgrading or introducing a CSS variable layer, Button variants are written directly with token classes (`bg-coral-500`, `bg-destructive`). The shadcn architecture (accessible primitive + `cva` + `cn`) is preserved while staying within the existing Tailwind v3 token conventions.

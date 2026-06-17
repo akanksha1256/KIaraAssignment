@@ -38,7 +38,7 @@ export const PropertiesListSkeleton = () => (
         <Skeleton className="h-3 w-48" />
         <Skeleton className="h-3 w-20" />
         <Skeleton className="h-3 w-20" />
-        <Skeleton className="h-3 w-[120px]" />
+        <Skeleton className="h-3 w-28" />
         <Skeleton className="h-3 w-10" />
       </div>
       {[1, 2, 3, 4, 5, 6].map((i) => (

@@ -65,7 +65,7 @@ const AddTenantModal = ({ onClose }: { onClose: () => void }) => {
   }, [onClose]);
 
   const inputCls = (field: string) =>
-    `h-10 w-full rounded-lg border px-3 text-[13.5px] text-espresso-900 bg-white placeholder:text-espresso-300 focus:outline-none focus:ring-2 focus:ring-coral-500/30 transition-colors ${
+    `h-10 w-full rounded-lg border px-3 text-[13.5px] text-espresso-900 bg-white placeholder:text-espresso-500 focus:outline-none focus:ring-2 focus:ring-coral-500/30 transition-colors ${
       errors[field] ? "border-destructive" : "border-sand-400"
     }`;
 
@@ -279,7 +279,7 @@ const TenantRow = ({ item }: { item: TenantListItem }) => {
             <span className="text-muted-foreground font-normal text-[11px]">/mo</span>
           </span>
         ) : (
-          <span className="text-espresso-300 text-[13px]">-</span>
+          <span className="text-espresso-500 text-[13px]">-</span>
         )}
       </td>
 
