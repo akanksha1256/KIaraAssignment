@@ -93,14 +93,16 @@ const handleMarkPaid = (periodMonth: string) => {
 
 ### Query key conventions
 
-| Key                            | What it covers                                    |
-| ------------------------------ | ------------------------------------------------- |
-| `["manager", "dashboard"]`     | Manager dashboard (stats, charts, property list)  |
-| `["property", "detail", id]`   | Property + all units                              |
-| `["tenant", "profile", id]`    | Tenant profile (manager view)                     |
-| `["tenant", "dashboard", id]`  | Tenant dashboard (tenant view — lease + payments) |
-| `["payments", leaseId]`        | Payment list for a lease                          |
-| `["paymentMethods", tenantId]` | Saved payment methods                             |
+| Key                            | What it covers                                          |
+| ------------------------------ | ------------------------------------------------------- |
+| `["manager", "dashboard"]`     | Manager dashboard (stats, charts, property list)        |
+| `["property", "detail", id]`   | Property + all units                                    |
+| `["tenant", "profile", id]`    | Tenant profile (manager view)                           |
+| `["tenant", "dashboard", id]`  | Tenant dashboard (tenant view — lease + payments)       |
+| `["payments", leaseId]`        | Payment list for a lease                                |
+| `["paymentMethods", tenantId]` | Saved payment methods                                   |
+| `["payments", "all"]`          | Cross-portfolio payment list (manager payments page)    |
+| `["tenants", "all"]`           | Full tenant list (manager tenants page)                 |
 
 ---
 
@@ -295,6 +297,31 @@ showToast("Message here", "success"); // or "error"
 ```
 
 Toasts are fixed top-right and auto-dismiss after 4 seconds.
+
+### PillTabs — tab filter component
+
+`PillTabs` (`src/client/components/PillTabs.tsx`) renders pill-shaped tab buttons with optional count badges and status color schemes. Use it for filter tab groups (e.g. All / Overdue / Outstanding / Paid):
+
+```tsx
+import { PillTabs } from "@/client/components/PillTabs";
+import type { PillTab } from "@/client/components/PillTabs";
+
+const tabs: PillTab<"all" | "overdue">[] = [
+  { key: "all", label: "All", count: 12 },
+  { key: "overdue", label: "Overdue", count: 3, color: "overdue" },
+];
+<PillTabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+```
+
+Color schemes: `"default"` | `"overdue"` | `"outstanding"` | `"paid"` | `"vacant"`.
+
+### ScoreRing — tenant payment score ring
+
+`ScoreRing` (`src/client/components/ScoreRing.tsx`) renders a Recharts donut ring showing a tenant's on-time payment score. Accepts `score` (0–100 or null for no data) and optional `size`, `innerRadius`, `outerRadius`. Color is derived automatically from the score range.
+
+### FilterAndSearchSection + FilterPopup — reusable filter bar
+
+`FilterAndSearchSection` (`src/client/components/FilterAndSearchSection.tsx`) composes the filter toggle button, `FilterPopup`, applied-filter chips, search input, and result count into a single bar. Pass `colLabels`, `getOptions`, and state setters to wire it up. The popup supports multi-row filters where each row picks a column and a value.
 
 ---
 

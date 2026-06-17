@@ -6,12 +6,19 @@ A two-sided rent management portal covering the full read + action surface requi
 
 **Manager side (`/manager`)**
 
-- Dashboard with portfolio stats, monthly revenue bar chart (expected vs collected, last 6 months), and a payment-status donut chart
-- Property list → property detail → unit detail drill-down
+- Dashboard with portfolio stats (with month-over-month trend deltas), monthly revenue bar chart (expected vs collected, last 12 months), payment-status donut chart, and a conditional **AttentionHero** panel that surfaces at-risk leases when overdue/outstanding amounts exist. AttentionHero shows total at-risk amount, overdue vs outstanding breakdown, a "Send All Reminders" bulk action, and a scrollable list of individual at-risk lease rows
+- **Payments page** (`/manager/payments`) — cross-portfolio payment list across all properties with:
+  - Summary cards (total collected, total outstanding, overdue count)
+  - Multi-row filter system (filter by status, property, period month, amount range)
+  - Search by tenant name, property, or unit label
+  - Sortable columns: property/unit, amount, period, paid on, status
+  - Per-row `PaymentRowMenu` and click-through to tenant profile
+- Property list → property detail → unit detail drill-down; property list supports PillTab status filters and search
 - Per-unit payment history table with:
   - **Mark as Paid** — optimistic update with rollback on failure, per-row loading state, toast feedback
   - **Send Reminder** — 24-hour disable window, "Last sent" sublabel, toast feedback
-- Tenant profile view with KYC status, on-time payment standing score, current lease card, and read-only payment history
+- Tenant list with search, filter, sort, and **Add Tenant** modal (creates tenant in DB)
+- Tenant profile view with KYC status, `ScoreRing` on-time payment score, current lease card, and read-only payment history
 
 **Tenant side (`/tenant`)**
 
@@ -28,9 +35,9 @@ A two-sided rent management portal covering the full read + action surface requi
 **Monorepo package split (`packages/`)**
 
 - `packages/tokens` — design system primitives: `colors.ts`, `fonts.ts`, `spaces.ts`, `strings.ts`, and a `tailwindPreset.js` consumed by `apps/web/tailwind.config.ts`. Single source of truth for all copy and color tokens across the workspace.
-- `packages/data` — all async logic: camelCase client types (`types/index.ts`), API client (`apiClient/client.ts`), snake_case wire types (`wireTypes.ts`, internal only), mappers, and every TanStack Query hook. Any app in the workspace can import `@repo/data` to get fully-typed hooks without knowing about the Next.js API layer.
-- `packages/ui` — all shared components (DataTable, Pill, StatCard, Card, Button, Spinner, Toast, Nav, LoadingState, ErrorState, EmptyState) plus utilities (`cn`, `formatDate`, `formatPeriodMonth`, `statusConfig`). Consumed by `apps/web` via `transpilePackages` — no build step required.
-- `apps/web` is now a thin Next.js shell: route handlers, page server components, and view components that import from the three packages above.
+- `packages/data` — all async logic: camelCase client types (`types/index.ts`), API client (`apiClient/client.ts`), snake_case wire types (internal only), mappers, and every TanStack Query hook. Hooks added: `useAllPayments`, `useAllTenants`, `useCreateTenant`, `useCreateLease`, `useCreateProperty`, `useSendAllReminders`. Any app in the workspace can import `@repo/data` to get fully-typed hooks without knowing about the Next.js API layer.
+- `packages/ui` — all shared components (DataTable, Pill, Badge, StatCard, Card, Button, Spinner, Toast, Nav, LoadingState, ErrorState, EmptyState, Select) plus utilities (`cn`, `formatDate`, `formatPeriodMonth`, `statusConfig`). Consumed by `apps/web` via `transpilePackages` — no build step required.
+- `apps/web` is now a thin Next.js shell: route handlers, page server components, and view components that import from the three packages above. New reusable components added at `src/client/components/`: `PillTabs`, `ScoreRing`, `FilterAndSearchSection`, `FilterPopup`.
 
 **shadcn/ui integration**
 
@@ -42,9 +49,9 @@ A two-sided rent management portal covering the full read + action surface requi
 
 ## What Was Cut and Why
 
-### Create / Edit flows (properties, units, leases, tenants)
+### Edit flows (properties, units, leases, tenants)
 
-The brief asked for management of properties and leases. The full CRUD surface — create-property forms, edit-unit modals, new-lease wizards — was scoped out in favour of completing the read + action paths end-to-end. The decision was time: building correct form validation, controlled inputs, error surfaces, and the corresponding POST/PATCH API routes for each entity would have consumed the remaining time without producing the more visible read/action behaviour the brief emphasised. The data model and route structure are designed so these forms can be added incrementally (one entity at a time) without restructuring anything.
+Core create flows are now implemented: **Add Property** modal, **Add Lease** modal (with inline new-tenant creation), and **Add Tenant** modal. Edit flows — updating a lease's rent or end date, editing tenant KYC details, reassigning units — remain out of scope. The mutation hook pattern is established (`useCreateLease`, `useCreateTenant`, `useCreateProperty`) and any edit form follows the same shape.
 
 ### Authentication / session management
 
@@ -62,6 +69,7 @@ Multiple managers acting on the same portfolio would see stale data across tabs.
 
 Automated tests are in place across three layers:
 
+- **Platform unit tests** (`apps/web/src/platform/payments.test.ts`) — Vitest Node environment. 21 tests covering all exported functions from `payments.ts`: `getDueWindowEnd`, `isOverdue`, `daysOverdue`, `resolvePaymentStatus`, `withResolvedStatus`, and `resolvePayments`. Boundary cases (due date, last window day, first overdue day), the `amount_paid >= amount_due` paid branch, immutability of the original payment, and empty-array handling are all explicitly tested.
 - **Hook tests** (`packages/data/src/hooks/`) — Vitest + `@testing-library/react` `renderHook` in a `happy-dom` environment. Covers `usePayments` (query caching and deduplication), `useMarkPaid`, and `usePayRent`. The optimistic update and rollback paths are explicitly tested: each mutation test pre-populates the cache, mocks the API to fail, and asserts the cache is restored to its pre-mutation snapshot.
 - **API route integration tests** (`apps/web/src/app/api/__tests__/`) — Vitest Node environment, `NextRequest` constructed directly against the handler functions. The DB is mocked to a controlled object reset in `beforeEach` so mutations don't leak between tests. `withDelay` is mocked to be instant while preserving the `?fail=true` throw. Covers the payments, pay, remind, and payment-methods routes — happy paths, 404s, validation errors, and forced-failure responses.
 - **E2E tests** (`e2e/`) — Playwright against `next dev` via `webServer` in `playwright.config.ts`. Covers the manager dashboard, property and unit detail navigation, mark-paid and send-reminder flows, the tenant dashboard, and the full pay-rent modal sequence (open, select method, pay, success toast).
@@ -72,9 +80,9 @@ Automated tests are in place across three layers:
 
 In priority order:
 
-1. **Create / Edit forms** — property, unit, and lease creation using controlled forms, Zod validation, and the mutation hook pattern already established. Lease editing (end date, rent amount) and tenant KYC update would follow.
+1. **Edit flows** — lease editing (end date, rent amount), tenant KYC update, unit reassignment. The mutation hook pattern is established; these are incremental additions.
 2. **Authentication** — Next.js middleware route guard, a session cookie or JWT, and a login page. The manager/tenant split in routing maps directly to two roles.
-3. **Pagination** — the payment history tables load all records. `useInfiniteQuery` with cursor-based pagination on the payments endpoint is the right next step once the dataset grows.
+3. **Pagination** — the payment history tables and cross-portfolio payments page load all records. `useInfiniteQuery` with cursor-based pagination is the right next step once the dataset grows.
 4. **Real-time invalidation** — a lightweight SSE endpoint (`/api/events`) that broadcasts cache-key invalidation events; the client subscribes and calls `queryClient.invalidateQueries` on receipt.
 
 ---

@@ -23,13 +23,24 @@ KIaraAssignment/
 │       │   │   └── layout.tsx                    Root layout — imports Providers + Nav from @repo/ui
 │       │   │
 │       │   ├── client/
+│       │   │   ├── components/                   Reusable non-view components
+│       │   │   │   ├── BackButton.tsx
+│       │   │   │   ├── BarChartCard.tsx
+│       │   │   │   ├── DonutChart.tsx
+│       │   │   │   ├── FilterAndSearchSection.tsx  Filter bar + search input composite
+│       │   │   │   ├── FilterPopup.tsx             Multi-row filter column/value picker
+│       │   │   │   ├── PillTabs.tsx               Pill-shaped tab filter buttons
+│       │   │   │   └── ScoreRing.tsx              Recharts donut ring for on-time score
 │       │   │   └── views/                        Feature view components ("use client")
 │       │   │       ├── manager/                  ManagerDashboard + sub-components
-│       │   │       ├── properties/               PropertyDetail, UnitDetail
-│       │   │       ├── tenant/                   TenantProfile (manager view)
+│       │   │       │   └── components/           StatusSection, MonthlyRevenueSection,
+│       │   │       │                             PaymentStatusSection, AttentionHero,
+│       │   │       │                             NeedsAttentionSection, AtRiskLeasesSection
+│       │   │       ├── properties/               PropertiesList, PropertyDetail, UnitDetail
+│       │   │       ├── tenant/                   TenantsList, TenantProfile (manager view)
 │       │   │       ├── tenant-dashboard/         TenantDashboard, PayRentModal, cards
 │       │   │       ├── lease/                    ManagerLeaseCard, TenantCurrentLeaseCard
-│       │   │       └── payments/                 PaymentHistoryTable
+│       │   │       └── payments/                 PaymentsPage, PaymentHistoryTable, components/
 │       │   │
 │       │   └── platform/                         Server-only — never imported by client code
 │       │       ├── db/index.ts                   In-memory data store
@@ -37,6 +48,7 @@ KIaraAssignment/
 │       │       └── utils.ts                      withDelay, errorResponse, generateId
 │       │
 │       ├── next.config.mjs                       transpilePackages: [@repo/tokens, @repo/ui, @repo/data, @repo/platform-types]
+│       ├── src/platform/payments.ts              Due date logic: DUE_DATE=1, GRACE_DAYS=4 (due 1st, grace 1st–5th, overdue from 6th)
 │       ├── tailwind.config.ts                    imports tailwindPreset from @repo/tokens
 │       └── tsconfig.json
 │
@@ -71,11 +83,18 @@ KIaraAssignment/
 │   │           ├── useMarkPaid.ts
 │   │           ├── usePayRent.ts
 │   │           ├── useSendReminder.ts
-│   │           └── useAddPaymentMethod.ts
+│   │           ├── useSendAllReminders.ts
+│   │           ├── useAddPaymentMethod.ts
+│   │           ├── useAllPayments.ts             Cross-portfolio payment list
+│   │           ├── useAllTenants.ts              Full tenant list
+│   │           ├── useCreateProperty.ts          Create property mutation
+│   │           ├── useCreateLease.ts             Create lease mutation
+│   │           └── useCreateTenant.ts            Create tenant mutation
 │   │
 │   └── ui/
 │       └── src/
 │           ├── index.ts                          Barrel: all components + utilities
+│           ├── Badge.tsx                         Inline status badge (variant-based)
 │           ├── Button.tsx                        shadcn-style (cva + @base-ui/react/button)
 │           ├── Card.tsx
 │           ├── DataTable.tsx                     "use client" — sortable table primitive
@@ -84,6 +103,7 @@ KIaraAssignment/
 │           ├── Pill.tsx
 │           ├── Providers.tsx                     QueryClientProvider + <Toaster /> (Sonner)
 │           ├── RowMenu.tsx                       Portal-based action dropdown
+│           ├── Select.tsx                        Accessible select input
 │           ├── Spinner.tsx                       Loader2 + animate-spin (lucide-react)
 │           ├── StatCard.tsx
 │           ├── statCard.types.ts                 AccentType, StatCardProps, accentMap
@@ -127,21 +147,27 @@ Lease           { id, unitId, tenantId, monthlyRent, startDate, endDate, terms, 
 
 // Composite / view-level
 PropertySummary     { id, name, address, unitCount, leasedCount, totalRent, status }
-UnitDetailItem      { id, label, paymentStatus, tenant?, lease? }
+UnitDetailItem      { id, label, paymentStatus, currentPeriodMonth?, tenant?, lease? }
 PropertyDetailData  { property: Property, units: UnitDetailItem[] }
 TenantProfile       { tenant, lease, unit, property, payments, standing }
 TenantDashboardData { tenantName, lease, unit, property }
+TenantListItem      { tenant, lease?, unit?, property?, paymentStatus }
+PaymentListItem     { payment, lease, unit, property, tenant }
 
 // Payment
 Payment        { id, leaseId, periodMonth, amountDue, amountPaid, status, paidDate?, method?, lastRemindedOn? }
 PaymentMethod  { id, tenantId, label }
 PaymentStatus  "paid" | "outstanding" | "overdue"
+PaymentsListSortCol   "period" | "paidOn" | "status" | "amount" | "property"
+PaymentsListFilterColKey  "status" | "property" | "period" | "amount"
 
 // Dashboard aggregates
-DashboardStats       { totalProperties, occupiedUnits, totalUnits, totalMonthlyRent, collectedThisMonth }
-PaymentBreakdown     { paid, outstanding, overdue }
+DashboardStats       { totalProperties, occupiedUnits, vacantUnits, totalUnits, totalMonthlyRent, collectedThisMonth }
+StatsTrend           { newLeasesThisMonth, rentAddedThisMonth, prevCollectionRate }
+PaymentBreakdown     { paid, outstanding, overdue, overdueAmount, outstandingAmount }
 MonthlyRevenue       { month: string, expected: number, collected: number }
-ManagerDashboardData { stats, paymentBreakdown, monthlyRevenue, properties }
+AtRiskLease          { tenantName, propertyName, unitLabel, amountDue, daysOverdue, leaseId, periodMonth, status }
+ManagerDashboardData { stats, statsTrend, paymentBreakdown, monthlyRevenue, properties, atRiskLeases }
 ```
 
 ### Import Rules
@@ -168,8 +194,11 @@ import type { Payment } from "../../types";        // relative cross-boundary im
 
 | Method | Path                                | Description                    | Returns                                                   |
 | ------ | ----------------------------------- | ------------------------------ | --------------------------------------------------------- |
-| GET    | `/api/manager/dashboard`            | Portfolio-level overview       | `ManagerDashboardData`                                    |
+| GET    | `/api/manager/dashboard`            | Portfolio-level overview       | `ManagerDashboardData` (incl. `statsTrend`, `atRiskLeases`) |
+| GET    | `/api/manager/payments`             | Cross-portfolio payment list   | `PaymentListItem[]`                                       |
 | GET    | `/api/properties/[id]`              | Property header + all units    | `PropertyDetailData`                                      |
+| GET    | `/api/tenants`                      | Full tenant list               | `TenantListItem[]`                                        |
+| POST   | `/api/tenants`                      | Create a new tenant            | `{ tenant: Tenant }`                                      |
 | GET    | `/api/tenants/[id]`                 | Tenant dashboard (tenant view) | `{ dashboard: TenantDashboardData, payments: Payment[] }` |
 | GET    | `/api/tenants/[id]/profile`         | Tenant profile (manager view)  | `TenantProfile`                                           |
 | GET    | `/api/tenants/[id]/payment-methods` | Saved payment methods          | `PaymentMethod[]`                                         |
@@ -177,7 +206,7 @@ import type { Payment } from "../../types";        // relative cross-boundary im
 | GET    | `/api/leases/[id]/payments`         | Payment history for a lease    | `Payment[]`                                               |
 | POST   | `/api/leases/[id]/pay`              | Mark payment as paid           | `Payment`                                                 |
 | POST   | `/api/leases/[id]/remind`           | Send payment reminder          | `Payment` (with updated `lastRemindedOn`)                 |
-| GET    | `/api/units/[id]`                   | Unit detail                    | `Unit`                                                    |
+| POST   | `/api/leases`                       | Create a new lease             | `{ lease: Lease }`                                        |
 
 ### Shared Route Convention
 
@@ -255,18 +284,24 @@ Always use `onSettled` (not `onSuccess`) for `invalidateQueries` — it fires fo
 
 ### All Hooks Summary
 
-| Hook                            | Type     | Query Key                                         | Description                             |
-| ------------------------------- | -------- | ------------------------------------------------- | --------------------------------------- |
-| `useManagerDashboard`           | query    | `["manager", "dashboard"]`                        | Stats, charts, property list            |
-| `usePropertyDetail(id)`         | query    | `["property", "detail", id]`                      | Property + all units                    |
-| `useTenantProfile(id)`          | query    | `["tenant", "profile", id]`                       | Profile + standing (manager view)       |
-| `useTenantDashboard(id)`        | query    | `["tenant", "dashboard", id]`                     | Lease, property, payments (tenant view) |
-| `usePayments(leaseId)`          | query    | `["payments", leaseId]`                           | Payment history list                    |
-| `usePaymentMethods(tenantId)`   | query    | `["paymentMethods", tenantId]`                    | Saved payment methods                   |
-| `useMarkPaid(leaseId)`          | mutation | optimistic on `["payments", leaseId]`             | Manager mark-paid with rollback         |
-| `usePayRent(tenantId, leaseId)` | mutation | optimistic on `["tenant", "dashboard", tenantId]` | Tenant pay rent with rollback           |
-| `useSendReminder(leaseId)`      | mutation | patches `["payments", leaseId]` cache             | Send email reminder                     |
-| `useAddPaymentMethod(tenantId)` | mutation | appends to `["paymentMethods", tenantId]`         | Add payment method                      |
+| Hook                                   | Type     | Query Key                                         | Description                                    |
+| -------------------------------------- | -------- | ------------------------------------------------- | ---------------------------------------------- |
+| `useManagerDashboard`                  | query    | `["manager", "dashboard"]`                        | Stats, trends, charts, at-risk leases          |
+| `usePropertyDetail(id)`                | query    | `["property", "detail", id]`                      | Property + all units                           |
+| `useTenantProfile(id)`                 | query    | `["tenant", "profile", id]`                       | Profile + standing (manager view)              |
+| `useTenantDashboard(id)`               | query    | `["tenant", "dashboard", id]`                     | Lease, property, payments (tenant view)        |
+| `usePayments(leaseId)`                 | query    | `["payments", leaseId]`                           | Payment history list                           |
+| `usePaymentMethods(tenantId)`          | query    | `["paymentMethods", tenantId]`                    | Saved payment methods                          |
+| `useAllPayments()`                     | query    | `["payments", "all"]`                             | Cross-portfolio payment list                   |
+| `useAllTenants()`                      | query    | `["tenants", "all"]`                              | Full tenant list with lease/property context   |
+| `useMarkPaid(leaseId)`                 | mutation | optimistic on `["payments", leaseId]`             | Manager mark-paid with rollback                |
+| `usePayRent(tenantId, leaseId)`        | mutation | optimistic on `["tenant", "dashboard", tenantId]` | Tenant pay rent with rollback                  |
+| `useSendReminder(leaseId)`             | mutation | patches `["payments", leaseId]` cache             | Send email reminder                            |
+| `useSendAllReminders()`                | mutation | —                                                 | Bulk send reminders to all at-risk leases      |
+| `useAddPaymentMethod(tenantId)`        | mutation | appends to `["paymentMethods", tenantId]`         | Add payment method                             |
+| `useCreateProperty()`                  | mutation | invalidates `["manager", "dashboard"]`            | Create a new property                          |
+| `useCreateLease(propertyId)`           | mutation | invalidates property + dashboard + tenants        | Create a new lease; also calls useCreateTenant inline if needed |
+| `useCreateTenant()`                    | mutation | invalidates `["tenants", "all"]`                  | Create a new tenant                            |
 
 ---
 
@@ -523,14 +558,17 @@ const pendingPayment = payingPeriodMonth
 
 ### View Map
 
-| View Component     | Route                                     | Hook(s) Used                                                         |
-| ------------------ | ----------------------------------------- | -------------------------------------------------------------------- |
-| `ManagerDashboard` | `/manager`                                | `useManagerDashboard`                                                |
-| `PropertyDetail`   | `/manager/properties/[id]`                | `usePropertyDetail`                                                  |
-| `UnitDetail`       | `/manager/properties/[id]/units/[unitId]` | `usePropertyDetail`, `usePayments`, `useMarkPaid`, `useSendReminder` |
-| `TenantProfile`    | `/manager/tenants/[id]`                   | `useTenantProfile`                                                   |
-| `TenantDashboard`  | `/tenant`                                 | `useTenantDashboard`                                                 |
-| `PayRentModal`     | modal inside `/tenant`                    | `usePaymentMethods`, `usePayRent`, `useAddPaymentMethod`             |
+| View Component     | Route                                     | Hook(s) Used                                                                       |
+| ------------------ | ----------------------------------------- | ---------------------------------------------------------------------------------- |
+| `ManagerDashboard` | `/manager`                                | `useManagerDashboard`                                                              |
+| `PaymentsPage`     | `/manager/payments`                       | `useAllPayments`                                                                   |
+| `PropertiesList`   | `/manager/properties`                     | `useManagerDashboard`, `useCreateProperty`                                         |
+| `PropertyDetail`   | `/manager/properties/[id]`                | `usePropertyDetail`, `useCreateLease`, `useCreateTenant`, `useAllTenants`          |
+| `UnitDetail`       | `/manager/properties/[id]/units/[unitId]` | `usePropertyDetail`, `usePayments`, `useMarkPaid`, `useSendReminder`               |
+| `TenantsList`      | `/manager/tenants`                        | `useAllTenants`, `useCreateTenant`                                                 |
+| `TenantProfile`    | `/manager/tenants/[id]`                   | `useTenantProfile`                                                                 |
+| `TenantDashboard`  | `/tenant`                                 | `useTenantDashboard`                                                               |
+| `PayRentModal`     | modal inside `/tenant`                    | `usePaymentMethods`, `usePayRent`, `useAddPaymentMethod`                           |
 
 ---
 
