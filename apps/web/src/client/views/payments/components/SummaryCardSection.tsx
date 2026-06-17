@@ -34,7 +34,7 @@ export const SummaryCardSection = ({
   unpaidCount: number;
   overdueCount: number;
 }) => (
-  <div className="grid grid-cols-3 gap-4 mb-4">
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
     <SummaryCard
       label={s.summary.collected}
       value={`$${totalCollected.toLocaleString()}`}

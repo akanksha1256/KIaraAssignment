@@ -112,7 +112,7 @@ export const PropertiesList = () => {
         />
       )}
       <div className="h-screen flex flex-col overflow-hidden">
-        <div className="px-8 pt-8 pb-4 flex-none">
+        <div className="px-4 pt-4 pb-4 md:px-8 md:pt-8 flex-none">
           <PropertiesListHeader
             count={properties.length}
             overdueCount={overdueCount}
@@ -129,7 +129,7 @@ export const PropertiesList = () => {
         </div>
 
         {/* Scrollable table section */}
-        <div className="flex-1 min-h-0 px-8 pb-8">
+        <div className="flex-1 min-h-0 px-4 pb-4 md:px-8 md:pb-8">
           {displayProperties.length === 0 ? (
             <EmptyState title={spl.emptyTitle} description={spl.emptyDescription} icon="building" />
           ) : (

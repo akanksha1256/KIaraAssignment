@@ -47,7 +47,7 @@ export const PillTabs = <K extends string>({
   onChange,
   className,
 }: PillTabsProps<K>) => (
-  <div className={cn("flex items-center gap-2", className)}>
+  <div className={cn("flex items-center gap-2 overflow-x-auto pb-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden", className)}>
     {tabs.map(({ key, label, count, color = "default" }) => {
       const isActive = activeTab === key;
       const styles = COLOR_CONFIG[color];
@@ -58,7 +58,7 @@ export const PillTabs = <K extends string>({
           size="sm"
           onClick={() => onChange(key)}
           className={cn(
-            "gap-1.5 text-[12.5px] font-semibold px-3",
+            "gap-1.5 text-[12.5px] font-semibold px-3 flex-none",
             isActive ? styles.active : styles.inactive,
           )}
         >

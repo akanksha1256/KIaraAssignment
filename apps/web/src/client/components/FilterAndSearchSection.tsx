@@ -49,11 +49,11 @@ export const FilterAndSearchSection = ({
   return (
     <>
       {/* Toolbar: filter (left) + search (right) */}
-      <div className="flex items-center gap-3 mb-2">
-        <div className="relative flex-none" ref={filterContainerRef}>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center mb-2">
+        <div className="relative w-full sm:flex-none sm:w-auto" ref={filterContainerRef}>
           <button
             onClick={() => setFilterOpen((o) => !o)}
-            className={`inline-flex items-center gap-2 h-9 px-4 rounded-lg border text-[13px] font-medium transition-colors ${
+            className={`inline-flex items-center gap-2 h-9 px-4 rounded-lg border text-[13px] font-medium transition-colors w-full sm:w-auto justify-center sm:justify-start ${
               activeFilterCount > 0
                 ? "border-coral-500 text-coral-500 bg-coral-50 hover:bg-coral-100"
                 : "border-sand-400 text-espresso-700 bg-white hover:bg-sand-100"
@@ -80,9 +80,9 @@ export const FilterAndSearchSection = ({
           )}
         </div>
 
-        <div className="flex-1" />
+        <div className="hidden sm:flex flex-1" />
 
-        <div className="relative flex-none w-[260px]">
+        <div className="relative w-full sm:flex-none sm:w-[260px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
           <input
             type="text"

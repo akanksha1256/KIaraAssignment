@@ -591,4 +591,12 @@ export const strings = {
       errorPrefix: "Payment failed:",
     },
   },
+
+  devToolbar: {
+    label: "Simulate:",
+    ok: "✓ OK",
+    fail: "✗ Fail",
+    delay: "⏱ Delay",
+    fast: "⚡ Fast",
+  },
 } as const;

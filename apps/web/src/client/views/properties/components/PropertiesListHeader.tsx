@@ -17,7 +17,7 @@ export const PropertiesListHeader = ({
   vacantCount: number;
   onAdd: () => void;
 }) => (
-  <div className="mb-6 flex items-start justify-between">
+  <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
     <div>
       <SectionTitle>{spl.title}</SectionTitle>
       <MutedText className="mt-1">
@@ -36,7 +36,7 @@ export const PropertiesListHeader = ({
         )}
       </MutedText>
     </div>
-    <Button size="sm" className="rounded-lg gap-2 font-semibold" onClick={onAdd}>
+    <Button size="sm" className="rounded-lg gap-2 font-semibold sm:flex-none" onClick={onAdd}>
       <PlusIcon className="h-3.5 w-3.5" />
       {spl.addPropertyButton}
     </Button>

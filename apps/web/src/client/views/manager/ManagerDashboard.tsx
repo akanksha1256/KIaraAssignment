@@ -30,7 +30,7 @@ export const ManagerDashboard = () => {
   const totalAtRisk = paymentBreakdown.overdueAmount + paymentBreakdown.outstandingAmount;
 
   return (
-    <div className="p-8 max-w-[1180px]">
+    <div className="p-4 md:p-8 max-w-[1180px]">
       {/* Page header */}
       <div className="flex items-end justify-between gap-4 flex-wrap mb-8">
         <div>
@@ -62,7 +62,7 @@ export const ManagerDashboard = () => {
       <StatusSection stats={stats} trend={statsTrend} />
 
       {/* Charts */}
-      <div className="grid grid-cols-[1.5fr_1fr] gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-4 mb-6">
         <MonthlyRevenueSection monthlyRevenue={monthlyRevenue} />
         <PaymentStatusSection paymentBreakdown={paymentBreakdown} />
       </div>

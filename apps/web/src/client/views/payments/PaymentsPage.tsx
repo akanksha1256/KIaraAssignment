@@ -133,7 +133,7 @@ export const PaymentsPage = () => {
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       {/* Static top section */}
-      <div className="px-8 pt-8 pb-4 flex-none">
+      <div className="px-4 pt-4 pb-4 md:px-8 md:pt-8 flex-none">
         <PaymentsListHeader count={data.length} />
 
         {/* Summary cards */}
@@ -178,7 +178,7 @@ export const PaymentsPage = () => {
       </div>
 
       {/* Scrollable table */}
-      <div className="flex-1 min-h-0 flex flex-col px-8 pb-8">
+      <div className="flex-1 min-h-0 flex flex-col px-4 pb-4 md:px-8 md:pb-8">
         <PaymentsTable
           items={filtered}
           sortCol={sortCol}

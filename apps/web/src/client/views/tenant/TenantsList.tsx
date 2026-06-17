@@ -407,8 +407,8 @@ export const TenantsList = () => {
       {addOpen && <AddTenantModal onClose={() => setAddOpen(false)} />}
       <div className="h-screen flex flex-col overflow-hidden">
         {/* Static top section */}
-        <div className="px-8 pt-8 pb-4 flex-none">
-          <div className="flex items-start justify-between mb-6">
+        <div className="px-4 pt-4 pb-4 md:px-8 md:pt-8 flex-none">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-6">
             <div>
               <SectionTitle>{s.title}</SectionTitle>
               <MutedText className="mt-1">
@@ -452,7 +452,7 @@ export const TenantsList = () => {
         </div>
 
         {/* Scrollable table */}
-        <div className="flex-1 min-h-0 flex flex-col px-8 pb-8">
+        <div className="flex-1 min-h-0 flex flex-col px-4 pb-4 md:px-8 md:pb-8">
           {filtered.length === 0 ? (
             <EmptyState title={s.noMatch} description={s.noMatchDescription} icon="inbox" />
           ) : (

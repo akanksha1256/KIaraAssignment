@@ -4,7 +4,8 @@ export const DELAY_MS = 800;
 
 export async function withDelay(req: NextRequest) {
   const fail = req.nextUrl.searchParams.get("fail") === "true";
-  await new Promise((r) => setTimeout(r, DELAY_MS));
+  const nodelay = req.nextUrl.searchParams.get("nodelay") === "true";
+  if (!nodelay) await new Promise((r) => setTimeout(r, DELAY_MS));
   if (fail) throw new Error("Forced failure (fail=true)");
 }
 

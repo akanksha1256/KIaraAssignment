@@ -39,7 +39,7 @@ export type {
 export { PropertyStatusValues, PaymentStatusValues } from "./types";
 
 // API client
-export { api } from "./apiClient/client";
+export { api, simConfig } from "./apiClient/client";
 
 // Query key factories + hooks
 export { MANAGER_DASHBOARD_KEY, useManagerDashboard } from "./hooks/useManagerDashboard";

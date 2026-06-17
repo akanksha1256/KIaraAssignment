@@ -43,7 +43,7 @@ export const NeedsAttentionSection = ({
         {overdueCount > 0 && s.overdueWarning(overdueCount)}
       </LeadText>
 
-      <div className="flex gap-3 mt-5">
+      <div className="flex flex-wrap gap-3 mt-5">
         <StatTile
           amount={fmt(overdueAmount)}
           label={s.overdueLabel(overdueCount)}
@@ -56,7 +56,7 @@ export const NeedsAttentionSection = ({
         />
       </div>
 
-      <div className="flex gap-3 mt-6">
+      <div className="flex flex-wrap gap-3 mt-6">
         <Button variant="default" onClick={() => router.push("/manager/payments")}>
           {s.reviewOverdue} <ArrowRight className="h-3.5 w-3.5" />
         </Button>

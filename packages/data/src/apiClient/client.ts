@@ -26,9 +26,12 @@ import type { Payment, PaymentMethod } from "../types";
 
 const BASE = "/api";
 
+export const simConfig = { fail: false, noDelay: false };
+
 async function request<T>(path: string, options?: RequestInit & { fail?: boolean }): Promise<T> {
   const url = new URL(BASE + path, window.location.origin);
-  if (options?.fail) url.searchParams.set("fail", "true");
+  if (options?.fail || simConfig.fail) url.searchParams.set("fail", "true");
+  if (simConfig.noDelay) url.searchParams.set("nodelay", "true");
 
   const res = await fetch(url.toString(), options);
   if (!res.ok) {

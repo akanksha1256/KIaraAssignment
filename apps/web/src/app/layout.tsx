@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Albert_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@repo/ui";
+import { DevToolbar } from "@/client/components/DevToolbar";
 
 const albertSans = Albert_Sans({
   subsets: ["latin"],
@@ -26,7 +27,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className={`${albertSans.variable} font-sans`}>
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <DevToolbar />
+        </Providers>
       </body>
     </html>
   );

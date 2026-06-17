@@ -16,7 +16,7 @@ export const AttentionHero = ({
   return (
     <section
       aria-label={s.label}
-      className="grid grid-cols-[1.3fr_1fr] gap-px bg-sand-400 border border-sand-400 rounded-xl overflow-hidden shadow-md mb-6"
+      className="grid grid-cols-1 md:grid-cols-[1.3fr_1fr] gap-px bg-sand-400 border border-sand-400 rounded-xl overflow-hidden shadow-md mb-6"
     >
       <NeedsAttentionSection
         totalAmount={totalAmount}
