@@ -7,7 +7,6 @@ import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
 import { PaymentHistoryTable } from "@/client/views/payments/PaymentHistoryTable";
 import { strings } from "@repo/tokens";
-import { CreditCard } from "lucide-react";
 import { BackButton } from "@/client/components/BackButton";
 import { TenantInfoCard } from "./components/TenantInfoCard";
 import { TenantCurrentLeaseCard } from "../lease/TenantCurrentLeaseCard";
@@ -63,14 +62,7 @@ export const TenantProfile = ({ tenantId }: Props) => {
 
       {/* Payment history */}
       <div>
-        <div className="flex items-center gap-2 mb-4">
-          <CreditCard className="h-4 w-4 text-muted-foreground" />
-          <CardTitle>
-            {s.payments.historyTitle}
-            <MutedText className="ml-2 inline font-normal">({payments.length})</MutedText>
-          </CardTitle>
-        </div>
-        <PaymentHistoryTable payments={payments} empty={s.payments.empty} />
+        <PaymentHistoryTable payments={payments} count={payments.length} empty={s.payments.empty} />
       </div>
     </div>
   );

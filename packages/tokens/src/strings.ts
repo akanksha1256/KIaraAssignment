@@ -7,6 +7,13 @@ export const strings = {
       invalidAmount: "Enter a valid amount",
       endDateAfterStart: "Must be after start date",
     },
+    filter: {
+      filterButton: "Filter",
+      filtersTitle: "Filters",
+      addFilter: "Add filter",
+      clearAllFilters: "Clear all filters",
+      applyFilter: "Apply filter",
+    },
   },
 
   app: {
@@ -28,6 +35,7 @@ export const strings = {
   },
 
   paymentTable: {
+    heading: "Payment history",
     colPeriod: "Period",
     colDue: "Amount Due",
     colPaid: "Amount Paid",
@@ -35,6 +43,8 @@ export const strings = {
     colMethod: "Method",
     colStatus: "Status",
     notPaid: "—",
+    emptyTitle: "No payments recorded",
+    emptyDescription: "Payments will appear here once a lease is active.",
     statusPill: {
       paid: "Paid",
       outstanding: "Outstanding",
@@ -145,11 +155,22 @@ export const strings = {
       stats: {
         totalUnits: "Total Units",
         occupied: "Occupied",
+        occupiedLabel: (vacantCount: number) => `Occupied · ${vacantCount} vacant`,
         vacant: "Vacant",
         monthlyRent: "Monthly Rent",
         occupancySub: (leased: number, total: number) => `${leased} of ${total} leased`,
         vacantSub: (count: number) => `${count} available`,
         rentSub: "across active leases",
+      },
+
+      overdueAlert: (count: number) => `${count} unit${count !== 1 ? "s" : ""} overdue — action needed`,
+
+      unitMixBar: {
+        heading: "Unit status breakdown",
+        overdue: "Overdue",
+        outstanding: "Outstanding",
+        paid: "Paid",
+        vacant: "Vacant",
       },
 
       unitsTable: {
@@ -163,6 +184,9 @@ export const strings = {
         vacant: "Vacant",
         leasePeriod: (start: string, end: string) => `${start} – ${end}`,
         viewLink: "View",
+        open: "Open",
+        sendReminder: "Send reminder",
+        addLease: "Add lease",
         empty: "No units found",
         emptyDescription: "This property has no units yet.",
       },
@@ -224,6 +248,7 @@ export const strings = {
       overdueCount: (count: number) => `· ${count} overdue`,
       vacantCount: (count: number) => `· ${count} vacant`,
       addPropertyButton: "Add Property",
+      error: "Failed to load properties.",
       emptyTitle: "No properties yet",
       emptyDescription: "Add your first property to get started.",
       noUnitsFound: "No units found",
@@ -460,6 +485,8 @@ export const strings = {
         heading: (count: number) => `Payment History (${count})`,
         loadingHistory: "Loading payments…",
         empty: "No payments recorded",
+        noLeaseTitle: "No lease on this unit",
+        noLeaseDescription: "Add a lease to start tracking payments.",
         colPeriod: "Period",
         colDue: "Amount Due",
         colPaid: "Amount Paid",

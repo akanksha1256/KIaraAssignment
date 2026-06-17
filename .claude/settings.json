@@ -11,10 +11,15 @@
       "Bash(curl -s \"https://ui.shadcn.com/r/styles/default/sonner.json\")",
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('name:', d.get\\('name'\\)\\); print\\('files:', [f.get\\('path',''\\) for f in d.get\\('files',[]\\)]\\); print\\('deps:', d.get\\('dependencies',[]\\)\\)\")",
       "Bash(pnpm test *)",
-      "Bash(mkdir -p /Users/akankshalm/Desktop/KIaraAssignment/packages/platform-types/src)"
+      "Bash(mkdir -p /Users/akankshalm/Desktop/KIaraAssignment/packages/platform-types/src)",
+      "Bash(grep -n \"useCreateLease\\\\|useCreateTenant\\\\|useAllTenants\\\\|Skeleton\\\\|StateTitle\\\\|\\\\\" X \\\\\"\\\\|<X \\\\|, X,\\\\|{X}\\\\|sl\\\\.\\\\|sc\\\\.\\\\| sl \" /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/properties/PropertiesList.tsx)",
+      "Bash(grep -n \"Skeleton\\\\|StateTitle\\\\|\\\\\" X \\\\\"\\\\|<X \\\\|, X[\\\\s,}]\\\\|{X}\\\\|^const sl\\\\|^const sc\\\\|UnitDetailItem\" /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/properties/PropertiesList.tsx)",
+      "Bash(python3 -)",
+      "Bash(rm /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/manager/properties/\\\\[id\\\\]/page.tsx *)"
     ],
     "additionalDirectories": [
-      "/Users/akankshalm/Desktop/KIaraAssignment/packages/platform-types"
+      "/Users/akankshalm/Desktop/KIaraAssignment/packages/platform-types",
+      "/Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/manager/properties/[id]"
     ]
   }
 }

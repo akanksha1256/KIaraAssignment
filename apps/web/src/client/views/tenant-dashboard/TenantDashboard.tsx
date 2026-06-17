@@ -113,15 +113,9 @@ export const TenantDashboard = ({ tenantId }: Props) => {
 
       {/* Payment history */}
       <div>
-        <div className="flex items-center gap-2 mb-4">
-          <CreditCard className="h-4 w-4 text-muted-foreground" />
-          <CardTitle>
-            {s.paymentHistoryTitle}
-            <MutedText className="ml-2 inline font-normal">({payments.length})</MutedText>
-          </CardTitle>
-        </div>
         <PaymentHistoryTable
           payments={payments}
+          count={payments.length}
           empty={s.payments.empty}
           emptyDescription={s.payments.emptyDescription}
           tenantActions={

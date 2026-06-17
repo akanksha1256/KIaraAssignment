@@ -1,5 +1,5 @@
 // Utilities
-export { cn, formatDate, formatPeriodMonth, statusConfig } from "./utils";
+export { cn, formatDate, formatDateTime, formatPeriodMonth, hoursSince, statusConfig } from "./utils";
 
 // StatCard types
 export type { AccentType, StatCardProps } from "./statCard.types";
@@ -7,6 +7,8 @@ export { accentMap } from "./statCard.types";
 
 // Components
 export { Avatar } from "./Avatar";
+export { CloseButton } from "./CloseButton";
+export { LabeledTextField } from "./LabeledTextField";
 export { Badge } from "./Badge";
 export type { BadgeProps } from "./Badge";
 export { Button, buttonVariants } from "./Button";
@@ -39,9 +41,11 @@ export {
   StatusLabel,
   MoneyText,
   LeadText,
+  StatValue,
   MetricValue,
   MetricCount,
   LinkText,
+  FieldLabel,
 } from "./Typography";
 export { ToastProvider, useToast } from "./Toast";
 export type { ToastVariant } from "./Toast";

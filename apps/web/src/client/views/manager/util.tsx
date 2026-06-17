@@ -6,6 +6,23 @@ import type { TableCell } from "@repo/ui";
 
 const s = strings.manager.dashboard;
 
+export function formatPeriod(m: string) {
+  const [y, mo] = m.split("-");
+  return new Date(Number(y), Number(mo) - 1).toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
+  });
+}
+
+export function formatDate(iso: string | null) {
+  if (!iso) return "—";
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 const STATUS_SORT: Record<string, number> = {
   overdue: 0,
   outstanding: 1,

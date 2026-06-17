@@ -22,6 +22,14 @@ export type {
   MonthlyRevenue,
   AtRiskLease,
   ManagerDashboardData,
+  EmptyIcon,
+  PaymentTableActions,
+  TenantPaymentActions,
+  PaymentHistoryTableProps,
+  PaymentsListSortCol,
+  SortDir,
+  PaymentsListFilterColKey,
+  PaymentsListFilterRow,
 } from "./types";
 
 // Status constants

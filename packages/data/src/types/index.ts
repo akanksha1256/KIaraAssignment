@@ -199,3 +199,41 @@ export interface TenantListItem {
   property: Property | null;
   paymentStatus: PaymentStatus | "vacant";
 }
+
+// ── UI shared types ───────────────────────────────────────────────────────────
+
+export type EmptyIcon = "inbox" | "building" | "payment";
+
+export interface PaymentTableActions {
+  onReminder: (periodMonth: string) => void;
+  onMarkPaid: (periodMonth: string) => void;
+  processingPeriodMonth: string | null;
+  sendingReminderPeriodMonth: string | null;
+}
+
+export interface TenantPaymentActions {
+  onPayRent: (periodMonth: string) => void;
+  payButtonLabel: string;
+}
+
+export interface PaymentHistoryTableProps {
+  payments: Payment[];
+  loading?: boolean;
+  count?: number;
+  empty?: string;
+  emptyDescription?: string;
+  actions?: PaymentTableActions;
+  tenantActions?: TenantPaymentActions;
+  flashStates?: Record<string, "success" | "error" | null>;
+}
+
+export type PaymentsListSortCol = "period" | "paidOn" | "status" | "amount";
+export type SortDir = "asc" | "desc";
+
+export type PaymentsListFilterColKey = "status" | "property" | "period" | "amount";
+
+export interface PaymentsListFilterRow {
+  id: number;
+  col: PaymentsListFilterColKey;
+  value: string;
+}

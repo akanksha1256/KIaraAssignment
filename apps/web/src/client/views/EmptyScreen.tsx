@@ -1,4 +1,5 @@
 import { StateTitle, BodyText } from "@repo/ui";
+import type { EmptyIcon } from "@repo/data";
 
 export const EmptyState = ({
   title,
@@ -9,7 +10,7 @@ export const EmptyState = ({
   title: string;
   description?: string;
   action?: React.ReactNode;
-  icon?: "inbox" | "building" | "payment";
+  icon?: EmptyIcon;
 }) => {
   const icons: Record<string, React.ReactNode> = {
     inbox: (

@@ -58,6 +58,15 @@ export function StateTitle({ className, ...props }: React.HTMLAttributes<HTMLHea
   );
 }
 
+export function StatValue({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) {
+  return (
+    <span
+      className={cn("text-[24px] font-semibold tabular-nums text-espresso-900", className)}
+      {...props}
+    />
+  );
+}
+
 export function MetricValue({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) {
   return (
     <span
@@ -103,6 +112,15 @@ export function MutedText({ className, ...props }: React.HTMLAttributes<HTMLPara
 
 export function Caption({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("text-[12.5px] text-muted-foreground", className)} {...props} />;
+}
+
+export function FieldLabel({ className, ...props }: React.LabelHTMLAttributes<HTMLLabelElement>) {
+  return (
+    <label
+      className={cn("block text-[12.5px] font-semibold text-espresso-700", className)}
+      {...props}
+    />
+  );
 }
 
 export function MoneyText({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
