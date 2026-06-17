@@ -1,7 +1,7 @@
 import { Skeleton } from "@repo/ui";
 
 // Dashboard skeleton — mirrors the actual layout
-export function DashboardSkeleton() {
+export const ManagerDashboardSkeleton = () => {
   return (
     <div className="space-y-6 p-8">
       {/* Attention hero */}
@@ -18,7 +18,10 @@ export function DashboardSkeleton() {
         <div className="bg-white p-6 space-y-4">
           <Skeleton className="h-3 w-24" />
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="flex justify-between items-center pt-3 border-t border-sand-200">
+            <div
+              key={i}
+              className="flex justify-between items-center pt-3 border-t border-sand-200"
+            >
               <div className="space-y-1.5">
                 <Skeleton className="h-3 w-28" />
                 <Skeleton className="h-2.5 w-36" />
@@ -72,7 +75,7 @@ export function DashboardSkeleton() {
       </div>
     </div>
   );
-}
+};
 
 export const LoadingState = ({ message = "Loading..." }: { message?: string }) => {
   return (

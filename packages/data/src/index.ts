@@ -49,3 +49,5 @@ export { useSendReminder } from "./hooks/useSendReminder";
 export { useAddPaymentMethod } from "./hooks/useAddPaymentMethod";
 export { allTenantsKey, useAllTenants } from "./hooks/useAllTenants";
 export { allPaymentsKey, useAllPayments } from "./hooks/useAllPayments";
+export { useCreateProperty } from "./hooks/useCreateProperty";
+export { useCreateLease } from "./hooks/useCreateLease";

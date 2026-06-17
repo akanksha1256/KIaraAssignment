@@ -1,27 +1,30 @@
 import type { AtRiskLease } from "@repo/data";
 import { strings } from "@repo/tokens";
-import { Button } from "@repo/ui";
+import {
+  Button,
+  PrimaryLabelMedium,
+  PrimaryLabelSemibold,
+  Caption,
+  StatusLabel,
+  Overline,
+} from "@repo/ui";
 
 const s = strings.manager.dashboard.attentionHero;
 
 const LeaseRow = ({ l }: { l: AtRiskLease }) => (
   <div className="flex items-center justify-between py-3 border-t border-sand-200 first:border-t-0">
     <div>
-      <div className="text-[14px] font-medium text-espresso-900">{l.tenantName}</div>
-      <div className="text-[12.5px] text-muted-foreground">
+      <PrimaryLabelMedium>{l.tenantName}</PrimaryLabelMedium>
+      <Caption>
         {l.propertyName} · {l.unitLabel}
-      </div>
+      </Caption>
     </div>
     <div className="text-right">
-      <div className="text-[14px] font-semibold text-espresso-900">
-        ${l.amountDue.toLocaleString()}
-      </div>
+      <PrimaryLabelSemibold>${l.amountDue.toLocaleString()}</PrimaryLabelSemibold>
       {l.status === "overdue" ? (
-        <div className="text-[11.5px] text-destructive font-medium">
-          {s.daysOverdue(l.daysOverdue)}
-        </div>
+        <StatusLabel className="text-destructive">{s.daysOverdue(l.daysOverdue)}</StatusLabel>
       ) : (
-        <div className="text-[11.5px] text-warning font-medium">{s.outstanding}</div>
+        <StatusLabel className="text-warning">{s.outstanding}</StatusLabel>
       )}
     </div>
   </div>
@@ -31,7 +34,7 @@ export const AtRiskLeasesSection = ({ atRiskLeases }: { atRiskLeases: AtRiskLeas
   return (
     <div className="bg-white p-6">
       <div className="flex items-center justify-between mb-4">
-        <span className="t-overline">{s.atRiskTitle}</span>
+        <Overline>{s.atRiskTitle}</Overline>
         <Button variant="ghost" size="sm">
           {s.viewAll}
         </Button>

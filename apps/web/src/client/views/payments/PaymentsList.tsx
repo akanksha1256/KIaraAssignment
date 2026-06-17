@@ -7,11 +7,13 @@ import { useAllPayments, useMarkPaid, useSendReminder, MANAGER_DASHBOARD_KEY, al
 import { useQueryClient } from "@tanstack/react-query";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
-import { Badge, Skeleton, RowMenu, useToast } from "@repo/ui";
+import { Badge, RowMenu, useToast, SectionTitle, MutedText } from "@repo/ui";
+import { PaymentsListSkeleton } from "./PaymentsListLoadingScreen";
 import { strings } from "@repo/tokens";
 import type { PaymentListItem } from "@repo/data";
 
 const s = strings.manager.paymentsList;
+const sp = strings.statusPill;
 
 type SortCol = "period" | "paidOn" | "status" | "amount";
 type SortDir = "asc" | "desc";
@@ -25,24 +27,19 @@ interface FilterRow {
 }
 
 const FILTER_COL_LABELS: Record<FilterColKey, string> = {
-  status: "Status",
-  property: "Property",
-  period: "Period",
-  amount: "Amount",
+  status: s.filterCols.status,
+  property: s.filterCols.property,
+  period: s.filterCols.period,
+  amount: s.filterCols.amount,
 };
 
 const STATUS_OPTIONS = [
-  { value: "overdue",     label: "Overdue" },
-  { value: "outstanding", label: "Outstanding" },
-  { value: "paid",        label: "Paid" },
+  { value: "overdue",     label: sp.overdue },
+  { value: "outstanding", label: sp.outstanding },
+  { value: "paid",        label: sp.paid },
 ];
 
-const AMOUNT_OPTIONS = [
-  { value: "lt1k",  label: "Under $1,000" },
-  { value: "1k2k",  label: "$1,000 – $2,000" },
-  { value: "2k3k",  label: "$2,000 – $3,000" },
-  { value: "gt3k",  label: "Over $3,000" },
-];
+const AMOUNT_OPTIONS = s.amountOptions as unknown as { value: string; label: string }[];
 
 function amountFn(value: string): (n: number) => boolean {
   if (value === "lt1k")  return (n) => n < 1000;
@@ -63,7 +60,7 @@ function formatDate(iso: string | null) {
 }
 
 // ── Row action menu ───────────────────────────────────────────────────────────
-function PaymentRowMenu({ item }: { item: PaymentListItem }) {
+const PaymentRowMenu = ({ item }: { item: PaymentListItem }) => {
   const { showToast } = useToast();
   const queryClient = useQueryClient();
   const [reminderSentAt, setReminderSentAt] = useState<Date | null>(null);
@@ -84,38 +81,38 @@ function PaymentRowMenu({ item }: { item: PaymentListItem }) {
 
   const items = [
     ...(item.payment.status === "overdue" ? [{
-      label: "Send reminder",
-      sublabel: reminderSentAt ? `Last sent ${formatTime(reminderSentAt)}` : undefined,
+      label: s.rowMenu.sendReminder,
+      sublabel: reminderSentAt ? s.rowMenu.lastSent(formatTime(reminderSentAt)) : undefined,
       disabled: reminderSentAt !== null || sendReminder.isPending,
       loading: sendReminder.isPending,
       onClick: () => sendReminder.mutate(
         { periodMonth: item.payment.periodMonth },
         {
-          onSuccess: () => { setReminderSentAt(new Date()); showToast(`Reminder sent to ${item.tenant.name}.`, "success"); },
-          onError: (err) => showToast((err as Error).message ?? "Failed to send reminder.", "error"),
+          onSuccess: () => { setReminderSentAt(new Date()); showToast(s.rowMenu.reminderSuccess(item.tenant.name), "success"); },
+          onError: (err) => showToast((err as Error).message ?? s.rowMenu.failedReminder, "error"),
         },
       ),
     }] : []),
     {
-      label: "Mark as paid",
+      label: s.rowMenu.markPaid,
       loading: markPaid.isPending,
       onClick: () => markPaid.mutate(
         { periodMonth: item.payment.periodMonth },
         {
-          onSuccess: () => { showToast("Payment marked as paid.", "success"); invalidate(); },
-          onError: (err) => showToast((err as Error).message ?? "Failed to mark as paid.", "error"),
+          onSuccess: () => { showToast(s.rowMenu.paymentSuccess, "success"); invalidate(); },
+          onError: (err) => showToast((err as Error).message ?? s.rowMenu.failedMarkPaid, "error"),
         },
       ),
     },
   ];
 
   return <RowMenu items={items} />;
-}
+};
 
 // ── Filter panel ──────────────────────────────────────────────────────────────
 let nextId = 1;
 
-function FilterPanel({
+const FilterPanel = ({
   open,
   onClose,
   filterRows,
@@ -131,7 +128,7 @@ function FilterPanel({
   search: string;
   onSearchChange: (v: string) => void;
   data: PaymentListItem[];
-}) {
+}) => {
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -184,7 +181,7 @@ function FilterPanel({
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-sand-200">
-          <span className="text-[15px] font-semibold text-espresso-900">Filters</span>
+          <span className="text-[15px] font-semibold text-espresso-900">{s.filtersTitle}</span>
           <button onClick={onClose} className="text-muted-foreground hover:text-espresso-900 transition-colors">
             <X className="h-4 w-4" />
           </button>
@@ -194,14 +191,14 @@ function FilterPanel({
         <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
           {/* Search */}
           <div className="space-y-1.5">
-            <label className="text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">Search</label>
+            <label className="text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">{s.searchLabel}</label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => onSearchChange(e.target.value)}
-                placeholder="Tenant, property or unit…"
+                placeholder={s.searchPlaceholder}
                 className="h-9 w-full rounded-lg border border-sand-400 bg-white pl-8 pr-8 text-[13px] text-espresso-900 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-coral-500/30"
               />
               {search && (
@@ -215,7 +212,7 @@ function FilterPanel({
           {/* Filter rows */}
           {filterRows.length > 0 && (
             <div className="space-y-1.5">
-              <label className="text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">Columns</label>
+              <label className="text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">{s.columnsLabel}</label>
               <div className="space-y-3">
                 {filterRows.map((row) => (
                   <div key={row.id} className="flex gap-2 items-start">
@@ -259,7 +256,7 @@ function FilterPanel({
             onClick={addRow}
             className="inline-flex items-center gap-1.5 text-[13px] font-medium text-coral-500 hover:text-coral-600 transition-colors"
           >
-            <Plus className="h-3.5 w-3.5" /> Add filter
+            <Plus className="h-3.5 w-3.5" /> {s.addFilter}
           </button>
         </div>
 
@@ -270,47 +267,24 @@ function FilterPanel({
               onClick={clearAll}
               className="w-full h-9 rounded-lg border border-sand-400 text-[13px] font-medium text-espresso-700 hover:bg-sand-100 transition-colors"
             >
-              Clear all filters
+              {s.clearAllFilters}
             </button>
           </div>
         )}
       </div>
     </div>
   );
-}
+};
 
-// ── Skeleton ──────────────────────────────────────────────────────────────────
-function PaymentsListSkeleton() {
-  return (
-    <div className="p-8 max-w-[1180px] space-y-6">
-      <div className="space-y-2">
-        <Skeleton className="h-9 w-40" />
-        <Skeleton className="h-4 w-56" />
-      </div>
-      <div className="rounded-xl border border-sand-400 bg-white overflow-hidden">
-        {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div key={i} className="px-5 py-4 border-t border-sand-200 first:border-t-0 flex items-center gap-4">
-            <Skeleton className="h-3 w-32" />
-            <Skeleton className="h-3 w-28" />
-            <Skeleton className="h-3 w-16 ml-auto" />
-            <Skeleton className="h-3 w-20" />
-            <Skeleton className="h-5 w-20 rounded-full" />
-            <Skeleton className="h-6 w-6 rounded" />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // ── Sort icon ─────────────────────────────────────────────────────────────────
-function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
+const SortIcon = ({ active, dir }: { active: boolean; dir: SortDir }) => {
   if (!active) return <ChevronsUpDown className="h-3 w-3 opacity-40" />;
   return dir === "asc" ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />;
-}
+};
 
 // ── Main view ─────────────────────────────────────────────────────────────────
-export function PaymentsList() {
+export const PaymentsList = () => {
   const router = useRouter();
   const { data, isLoading, isError, error, refetch } = useAllPayments();
 
@@ -389,12 +363,8 @@ export function PaymentsList() {
           {/* Header */}
           <div className="flex items-start justify-between mb-6">
             <div>
-              <h1 className="font-serif text-[36px] font-semibold leading-[1.1] tracking-[-0.01em] text-maroon-600">
-                {s.title}
-              </h1>
-              <p className="text-muted-foreground mt-1">
-                {data.length} records across all leases
-              </p>
+              <SectionTitle>{s.title}</SectionTitle>
+              <MutedText className="mt-1">{s.subtitle(data.length)}</MutedText>
             </div>
             <button
               onClick={() => setFilterOpen(true)}
@@ -405,7 +375,7 @@ export function PaymentsList() {
               }`}
             >
               <SlidersHorizontal className="h-3.5 w-3.5" />
-              Filter
+              {s.filterButton}
               {activeFilterCount > 0 && (
                 <span className="inline-flex items-center justify-center h-4 min-w-4 px-1 rounded-full bg-coral-500 text-white text-[10px] font-bold">
                   {activeFilterCount}
@@ -417,19 +387,19 @@ export function PaymentsList() {
           {/* Summary cards */}
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div className="rounded-xl border border-sand-400 bg-white px-5 py-4">
-              <div className="text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground mb-1">Collected</div>
+              <div className="text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground mb-1">{s.summary.collected}</div>
               <div className="text-[24px] font-semibold tabular-nums text-teal-700">${totalCollected.toLocaleString()}</div>
-              <div className="text-[12px] text-muted-foreground mt-0.5">{paidCount} payments</div>
+              <div className="text-[12px] text-muted-foreground mt-0.5">{s.summary.payments(paidCount)}</div>
             </div>
             <div className="rounded-xl border border-sand-400 bg-white px-5 py-4">
-              <div className="text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground mb-1">Outstanding</div>
+              <div className="text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground mb-1">{s.summary.outstanding}</div>
               <div className="text-[24px] font-semibold tabular-nums text-warning">${totalOutstanding.toLocaleString()}</div>
-              <div className="text-[12px] text-muted-foreground mt-0.5">{unpaidCount} payments</div>
+              <div className="text-[12px] text-muted-foreground mt-0.5">{s.summary.payments(unpaidCount)}</div>
             </div>
             <div className="rounded-xl border border-sand-400 bg-white px-5 py-4">
-              <div className="text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground mb-1">Overdue</div>
+              <div className="text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground mb-1">{s.summary.overdue}</div>
               <div className="text-[24px] font-semibold tabular-nums text-destructive">{overdueCount}</div>
-              <div className="text-[12px] text-muted-foreground mt-0.5">need immediate action</div>
+              <div className="text-[12px] text-muted-foreground mt-0.5">{s.needImmediateAction}</div>
             </div>
           </div>
 
@@ -463,7 +433,7 @@ export function PaymentsList() {
                   </button>
                 </span>
               )}
-              <span className="text-[12px] text-muted-foreground ml-1">{filtered.length} of {data.length} results</span>
+              <span className="text-[12px] text-muted-foreground ml-1">{s.results(filtered.length, data.length)}</span>
             </div>
           )}
         </div>
@@ -471,7 +441,7 @@ export function PaymentsList() {
         {/* Scrollable table */}
         <div className="flex-1 min-h-0 overflow-y-auto px-8 pb-10">
           {filtered.length === 0 ? (
-            <EmptyState title="No payments match" description="Try adjusting or clearing your filters." />
+            <EmptyState title={s.noMatch} description={s.noMatchDescription} />
           ) : (
             <div className="rounded-xl border border-sand-400 bg-white overflow-auto shadow-sm">
               <table className="w-full table-fixed min-w-[700px]">
@@ -486,19 +456,19 @@ export function PaymentsList() {
                 </colgroup>
                 <thead className="sticky top-0 z-10">
                   <tr className="bg-sand-100 border-b border-sand-400">
-                    <th className="px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">Tenant</th>
-                    <th className="px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">Property / Unit</th>
+                    <th className="px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">{s.cols.tenant}</th>
+                    <th className="px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">{s.cols.propertyUnit}</th>
                     <th onClick={() => toggleSort("period")} className={`px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] cursor-pointer select-none transition-colors ${sortCol === "period" ? "text-espresso-900" : "text-muted-foreground hover:text-espresso-700"}`}>
-                      <span className="inline-flex items-center gap-1">Period <SortIcon active={sortCol === "period"} dir={sortDir} /></span>
+                      <span className="inline-flex items-center gap-1">{s.cols.period} <SortIcon active={sortCol === "period"} dir={sortDir} /></span>
                     </th>
                     <th onClick={() => toggleSort("amount")} className={`px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] cursor-pointer select-none transition-colors ${sortCol === "amount" ? "text-espresso-900" : "text-muted-foreground hover:text-espresso-700"}`}>
-                      <span className="inline-flex items-center gap-1 justify-end w-full">Amount <SortIcon active={sortCol === "amount"} dir={sortDir} /></span>
+                      <span className="inline-flex items-center gap-1 justify-end w-full">{s.cols.amount} <SortIcon active={sortCol === "amount"} dir={sortDir} /></span>
                     </th>
                     <th onClick={() => toggleSort("paidOn")} className={`px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] cursor-pointer select-none transition-colors ${sortCol === "paidOn" ? "text-espresso-900" : "text-muted-foreground hover:text-espresso-700"}`}>
-                      <span className="inline-flex items-center gap-1">Paid on <SortIcon active={sortCol === "paidOn"} dir={sortDir} /></span>
+                      <span className="inline-flex items-center gap-1">{s.cols.paidOn} <SortIcon active={sortCol === "paidOn"} dir={sortDir} /></span>
                     </th>
                     <th onClick={() => toggleSort("status")} className={`px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] cursor-pointer select-none transition-colors ${sortCol === "status" ? "text-espresso-900" : "text-muted-foreground hover:text-espresso-700"}`}>
-                      <span className="inline-flex items-center gap-1 justify-end w-full">Status <SortIcon active={sortCol === "status"} dir={sortDir} /></span>
+                      <span className="inline-flex items-center gap-1 justify-end w-full">{s.cols.status} <SortIcon active={sortCol === "status"} dir={sortDir} /></span>
                     </th>
                     <th />
                   </tr>
@@ -535,7 +505,7 @@ export function PaymentsList() {
                             variant={item.payment.status === "overdue" ? "overdue" : item.payment.status === "outstanding" ? "outstanding" : "paid"}
                             size="sm"
                           >
-                            {item.payment.status === "overdue" ? "Overdue" : item.payment.status === "outstanding" ? "Outstanding" : "Paid"}
+                            {item.payment.status === "overdue" ? sp.overdue : item.payment.status === "outstanding" ? sp.outstanding : sp.paid}
                           </Badge>
                         </div>
                       </td>
@@ -552,4 +522,4 @@ export function PaymentsList() {
       </div>
     </>
   );
-}
+};

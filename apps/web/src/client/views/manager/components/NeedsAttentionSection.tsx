@@ -1,8 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { strings } from "@repo/tokens";
-import { Button } from "@repo/ui";
+import { Button, Overline, MoneyText, LeadText, StatTile } from "@repo/ui";
 import type { NeedsAttentionSectionProps } from "./utils";
-import { StatTile } from "@repo/ui";
 
 const s = strings.manager.dashboard.attentionHero;
 
@@ -19,18 +18,16 @@ export const NeedsAttentionSection = ({
     <div className="bg-white p-6 bg-gradient-to-br from-white to-coral-50">
       <div className="flex items-center gap-2 mb-4">
         <span className="w-2 h-2 rounded-full bg-destructive flex-none" />
-        <span className="t-overline" style={{ color: "var(--destructive)" }}>
-          {s.label}
-        </span>
+        <Overline className="text-destructive">{s.label}</Overline>
       </div>
-      <div className="t-money text-espresso-900">{fmt(totalAmount)}</div>
-      <p className="text-espresso-700 mt-2 max-w-[42ch] text-[15px]">
+      <MoneyText className="text-espresso-900">{fmt(totalAmount)}</MoneyText>
+      <LeadText className="mt-2 max-w-[42ch]">
         {s.outstandingPrefix}{" "}
         <strong>
           {overdueCount + outstandingCount} {s.outstandingCycleSuffix}
         </strong>{" "}
         {overdueCount > 0 && s.overdueWarning(overdueCount)}
-      </p>
+      </LeadText>
 
       <div className="flex gap-3 mt-5">
         <StatTile

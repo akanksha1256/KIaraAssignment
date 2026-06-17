@@ -188,18 +188,76 @@ export default function Page({ params }: { params: { id: string } }) {
 
 All logic lives in the view component (`"use client"`). Pages never contain hooks or state.
 
+### All components are arrow functions
+
+Every React component — views, sub-components, helpers — must be defined as an arrow function and exported with `const`:
+
+```tsx
+// ✅ correct
+export const MyComponent = ({ label }: { label: string }) => (
+  <div>{label}</div>
+);
+
+// ❌ wrong
+export function MyComponent({ label }: { label: string }) {
+  return <div>{label}</div>;
+}
+```
+
+This applies to local helper components inside a file too (e.g. `const LegendItem = ...`).
+
 ### No inline strings in components
 
-All user-facing copy lives in `src/client/designSystems/strings.ts`. Reference it as:
+All user-facing copy lives in `packages/tokens/src/strings.ts`. Import via `@repo/tokens` and alias the relevant section at the top of the file:
 
 ```ts
+import { strings } from "@repo/tokens";
 const s = strings.manager.unitDetail; // pick the relevant section
 // then use s.loading, s.emptyTitle, etc.
 ```
 
+If a string doesn't exist yet, add it to `strings.ts` first — never write the literal inline in JSX.
+
+### Use Typography components for all text
+
+All text rendering must use a component from `packages/ui/src/Typography.tsx`. Never write raw `text-[Xpx]` Tailwind size classes inline in JSX. If no existing component matches, add one to `Typography.tsx` and export it from `packages/ui/src/index.ts`.
+
+Current palette:
+
+| Component | Size | Weight | Color |
+|---|---|---|---|
+| `PageTitle` | 40px | semibold | maroon-600 (serif) |
+| `SectionTitle` | 36px | semibold | maroon-600 (serif) |
+| `CardTitle` | 18px | semibold | espresso-900 |
+| `LeadText` | 15px | regular | espresso-700 |
+| `LinkText` | 13.5px | medium | maroon-600 |
+| `BodyText` | 14px | regular | espresso-700 |
+| `PrimaryLabelMedium` | 14px | medium | espresso-900 |
+| `PrimaryLabelSemibold` | 14px | semibold | espresso-900 |
+| `MutedText` | 13px | regular | muted-foreground |
+| `Caption` | 12.5px | regular | muted-foreground |
+| `Overline` | 11.5px | semibold uppercase | muted-foreground |
+| `StatusLabel` | 11.5px | medium | destructive or warning |
+| `MetricValue` | 22px | semibold | espresso-900 |
+| `MetricCount` | 20px | semibold | espresso-900 |
+| `MoneyText` | 44px (t-money) | — | — |
+
+Use `className` to override color or weight when needed (e.g. `<MutedText className="text-destructive font-medium">`).
+
+### Skeleton loaders live in dedicated `*LoadingScreen.tsx` files
+
+Every skeleton loading state must be extracted into its own file alongside the view it belongs to:
+
+```
+views/properties/PropertyDetail.tsx
+views/properties/PropertyDetailLoadingScreen.tsx  ← skeleton lives here
+```
+
+The skeleton component must be an arrow function and exported by name.
+
 ### No hardcoded colors in components
 
-Use Tailwind classes from the design token palette only (`brand-*`, `neutral-*`, `success-*`, `warning-*`, `danger-*`). For dynamic colors (charts, status), use `colors.ts`.
+Use Tailwind classes from the design token palette only (`brand-*`, `neutral-*`, `success-*`, `warning-*`, `danger-*`). For dynamic colors (charts, status), use `colors.ts` from `@repo/tokens`.
 
 ---
 
@@ -262,8 +320,12 @@ When adding a new data-driven feature, follow this order:
 - Do not use Redux, `createSlice`, `createAction`, `extraReducers`, epics, or RxJS — the project uses TanStack Query
 - Do not import `@/platform/types` in components, views, or hooks
 - Do not import types from anywhere other than `@/client/types` in client code
-- Do not hardcode copy strings in components — use `strings.ts`
-- Do not hardcode colors — use the design token classes or `colors.ts`
+- Do not define React components as `function Foo()` — always use `export const Foo = () =>`
+- Do not hardcode copy strings in components — add them to `strings.ts` first, then import via `@repo/tokens`
+- Do not use raw `text-[Xpx]` Tailwind classes — use a component from `Typography.tsx`; add one if missing
+- Do not hardcode colors — use the design token classes or `colors.ts` from `@repo/tokens`
+- Do not define skeleton loaders inline — put them in a `*LoadingScreen.tsx` file next to the view
+- Do not name icon imports without the `Icon` suffix — use `import { Building2 as Building2Icon } from "lucide-react"`
 - Do not use `table-fixed` in DataTable (breaks explicit column widths)
 - Do not use `text-right` to align `inline-flex` pill elements — use `flex justify-end` wrapper
 - Do not add `$` or currency formatting to count-based charts (payment status donut)

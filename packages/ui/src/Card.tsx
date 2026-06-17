@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "./utils";
+export { CardTitle } from "./Typography";
 
 export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
@@ -12,10 +13,6 @@ export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElemen
 
 export function CardHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("flex flex-col gap-1 p-6", className)} {...props} />;
-}
-
-export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
-  return <h3 className={cn("text-[18px] font-semibold text-espresso-900", className)} {...props} />;
 }
 
 export function CardDescription({

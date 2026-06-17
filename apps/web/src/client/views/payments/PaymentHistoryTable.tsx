@@ -174,7 +174,7 @@ function buildRow(
   ];
 }
 
-export function PaymentHistoryTable({
+export const PaymentHistoryTable = ({
   payments,
   loading,
   empty,
@@ -182,7 +182,7 @@ export function PaymentHistoryTable({
   actions,
   tenantActions,
   flashStates,
-}: Props) {
+}: Props) => {
   if (loading) {
     return (
       <div className="rounded-xl border border-sand-400 bg-white overflow-hidden">

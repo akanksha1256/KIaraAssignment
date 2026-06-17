@@ -1,46 +1,52 @@
-import { Building2, DoorOpen, DollarSign, TrendingUp } from "lucide-react";
+import {
+  Building2 as Building2Icon,
+  DoorOpen as DoorOpenIcon,
+  DollarSign as DollarSignIcon,
+  TrendingUp as TrendingUpIcon,
+} from "lucide-react";
 import { strings } from "@repo/tokens";
 import { StatCard } from "@repo/ui";
 import type { DashboardStats } from "@repo/data";
 
 const s = strings.manager.dashboard;
 
-export function StatusSection({ stats }: { stats: DashboardStats }) {
+export const StatusSection = ({ stats }: { stats: DashboardStats }) => {
   const collectionRate =
     stats.totalMonthlyRent > 0
       ? Math.round((stats.collectedThisMonth / stats.totalMonthlyRent) * 100)
       : 0;
 
   return (
-    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <section aria-label="Portfolio metrics" className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <StatCard
-        icon={Building2}
-        label={s.stats.properties}
+        icon={Building2Icon}
+        label={s.stats.propertiesLabel(stats.totalUnits)}
         value={String(stats.totalProperties)}
-        sub={s.stats.propertiesSubtitle(stats.totalUnits)}
         accent="neutral"
+        trend={{ direction: "flat", label: "0" }}
       />
       <StatCard
-        icon={DoorOpen}
-        label={s.stats.occupancy}
+        icon={DoorOpenIcon}
+        label={s.stats.occupancyLabel(stats.vacantUnits)}
         value={`${stats.occupiedUnits}/${stats.totalUnits}`}
-        sub={s.stats.occupancySubtitle(stats.vacantUnits)}
         accent="neutral"
+        trend={{ direction: "up", label: "+2" }}
       />
       <StatCard
-        icon={DollarSign}
-        label={s.stats.monthlyRent}
+        icon={DollarSignIcon}
+        label={s.stats.monthlyRentLabel}
         value={`$${stats.totalMonthlyRent.toLocaleString()}`}
-        sub={s.stats.monthlyRentSubtitle}
-        accent="teal"
+        accent="neutral"
+        trend={{ direction: "flat", label: "—" }}
       />
       <StatCard
-        icon={TrendingUp}
-        label={s.stats.collectionRate}
+        icon={TrendingUpIcon}
+        label={s.stats.collectionRateLabel}
         value={`${collectionRate}%`}
-        sub={s.stats.collectionRateSubtitle(`$${stats.collectedThisMonth.toLocaleString()}`)}
         accent={collectionRate >= 80 ? "teal" : "warning"}
+        trend={{ direction: collectionRate >= 80 ? "up" : "down", label: `${collectionRate}%` }}
+        alert={collectionRate < 60}
       />
-    </div>
+    </section>
   );
-}
+};

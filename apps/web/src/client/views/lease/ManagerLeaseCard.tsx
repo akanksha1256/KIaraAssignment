@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui";
+import { Card, CardContent, CardHeader, CardTitle, MutedText, LinkText } from "@repo/ui";
 import { strings } from "@repo/tokens";
-import { FileText, ExternalLink } from "lucide-react";
+import { FileText as FileTextIcon, ExternalLink as ExternalLinkIcon } from "lucide-react";
 import type { Lease } from "@repo/data";
 import { formatDate } from "@repo/ui";
 
@@ -8,8 +8,8 @@ const s = strings.manager.unitDetail.lease;
 
 const DetailRow = ({ label, value }: { label: string; value: string }) => (
   <div className="flex justify-between py-3 border-b border-sand-200 last:border-0">
-    <span className="text-[13px] text-muted-foreground">{label}</span>
-    <span className="text-[13px] font-medium text-espresso-900">{value}</span>
+    <MutedText>{label}</MutedText>
+    <MutedText className="font-medium text-espresso-900">{value}</MutedText>
   </div>
 );
 
@@ -18,7 +18,7 @@ export const ManagerLeaseCard = ({ lease }: { lease: Lease | null }) => (
     <CardHeader>
       <CardTitle className="flex items-center gap-2 text-[15px]">
         <div className="w-8 h-8 rounded-full bg-sand-200 flex items-center justify-center flex-none">
-          <FileText className="h-4 w-4 text-espresso-700" />
+          <FileTextIcon className="h-4 w-4 text-espresso-700" />
         </div>
         {s.heading}
       </CardTitle>
@@ -33,24 +33,24 @@ export const ManagerLeaseCard = ({ lease }: { lease: Lease | null }) => (
           />
           <DetailRow label={s.terms} value={lease.terms} />
           <div className="flex justify-between py-3">
-            <span className="text-[13px] text-muted-foreground">{s.leaseDocument}</span>
+            <MutedText>{s.leaseDocument}</MutedText>
             {lease.leaseDocument ? (
               <a
                 href={lease.leaseDocument}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-maroon-600 hover:underline transition-colors text-[13px] font-medium"
+                className="inline-flex items-center gap-1 hover:underline transition-colors"
               >
-                {s.leaseDocumentLink}
-                <ExternalLink className="h-3 w-3" />
+                <LinkText className="text-[13px]">{s.leaseDocumentLink}</LinkText>
+                <ExternalLinkIcon className="h-3 w-3 text-maroon-600" />
               </a>
             ) : (
-              <span className="text-[13px] font-medium text-muted-foreground">{s.leaseDocumentNone}</span>
+              <MutedText className="font-medium">{s.leaseDocumentNone}</MutedText>
             )}
           </div>
         </>
       ) : (
-        <p className="text-[13px] text-muted-foreground">{s.noLease}</p>
+        <MutedText>{s.noLease}</MutedText>
       )}
     </CardContent>
   </Card>

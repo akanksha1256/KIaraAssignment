@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import { useAllTenants } from "@repo/data";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
-import { Badge, Skeleton } from "@repo/ui";
+import { Badge, SectionTitle, MutedText } from "@repo/ui";
+import { TenantsListSkeleton } from "./TenantsListLoadingScreen";
 import { strings } from "@repo/tokens";
 import type { TenantListItem } from "@repo/data";
 import { ShieldCheck, Clock, ShieldOff, ChevronRight } from "lucide-react";
@@ -12,24 +13,24 @@ import { ShieldCheck, Clock, ShieldOff, ChevronRight } from "lucide-react";
 const s = strings.manager.tenantsList;
 
 const KYC_ICON: Record<string, React.ReactNode> = {
-  verified:      <ShieldCheck className="h-3.5 w-3.5" />,
-  pending:       <Clock className="h-3.5 w-3.5" />,
+  verified: <ShieldCheck className="h-3.5 w-3.5" />,
+  pending: <Clock className="h-3.5 w-3.5" />,
   not_submitted: <ShieldOff className="h-3.5 w-3.5" />,
 };
 
 const KYC_CLASS: Record<string, string> = {
-  verified:      "text-teal-700 bg-teal-50 border border-teal-200",
-  pending:       "text-warning bg-amber-50 border border-amber-200",
+  verified: "text-teal-700 bg-teal-50 border border-teal-200",
+  pending: "text-warning bg-amber-50 border border-amber-200",
   not_submitted: "text-muted-foreground bg-sand-100 border border-sand-300",
 };
 
 const KYC_LABEL: Record<string, string> = {
-  verified:      "Verified",
-  pending:       "Pending",
+  verified: "Verified",
+  pending: "Pending",
   not_submitted: "Not submitted",
 };
 
-function TenantRow({ item }: { item: TenantListItem }) {
+const TenantRow = ({ item }: { item: TenantListItem }) => {
   const router = useRouter();
   const { tenant, lease, unit, property, paymentStatus } = item;
   const kycClass = KYC_CLASS[tenant.kycStatus] ?? KYC_CLASS.not_submitted;
@@ -43,10 +44,17 @@ function TenantRow({ item }: { item: TenantListItem }) {
       <td className="px-5 py-3.5">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-coral-500 to-maroon-600 text-white grid place-items-center text-[12px] font-semibold flex-none select-none">
-            {tenant.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+            {tenant.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .slice(0, 2)
+              .toUpperCase()}
           </div>
           <div>
-            <div className="text-[13.5px] font-semibold text-espresso-900 leading-tight">{tenant.name}</div>
+            <div className="text-[13.5px] font-semibold text-espresso-900 leading-tight">
+              {tenant.name}
+            </div>
             <div className="text-[12px] text-muted-foreground">{tenant.email}</div>
           </div>
         </div>
@@ -60,7 +68,7 @@ function TenantRow({ item }: { item: TenantListItem }) {
             <div className="text-[12px] text-muted-foreground font-mono">{unit.label}</div>
           </div>
         ) : (
-          <span className="text-[13px] text-espresso-300 italic">No active lease</span>
+          <MutedText className="italic">{s.noActiveLease}</MutedText>
         )}
       </td>
 
@@ -81,17 +89,23 @@ function TenantRow({ item }: { item: TenantListItem }) {
         <div className="flex justify-end">
           <Badge
             variant={
-              paymentStatus === "overdue"      ? "overdue"
-              : paymentStatus === "outstanding" ? "outstanding"
-              : paymentStatus === "paid"        ? "paid"
-              : "vacant"
+              paymentStatus === "overdue"
+                ? "overdue"
+                : paymentStatus === "outstanding"
+                  ? "outstanding"
+                  : paymentStatus === "paid"
+                    ? "paid"
+                    : "vacant"
             }
             size="sm"
           >
-            {paymentStatus === "vacant"      ? "No lease"
-              : paymentStatus === "overdue"  ? "Overdue"
-              : paymentStatus === "outstanding" ? "Outstanding"
-              : "Paid"}
+            {paymentStatus === "vacant"
+              ? "No lease"
+              : paymentStatus === "overdue"
+                ? "Overdue"
+                : paymentStatus === "outstanding"
+                  ? "Outstanding"
+                  : "Paid"}
           </Badge>
         </div>
       </td>
@@ -99,7 +113,9 @@ function TenantRow({ item }: { item: TenantListItem }) {
       {/* KYC */}
       <td className="px-5 py-3.5 text-right">
         <div className="flex justify-end">
-          <span className={`inline-flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1 rounded-full ${kycClass}`}>
+          <span
+            className={`inline-flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1 rounded-full ${kycClass}`}
+          >
             {KYC_ICON[tenant.kycStatus]}
             {KYC_LABEL[tenant.kycStatus]}
           </span>
@@ -114,59 +130,33 @@ function TenantRow({ item }: { item: TenantListItem }) {
   );
 }
 
-function TenantsListSkeleton() {
-  return (
-    <div className="p-8 max-w-[1180px] space-y-6">
-      <div className="space-y-2">
-        <Skeleton className="h-9 w-36" />
-        <Skeleton className="h-4 w-48" />
-      </div>
-      <div className="rounded-xl border border-sand-400 bg-white overflow-hidden">
-        <div className="bg-sand-100 px-5 py-3 flex gap-4">
-          {[160, 140, 80, 100, 100].map((w, i) => (
-            <Skeleton key={i} className={`h-3 w-[${w}px]`} />
-          ))}
-        </div>
-        {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="px-5 py-4 border-t border-sand-200 flex items-center gap-4">
-            <Skeleton className="h-8 w-8 rounded-full flex-none" />
-            <div className="space-y-1 flex-1">
-              <Skeleton className="h-3 w-32" />
-              <Skeleton className="h-3 w-40" />
-            </div>
-            <Skeleton className="h-3 w-24 ml-auto" />
-            <Skeleton className="h-5 w-20 rounded-full" />
-            <Skeleton className="h-5 w-20 rounded-full" />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
-export function TenantsList() {
+export const TenantsList = () => {
   const { data, isLoading, isError, error, refetch } = useAllTenants();
 
   if (isLoading) return <TenantsListSkeleton />;
-  if (isError) return <ErrorState message={(error as Error)?.message ?? s.error} onRetry={() => refetch()} />;
-  if (!data) return <EmptyState title={s.emptyTitle} description={s.emptyDescription} icon="inbox" />;
+  if (isError)
+    return <ErrorState message={(error as Error)?.message ?? s.error} onRetry={() => refetch()} />;
+  if (!data)
+    return <EmptyState title={s.emptyTitle} description={s.emptyDescription} icon="inbox" />;
 
   const overdueCount = data.filter((t) => t.paymentStatus === "overdue").length;
-  const pendingKyc   = data.filter((t) => t.tenant.kycStatus !== "verified").length;
+  const pendingKyc = data.filter((t) => t.tenant.kycStatus !== "verified").length;
 
   return (
     <div className="p-8 max-w-[1180px]">
       <div className="mb-8">
-        <h1 className="font-serif text-[36px] font-semibold leading-[1.1] tracking-[-0.01em] text-maroon-600">
-          {s.title}
-        </h1>
-        <p className="text-muted-foreground mt-1">
+        <SectionTitle>{s.title}</SectionTitle>
+        <MutedText className="mt-1">
           {data.length} tenant{data.length !== 1 ? "s" : ""}
           {overdueCount > 0 && (
-            <> · <span className="text-destructive font-medium">{overdueCount} overdue</span></>
+            <>
+              {" "}
+              · <span className="text-destructive font-medium">{overdueCount} overdue</span>
+            </>
           )}
           {pendingKyc > 0 && <> · {pendingKyc} KYC pending</>}
-        </p>
+        </MutedText>
       </div>
 
       {data.length === 0 ? (
@@ -184,11 +174,21 @@ export function TenantsList() {
             </colgroup>
             <thead>
               <tr className="bg-sand-100 border-b border-sand-400">
-                <th className="px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">Tenant</th>
-                <th className="px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">Property / Unit</th>
-                <th className="px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">Rent/mo</th>
-                <th className="px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">Payment</th>
-                <th className="px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">KYC</th>
+                <th className="px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                  Tenant
+                </th>
+                <th className="px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                  Property / Unit
+                </th>
+                <th className="px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                  Rent/mo
+                </th>
+                <th className="px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                  Payment
+                </th>
+                <th className="px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                  KYC
+                </th>
                 <th />
               </tr>
             </thead>

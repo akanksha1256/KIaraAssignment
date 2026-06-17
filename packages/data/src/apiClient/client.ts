@@ -151,6 +151,19 @@ export const api = {
       mapPaymentMethod,
     ),
 
+  createProperty: async (data: {
+    name: string;
+    address: string;
+    units: string[];
+  }): Promise<Property> => {
+    const res = await request<{ property: P.Property }>("/properties", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: data.name, address: data.address, units: data.units }),
+    });
+    return mapProperty(res.property);
+  },
+
   addPaymentMethod: async (tenantId: string, label: string): Promise<PaymentMethod> =>
     mapPaymentMethod(
       await request<P.PaymentMethod>(`/tenants/${tenantId}/payment-methods`, {

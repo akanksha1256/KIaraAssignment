@@ -2,63 +2,19 @@
 
 import { useRouter } from "next/navigation";
 import { usePropertyDetail } from "@repo/data";
-import { Skeleton } from "@repo/ui";
+import { PropertyDetailSkeleton } from "./PropertyDetailLoadingScreen";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
 import { DataTable, Badge, StatCard } from "@repo/ui";
 import type { RowGroup } from "@repo/ui";
 import { strings } from "@repo/tokens";
 import { formatDate } from "@repo/ui";
-import { ArrowLeft, Building2, DoorOpen, DoorClosed, DollarSign, ChevronRight } from "lucide-react";
+import { Building2, DoorOpen, DoorClosed, DollarSign, ChevronRight } from "lucide-react";
+import { BackButton } from "@/client/components/BackButton";
 import type { UnitDetailItem } from "@repo/data";
 
 const s = strings.manager.propertyDetail;
 
-// ── Property Detail Skeleton ──────────────────────────────────────────────────
-function PropertyDetailSkeleton() {
-  return (
-    <div className="p-8 max-w-[1180px] space-y-8">
-      {/* Back link */}
-      <Skeleton className="h-4 w-28" />
-      {/* Header */}
-      <div className="space-y-2">
-        <Skeleton className="h-9 w-72" />
-        <Skeleton className="h-4 w-52" />
-      </div>
-      {/* Stat cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="rounded-xl border border-sand-400 bg-white p-5 space-y-4">
-            <div className="flex justify-between">
-              <Skeleton className="h-9 w-9 rounded-md" />
-              <Skeleton className="h-5 w-16 rounded-full" />
-            </div>
-            <Skeleton className="h-7 w-20" />
-            <Skeleton className="h-3 w-28" />
-          </div>
-        ))}
-      </div>
-      {/* Mix bar */}
-      <div className="rounded-xl border border-sand-400 bg-white p-5 space-y-3">
-        <Skeleton className="h-3 w-24" />
-        <Skeleton className="h-3 w-full rounded-full" />
-        <div className="flex gap-4">
-          {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-3 w-20" />)}
-        </div>
-      </div>
-      {/* Table rows */}
-      <div className="rounded-xl border border-sand-400 bg-white overflow-hidden">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="px-5 py-4 border-b border-sand-200 flex gap-4 items-center">
-            {[60, 120, 80, 140, 70, 80].map((w, j) => (
-              <Skeleton key={j} className={`h-3 w-[${w}px]`} />
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // ── Unit Status Mix Bar (full-width) ──────────────────────────────────────────
 function UnitMixBar({ units }: { units: UnitDetailItem[] }) {
@@ -243,13 +199,7 @@ export const PropertyDetail = ({ propertyId }: Props) => {
   return (
     <div className="p-8 max-w-[1180px]">
       {/* Back navigation */}
-      <button
-        onClick={() => router.back()}
-        className="inline-flex items-center gap-1.5 text-[13.5px] font-medium text-maroon-600 hover:bg-sand-100 px-2.5 py-1 rounded-full transition-colors -ml-2.5 mb-8"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" />
-        {s.backLink}
-      </button>
+      <BackButton onClick={() => router.back()}>{s.backLink}</BackButton>
 
       {/* Page header */}
       <div className="flex items-end justify-between gap-4 flex-wrap mb-8">

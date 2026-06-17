@@ -1,25 +1,18 @@
-import type { AtRiskLease } from "@repo/data";
 import { strings } from "@repo/tokens";
 import { NeedsAttentionSection } from "./NeedsAttentionSection";
 import { AtRiskLeasesSection } from "./AtRiskLeasesSection";
+import type { AttentionHeroProps } from "./utils";
 
 const s = strings.manager.dashboard.attentionHero;
 
-export function AttentionHero({
+export const AttentionHero = ({
   totalAmount,
   overdueAmount,
   overdueCount,
   outstandingAmount,
   outstandingCount,
   atRiskLeases,
-}: {
-  totalAmount: number;
-  overdueAmount: number;
-  overdueCount: number;
-  outstandingAmount: number;
-  outstandingCount: number;
-  atRiskLeases: AtRiskLease[];
-}) {
+}: AttentionHeroProps) => {
   return (
     <section
       aria-label={s.label}
@@ -35,4 +28,4 @@ export function AttentionHero({
       <AtRiskLeasesSection atRiskLeases={atRiskLeases} />
     </section>
   );
-}
+};

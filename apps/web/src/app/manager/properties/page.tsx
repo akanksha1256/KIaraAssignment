@@ -1,4 +1,4 @@
-import { PropertiesList } from "@/client/views/manager/PropertiesList";
+import { PropertiesList } from "@/client/views/properties/PropertiesList";
 
 export default function Page() {
   return <PropertiesList />;

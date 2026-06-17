@@ -1,4 +1,4 @@
-import { PaymentsList } from "@/client/views/manager/PaymentsList";
+import { PaymentsList } from "@/client/views/payments/PaymentsList";
 
 export default function Page() {
   return <PaymentsList />;

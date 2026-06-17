@@ -1,4 +1,14 @@
 export const strings = {
+  common: {
+    errorHeading: "Something went wrong",
+    errorRetry: "Try again",
+    validation: {
+      required: "Required",
+      invalidAmount: "Enter a valid amount",
+      endDateAfterStart: "Must be after start date",
+    },
+  },
+
   app: {
     name: "RentPortal",
     tagline: "A rent management portal.",
@@ -86,6 +96,7 @@ export const strings = {
         outstanding: "Outstanding",
         overdue: "Overdue",
         empty: "No payment data",
+        collected: "collected",
       },
 
       propertiesTable: {
@@ -154,6 +165,87 @@ export const strings = {
       },
     },
 
+    addLease: {
+      title: (unitLabel: string) => `Add Lease — ${unitLabel}`,
+      subtitle: "Assign a tenant and set lease terms for this unit.",
+      fieldTenant: "Tenant",
+      fieldTenantPlaceholder: "Select a tenant",
+      fieldRent: "Monthly Rent ($)",
+      fieldRentPlaceholder: "e.g. 2500",
+      fieldStartDate: "Start Date",
+      fieldEndDate: "End Date",
+      fieldTerms: "Terms (optional)",
+      fieldTermsPlaceholder: "e.g. No pets, no subletting.",
+      submit: "Create Lease",
+      submitting: "Creating…",
+      cancel: "Cancel",
+      successToast: (unitLabel: string) => `Lease created for ${unitLabel}.`,
+    },
+
+    addProperty: {
+      title: "Add Property",
+      subtitle: "Fill in the details to add a new property to your portfolio.",
+      fieldName: "Property Name",
+      fieldNamePlaceholder: "e.g. Maple Heights",
+      fieldAddress: "Address",
+      fieldAddressPlaceholder: "e.g. 123 Main St, Austin TX 78701",
+      fieldManagerName: "Manager Name",
+      fieldManagerNamePlaceholder: "e.g. James Carter",
+      fieldManagerEmail: "Manager Email",
+      fieldManagerEmailPlaceholder: "e.g. james@rentportal.com",
+      fieldManagerContact: "Manager Contact",
+      fieldManagerContactPlaceholder: "e.g. +1 512-555-0100",
+      fieldUnitCount: "Number of Units",
+      fieldUnitCountHint: "Blank units will be created. You can add tenants and leases later.",
+      submit: "Add Property",
+      submitting: "Adding…",
+      cancel: "Cancel",
+      successToast: (name: string) => `"${name}" added successfully.`,
+    },
+
+    propertiesList: {
+      title: "Properties",
+      subtitle: (count: number) => `${count} properties`,
+      overdueCount: (count: number) => `· ${count} overdue`,
+      vacantCount: (count: number) => `· ${count} vacant`,
+      addPropertyButton: "Add Property",
+      emptyTitle: "No properties yet",
+      emptyDescription: "Add your first property to get started.",
+      noUnitsFound: "No units found",
+      vacant: "Vacant",
+      occupied: "occupied",
+      cols: {
+        property: "Property",
+        units: "Units",
+        rentPerMonth: "Rent/mo",
+        status: "Status",
+      },
+      groups: {
+        overdue: "Overdue",
+        outstanding: "Outstanding",
+        paid: "Paid",
+        vacant: "Vacant",
+      },
+      unitMenu: {
+        addLease: "Add lease",
+        sendReminder: "Send reminder",
+        markPaid: "Mark as paid",
+        lastSent: (time: string) => `Last sent ${time}`,
+        reminderSuccess: (name: string) => `Reminder sent to ${name}.`,
+        paymentSuccess: "Payment marked as paid.",
+        failedReminder: "Failed to send reminder.",
+        failedMarkPaid: "Failed to mark as paid.",
+        failedAddLease: "Failed to create lease.",
+        failedAddProperty: "Failed to add property.",
+      },
+      addPropertyModal: {
+        unitsLabel: "Units",
+        addUnit: "Add unit",
+        noUnitsHint: 'No units added yet. Click "Add unit" to add one.',
+        unitPlaceholder: (i: number) => `e.g. Unit ${i} or 2A`,
+      },
+    },
+
     paymentsList: {
       title: "Payments",
       loading: "Loading payments…",
@@ -161,6 +253,53 @@ export const strings = {
       emptyTitle: "No payments yet",
       emptyDescription: "Payments will appear here once leases are active.",
       tabs: { all: "All", overdue: "Overdue", outstanding: "Outstanding", paid: "Paid" },
+      filtersTitle: "Filters",
+      needImmediateAction: "need immediate action",
+      subtitle: (count: number) => `${count} records across all leases`,
+      filterButton: "Filter",
+      addFilter: "Add filter",
+      clearAllFilters: "Clear all filters",
+      noMatch: "No payments match",
+      noMatchDescription: "Try adjusting or clearing your filters.",
+      results: (shown: number, total: number) => `${shown} of ${total} results`,
+      searchLabel: "Search",
+      searchPlaceholder: "Tenant, property or unit…",
+      columnsLabel: "Columns",
+      cols: {
+        tenant: "Tenant",
+        propertyUnit: "Property / Unit",
+        period: "Period",
+        amount: "Amount",
+        paidOn: "Paid on",
+        status: "Status",
+      },
+      summary: {
+        collected: "Collected",
+        outstanding: "Outstanding",
+        overdue: "Overdue",
+        payments: (count: number) => `${count} payments`,
+      },
+      filterCols: {
+        status: "Status",
+        property: "Property",
+        period: "Period",
+        amount: "Amount",
+      },
+      amountOptions: [
+        { value: "lt1k", label: "Under $1,000" },
+        { value: "1k2k", label: "$1,000 – $2,000" },
+        { value: "2k3k", label: "$2,000 – $3,000" },
+        { value: "gt3k", label: "Over $3,000" },
+      ] as const,
+      rowMenu: {
+        sendReminder: "Send reminder",
+        markPaid: "Mark as paid",
+        lastSent: (time: string) => `Last sent ${time}`,
+        reminderSuccess: (name: string) => `Reminder sent to ${name}.`,
+        paymentSuccess: "Payment marked as paid.",
+        failedReminder: "Failed to send reminder.",
+        failedMarkPaid: "Failed to mark as paid.",
+      },
     },
 
     tenantsList: {
@@ -169,6 +308,7 @@ export const strings = {
       error: "Could not load tenants.",
       emptyTitle: "No tenants yet",
       emptyDescription: "Tenants will appear here once leases are created.",
+      noActiveLease: "No active lease",
     },
 
     tenantProfile: {
@@ -226,6 +366,7 @@ export const strings = {
 
       payments: {
         heading: (count: number) => `Payment History (${count})`,
+        historyTitle: "Payment history",
         loadingHistory: "Loading payments…",
         empty: "No payments recorded",
         colPeriod: "Period",
@@ -323,9 +464,21 @@ export const strings = {
     },
     dashboard: {
       heading: (name: string) => `Welcome back, ${name}`,
+      subheading: "Your rental dashboard",
       loading: "Loading your dashboard…",
+      error: "Failed to load dashboard.",
       emptyTitle: "Profile not found",
       emptyDescription: "Your tenant profile could not be loaded.",
+      hero: {
+        overdue: "Payment overdue",
+        outstanding: "Payment outstanding",
+        payNow: "Pay rent now",
+        dueFor: (period: string) => `Due for ${period}`,
+        pastDue: " — this payment is past due.",
+        allClearTitle: "All payments up to date",
+        allClearDescription: "You have no outstanding or overdue payments.",
+      },
+      paymentHistoryTitle: "Payment history",
       payments: {
         heading: (count: number) => `Payment History [${count}] `,
         empty: "No payment records yet.",

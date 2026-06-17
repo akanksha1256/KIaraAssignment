@@ -1,4 +1,4 @@
-import { TenantsList } from "@/client/views/manager/TenantsList";
+import { TenantsList } from "@/client/views/tenant/TenantsList";
 
 export default function Page() {
   return <TenantsList />;
