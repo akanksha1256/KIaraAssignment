@@ -378,7 +378,63 @@ All pages are thin Next.js server components that simply render their correspond
 
 ---
 
-## 12. Known Trade-offs & What Would Be Done With More Time
+## 12. Second Pass — Design Feedback Addressed
+
+The initial submission was reviewed and flagged on six points. This section documents what was missing and how it was resolved in the second pass.
+
+### 1. Mobile Experience (largest gap)
+
+**Flagged:** The portal had no mobile layout. The sidebar was always visible, all data tables were desktop-only, and `h-screen` broke scroll on phones by ignoring the nav bar's padding.
+
+**Addressed:**
+- `Nav.tsx` rewritten with three modes: desktop sidebar (`hidden md:flex w-[250px]`), mobile bottom tab bar (`md:hidden fixed bottom-0 h-16`), and a hamburger-triggered slide-in drawer
+- A `navLinks()` helper extracted so the same link definitions render in all three modes without duplication
+- All data tables (`PaymentsTable`, `PropertiesTable`, `TenantsList`) now have a `sm:hidden` card-per-row section alongside the `hidden sm:block` desktop table
+- `h-screen` → `h-[calc(100vh-4rem)] md:h-screen` across five files (`PaymentsPage`, `PaymentsListLoadingScreen`, `PropertiesList`, `TenantsList`, `TenantsListLoadingScreen`) to account for the 4rem bottom nav clearance declared on `<main>` in the manager layout
+- Dashboard stat grid uses `grid-cols-2 lg:grid-cols-4`, charts use `grid-cols-1 md:grid-cols-[1.5fr_1fr]`, summary cards use `grid-cols-1 sm:grid-cols-3`
+
+### 2. Skeleton Loaders (spinners replaced everywhere)
+
+**Flagged:** All loading states used a generic `Loader2` spinner. It gives no layout preview and causes a jarring content jump when data arrives.
+
+**Addressed:**
+- Every view has a co-located `*LoadingScreen.tsx` skeleton that mirrors the real content's grid, card structure, and typography hierarchy
+- Skeletons use the same responsive breakpoints as the live content (e.g. `grid-cols-1 md:grid-cols-2` in `ManagerDashboardSkeleton`, `sm:hidden` card skeletons + `hidden sm:block` table skeleton in `PaymentsListSkeleton`)
+- `PayRentModal` methods loader changed from a spinner to two skeleton payment method rows matching the real method button shape
+
+### 3. Stat Cards Lacked Actionable Numbers
+
+**Flagged:** The collection rate card showed "73%" with no dollar figures — a percentage alone does not convey severity.
+
+**Addressed:**
+- `collectionRateSubtitle` in `strings.ts` changed from `(amount) => string` to `(collected, total) => string`; card subtitle now reads "$18K of $22K collected"
+- `StatCardProps` extended with `sparkline?: number[]`; all four stat cards on the manager dashboard now render a pure SVG sparkline from 12 months of `MonthlyRevenue` data
+
+### 4. Mobile Table Scroll Broken
+
+**Flagged:** PaymentsList and TenantsList showed only two rows on mobile and did not scroll.
+
+**Root cause:** `overflow-hidden` on the outer card wrapper (added to fix desktop header rounding) was clipping the mobile card list, which had no `flex-1 overflow-y-auto` of its own.
+
+**Addressed:** Added `flex flex-col` to the outer wrapper and `flex-1 overflow-y-auto` to both the `sm:hidden` card div and the `hidden sm:block` table div — the same scroll-container pattern already working on the desktop path.
+
+### 5. PaymentsTable Header Not Rounded
+
+**Flagged:** The table header row corners were flush on large screens despite the outer card having `rounded-xl`.
+
+**Root cause:** `overflow-hidden` was dropped from the outer wrapper when the mobile/desktop split was added. Without it, `rounded-xl` on a non-`overflow-hidden` container does not clip its children.
+
+**Addressed:** Restored `overflow-hidden` on the outer wrapper combined with `flex flex-col`, correctly clipping both the header row and the card list.
+
+### 6. Modal Keyboard Trap Was Fragile
+
+**Flagged:** `PayRentModal` handled Escape via a raw `useEffect` + `addEventListener`. This does not trap Tab/Shift+Tab focus within the modal, which is a WCAG requirement for modal dialogs.
+
+**Addressed:** Replaced with `focus-trap-react`. The trap activates on mount, traps Tab/Shift+Tab within the card, deactivates on Escape unless `modalState === "processing"`, and uses `allowOutsideClick: true` so the backdrop click still reaches its handler. `onDeactivate: onClose` handles cleanup for every deactivation path (Escape, programmatic).
+
+---
+
+## 13. Known Trade-offs & What Would Be Done With More Time
 
 | Area                   | Current State                                        | With More Time                                                                            |
 | ---------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------- |

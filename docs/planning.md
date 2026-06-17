@@ -76,6 +76,93 @@ Automated tests are in place across three layers:
 
 ---
 
+## Second Pass — Gaps Flagged and How They Were Addressed
+
+The initial submission was reviewed and six specific gaps were called out. This section documents each gap, its root cause, and the precise fix applied. The intent is to be explicit about what was wrong and demonstrate that each point was understood and closed — not just acknowledged.
+
+---
+
+### Gap 1: No Mobile Support
+
+**What was missing:** The entire portal assumed a desktop viewport. The sidebar was always rendered, all data tables were desktop-only, and page scrolling broke on phones.
+
+**Root cause:** Responsive layouts were not included in the initial scoping pass. The fixed-sidebar layout and `px-8 p-8` padding assumptions were designed and tested only at desktop width.
+
+**What was done:**
+
+- `Nav.tsx` completely rewritten with three co-existing modes: a desktop sidebar (`hidden md:flex`), a mobile bottom tab bar (`md:hidden fixed bottom-0 h-16`), and a hamburger-triggered slide-in drawer. All three modes share a `navLinks()` helper so link definitions are not duplicated.
+- Every data table given a `sm:hidden` card-per-row section alongside the `hidden sm:block` desktop table. Card layouts are bespoke per view — they surface the most important fields in a readable mobile hierarchy rather than squashing table columns.
+- `h-screen` → `h-[calc(100vh-4rem)] md:h-screen` across five files. `h-screen = 100vh` ignores the 4rem `pb-16` clearance on `<main>`, so the last table rows sit behind the bottom nav. The `calc()` subtracts exactly that amount.
+- Dashboard grids made responsive: stat cards `grid-cols-2 lg:grid-cols-4`, charts `grid-cols-1 md:grid-cols-[1.5fr_1fr]`, attention hero `grid-cols-1 md:grid-cols-2`, summary cards `grid-cols-1 sm:grid-cols-3`.
+- All top-section padding changed from `px-8 pt-8` to `px-4 pt-4 md:px-8 md:pt-8`.
+
+---
+
+### Gap 2: Spinners Instead of Skeleton Loaders
+
+**What was missing:** Every loading state used a generic `Loader2` spinner. Spinners give no layout preview — the page jumps from a centered icon to a full layout when data arrives.
+
+**Root cause:** Loading states were stubbed with a placeholder during the initial feature pass and not revisited before submission.
+
+**What was done:**
+
+- Every view now has a co-located `*LoadingScreen.tsx` file with a skeleton that mirrors the actual page layout: same grid structure, same card proportions, same number of rows.
+- Skeleton screens use the same breakpoint-aware grid classes as the live content, so the skeleton and the loaded page occupy the same visual space.
+- `PayRentModal` methods loader replaced with two skeleton rows that match the shape of the real payment method buttons.
+- `ManagerLoadingScreen`'s generic `LoadingState` component replaced with skeleton bars.
+
+---
+
+### Gap 3: Stat Cards Showed Only Percentages
+
+**What was missing:** The collection rate stat card showed "73%" — a percentage alone does not tell a manager whether the shortfall is $500 or $50,000.
+
+**What was done:**
+
+- `strings.ts` `collectionRateSubtitle` signature changed from `(amount: string) => string` to `(collected: string, total: string) => string`. The subtitle now reads "$18K of $22K collected".
+- `StatCardProps` extended with `sparkline?: number[]`. All four stat cards on the manager dashboard now render a pure SVG sparkline drawn from 12 months of `MonthlyRevenue` data. The sparkline is implemented as a `<polyline>` in a `preserveAspectRatio="none"` SVG — no chart library dependency required in `@repo/ui`.
+
+---
+
+### Gap 4: Mobile Table Scroll Broken
+
+**What was missing:** PaymentsList and TenantsList appeared scrollable on mobile but showed only two rows — the rest were clipped and unreachable.
+
+**Root cause:** Two separate issues combined. First, `overflow-hidden` on the outer card wrapper (added to fix border-radius on the desktop table header) was also clipping the mobile card list. Second, the mobile card div had no `flex-1` or `overflow-y-auto`, so it relied on the parent's scroll — which was blocked by the `overflow-hidden` above it.
+
+**What was done:**
+
+- Outer table wrapper changed to `flex flex-col overflow-hidden`. This lets `overflow-hidden` clip the rounded corners while still allowing inner flex children to manage their own scroll.
+- Mobile card div changed to `flex-1 overflow-y-auto` (same as the desktop table div), creating an independent scroll container within the clipped parent.
+- `TenantsList` mobile card div: `overflow-hidden` → `flex-1 min-h-0 overflow-y-auto`.
+
+---
+
+### Gap 5: PaymentsTable Header Not Rounded
+
+**What was missing:** The table header row corners were flush on large screens despite the outer card using `rounded-xl`.
+
+**Root cause:** When the mobile/desktop split was added to `PaymentsTable`, `overflow-hidden` was removed from the outer wrapper. Without `overflow-hidden`, `border-radius` on a parent does not clip its children — the table header rendered at full width, squared.
+
+**What was done:** Restored `overflow-hidden` on the outer wrapper, combined with `flex flex-col` so the scroll children work correctly. `rounded-xl overflow-hidden flex flex-col` is now the standard shape for all scrollable card containers in the codebase.
+
+---
+
+### Gap 6: Modal Focus Trap Was Fragile
+
+**What was missing:** `PayRentModal` handled keyboard dismissal via a manual `useEffect` + `document.addEventListener("keydown")`. This does not trap Tab/Shift+Tab focus within the modal — keyboard users can tab out of the modal into the background page, which is a WCAG 2.1 failure for dialog components.
+
+**What was done:**
+
+- `focus-trap-react` added to `apps/web/package.json`.
+- Manual `handleKeyDown` useEffect removed.
+- `FocusTrap` wraps the inner card `<div>` with:
+  - `escapeDeactivates: () => modalState !== "processing"` — Escape is disabled only while a payment is in-flight
+  - `onDeactivate: onClose` — fires for Escape and programmatic deactivation; single close handler
+  - `allowOutsideClick: true` — lets the backdrop's own `onClick` handler fire; FocusTrap does not intercept it
+
+---
+
 ## What Would Be Done Next
 
 In priority order:

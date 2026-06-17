@@ -645,7 +645,66 @@ Components use Tailwind class names for static colors (`text-espresso-900`, `bg-
 
 ---
 
-## 10. Key Design Decisions
+## 10. Responsive / Mobile Architecture
+
+The second pass added full mobile support. This section documents the layout primitives that make it work consistently across views.
+
+### Nav — three rendering modes
+
+```
+md+  → hidden md:flex w-[250px]        desktop sidebar (always visible)
+<md  → md:hidden fixed bottom-0 h-16   bottom tab bar with 4 icon tabs + "More" button
+<md  → md:hidden fixed left-0 top-0    slide-in drawer, triggered by hamburger in top bar
+       translateX(-100%) → translateX(0)  animated via inline style, no tailwindcss-animate needed
+```
+
+A `navLinks(onNavigate?)` helper returns the shared link definitions used by all three modes. The mobile backdrop (opacity + pointer-events) and drawer position are both managed with Tailwind transition classes on opacity/translate.
+
+### Manager layout clearance
+
+```tsx
+// apps/web/src/app/manager/layout.tsx
+<main className="flex-1 min-w-0 pb-16 md:pb-0">{children}</main>
+```
+
+`pb-16` reserves 4rem at the bottom so page content is not obscured by the nav bar. All scrollable page shells use `h-[calc(100vh-4rem)] md:h-screen` instead of `h-screen` to account for this.
+
+### Table → card fallback pattern
+
+Every data table that appears on the manager side uses the same two-section fragment:
+
+```tsx
+<>
+  {/* Mobile: card view */}
+  <div className="sm:hidden flex-1 overflow-y-auto ...">
+    {items.map((item) => <CardRow key={item.id} item={item} />)}
+  </div>
+
+  {/* Desktop: table view */}
+  <div className="hidden sm:flex flex-col flex-1 overflow-y-auto">
+    <table className="w-full table-auto min-w-[700px]">...</table>
+  </div>
+</>
+```
+
+The outer wrapper adds `flex flex-col overflow-hidden` so both children can use `flex-1` to fill the available height and `overflow-y-auto` to scroll independently. Because one section is always `display: none`, only one `flex-1` participates in layout at a time.
+
+### Skeleton loader responsiveness
+
+Skeleton screens (`*LoadingScreen.tsx`) use the same breakpoint classes as the live content they replace:
+
+| Live component | Skeleton grid |
+|---|---|
+| `SummaryCardSection` — `grid-cols-1 sm:grid-cols-3` | `PaymentsListSkeleton` — same |
+| `StatusSection` — `grid-cols-2 lg:grid-cols-4` | `ManagerDashboardSkeleton` — same |
+| Charts — `grid-cols-1 md:grid-cols-[1.5fr_1fr]` | `ManagerDashboardSkeleton` — same |
+| `PaymentsTable` — `sm:hidden` cards + `hidden sm:block` table | `PaymentsListSkeleton` — same split |
+
+This means the skeleton layout does not shift when data arrives.
+
+---
+
+## 11. Key Design Decisions
 
 ### Why a shared `@repo/platform-types` package instead of duplicating types?
 
@@ -666,6 +725,21 @@ Packages ship TypeScript source directly. Next.js compiles them in-process via `
 ### Why `staleTime: 5 * 60 * 1000` on read queries?
 
 Navigating between property detail and unit detail (and back) would trigger unnecessary network requests without stale time. Five minutes covers normal browsing patterns without stale data risk. Payment lists deliberately have no `staleTime` so they always reflect the latest server state after mutations.
+
+### Why `flex flex-col` + `flex-1 overflow-y-auto` instead of `h-full overflow-y-auto` for scroll containers?
+
+`h-full` on a non-flex child requires the parent to have an explicit computed height, which is fragile in a flex layout using `min-h-0`. The pattern used throughout the scrollable list views is:
+
+```
+parent: flex flex-col  (or flex-1 min-h-0 from further up)
+child:  flex-1 overflow-y-auto
+```
+
+This lets the child fill all remaining space and scroll without needing a hardcoded height. The same structure is applied consistently to both the `sm:hidden` mobile card div and the `hidden sm:block` desktop table div inside each table wrapper.
+
+### Why `h-[calc(100vh-4rem)] md:h-screen` instead of `h-screen` on list page shells?
+
+`h-screen = 100vh` is computed relative to the viewport, not relative to the flex parent. The manager layout declares `<main className="pb-16 md:pb-0">` to clear the 4rem bottom nav bar. On mobile, a `h-screen` child of that `<main>` overflows by 4rem — the last rows are underneath the nav and unreachable. `h-[calc(100vh-4rem)]` subtracts the same 4rem so the scrollable region ends exactly at the top of the nav bar.
 
 ### Why shadcn variants are mapped to token classes (not CSS variables)?
 
