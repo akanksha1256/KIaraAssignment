@@ -15,7 +15,9 @@
       "Bash(grep -n \"useCreateLease\\\\|useCreateTenant\\\\|useAllTenants\\\\|Skeleton\\\\|StateTitle\\\\|\\\\\" X \\\\\"\\\\|<X \\\\|, X,\\\\|{X}\\\\|sl\\\\.\\\\|sc\\\\.\\\\| sl \" /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/properties/PropertiesList.tsx)",
       "Bash(grep -n \"Skeleton\\\\|StateTitle\\\\|\\\\\" X \\\\\"\\\\|<X \\\\|, X[\\\\s,}]\\\\|{X}\\\\|^const sl\\\\|^const sc\\\\|UnitDetailItem\" /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/properties/PropertiesList.tsx)",
       "Bash(python3 -)",
-      "Bash(rm /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/manager/properties/\\\\[id\\\\]/page.tsx *)"
+      "Bash(rm /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/app/manager/properties/\\\\[id\\\\]/page.tsx *)",
+      "Bash(rm /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/manager/components/NeedsAttentionSection.tsx)",
+      "Bash(rm /Users/akankshalm/Desktop/KIaraAssignment/apps/web/src/client/views/properties/components/StatusSection.tsx)"
     ],
     "additionalDirectories": [
       "/Users/akankshalm/Desktop/KIaraAssignment/packages/platform-types",

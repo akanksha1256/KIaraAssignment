@@ -1,9 +1,9 @@
 import type { Payment, PaymentStatus } from "@repo/platform-types";
 
-/** Rent is due on the 15th of each month. */
-const DUE_DATE = 15;
-/** Tenant has a 5-day grace window (15th–20th) before the payment becomes overdue. */
-const GRACE_DAYS = 5;
+/** Rent is due on the 1st of each month. */
+const DUE_DATE = 1;
+/** Tenant has a 4-day grace window (1st–5th) before the payment becomes overdue. */
+const GRACE_DAYS = 4;
 
 const startOfDay = (date: Date): Date =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
