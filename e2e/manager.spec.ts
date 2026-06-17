@@ -43,7 +43,7 @@ test.describe("Property detail", () => {
   });
 });
 
-test.describe("Unit detail — payment actions", () => {
+test.describe("Unit detail - payment actions", () => {
   test("loads the unit detail page with tenant and payment history", async ({ page }) => {
     await page.goto("/manager/properties/prop-1/units/unit-1");
 
@@ -77,7 +77,7 @@ test.describe("Unit detail — payment actions", () => {
   test("shows an error toast when Mark as Paid fails (?fail=true)", async ({ page }) => {
     await page.goto("/manager/properties/prop-1/units/unit-1?fail=true");
 
-    // Error state is shown — no action buttons visible
+    // Error state is shown - no action buttons visible
     await expect(page.getByRole("button", { name: "Retry" })).toBeVisible();
   });
 

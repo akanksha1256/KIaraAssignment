@@ -1,4 +1,4 @@
-# Low-Level Design — Rent Management Portal
+# Low-Level Design - Rent Management Portal
 
 ## 1. Project Structure
 
@@ -7,7 +7,7 @@ KIaraAssignment/
 ├── apps/
 │   └── web/
 │       ├── src/
-│       │   ├── app/                              Next.js App Router — pages + API routes
+│       │   ├── app/                              Next.js App Router - pages + API routes
 │       │   │   ├── api/
 │       │   │   │   ├── manager/dashboard/        GET  manager summary
 │       │   │   │   ├── properties/[id]/          GET  property + units
@@ -20,7 +20,7 @@ KIaraAssignment/
 │       │   │   │   └── units/[id]/               GET  unit info
 │       │   │   ├── manager/                      Manager pages (thin server components)
 │       │   │   ├── tenant/                       Tenant page
-│       │   │   └── layout.tsx                    Root layout — imports Providers + Nav from @repo/ui
+│       │   │   └── layout.tsx                    Root layout - imports Providers + Nav from @repo/ui
 │       │   │
 │       │   ├── client/
 │       │   │   ├── components/                   Reusable non-view components
@@ -42,7 +42,7 @@ KIaraAssignment/
 │       │   │       ├── lease/                    ManagerLeaseCard, TenantCurrentLeaseCard
 │       │   │       └── payments/                 PaymentsPage, PaymentHistoryTable, components/
 │       │   │
-│       │   └── platform/                         Server-only — never imported by client code
+│       │   └── platform/                         Server-only - never imported by client code
 │       │       ├── db/index.ts                   In-memory data store
 │       │       ├── types/index.ts                Re-exports @repo/platform-types (snake_case)
 │       │       └── utils.ts                      withDelay, errorResponse, generateId
@@ -97,7 +97,7 @@ KIaraAssignment/
 │           ├── Badge.tsx                         Inline status badge (variant-based)
 │           ├── Button.tsx                        shadcn-style (cva + @base-ui/react/button)
 │           ├── Card.tsx
-│           ├── DataTable.tsx                     "use client" — sortable table primitive
+│           ├── DataTable.tsx                     "use client" - sortable table primitive
 │           ├── MainHeader.tsx
 │           ├── Nav.tsx
 │           ├── Pill.tsx
@@ -127,16 +127,16 @@ packages/platform-types/src/      packages/data/src/                 packages/ui
   index.ts                          apiClient/
   (snake_case canonical)              client.ts   (imports P.*)
                                       mappers.ts  (converts)     →   types/index.ts
-        ↑                                                              (camelCase — exported)
+        ↑                                                              (camelCase - exported)
   apps/web re-exports via               ↑                               ↑
   platform/types/index.ts       Only client.ts and                 Used by hooks, views,
   API routes import              mappers.ts import                  and components
   from @repo/platform-types      from @repo/platform-types
 ```
 
-`apps/web/src/platform/types/index.ts` is a thin `export type * from "@repo/platform-types"` — it exists only so API route handlers can use the `@/platform/types` alias without a full package path. The canonical definitions live in `@repo/platform-types`.
+`apps/web/src/platform/types/index.ts` is a thin `export type * from "@repo/platform-types"` - it exists only so API route handlers can use the `@/platform/types` alias without a full package path. The canonical definitions live in `@repo/platform-types`.
 
-### Key Domain Types (camelCase — `packages/data/src/types/index.ts`)
+### Key Domain Types (camelCase - `packages/data/src/types/index.ts`)
 
 ```ts
 // Core entities
@@ -227,7 +227,7 @@ export async function GET(req: NextRequest, { params }) {
 
 ## 4. TanStack Query Hooks (`packages/data/src/hooks/`)
 
-All async data operations live in `packages/data`. There is no global state store — query results live in TanStack Query's `QueryClient` cache.
+All async data operations live in `packages/data`. There is no global state store - query results live in TanStack Query's `QueryClient` cache.
 
 ### Query Hook Pattern
 
@@ -245,7 +245,7 @@ export function usePropertyDetail(propertyId: string) {
 }
 ```
 
-### Mutation Hook Pattern — Optimistic Update
+### Mutation Hook Pattern - Optimistic Update
 
 ```ts
 // packages/data/src/hooks/useMarkPaid.ts
@@ -280,7 +280,7 @@ export function useMarkPaid(leaseId: string) {
 }
 ```
 
-Always use `onSettled` (not `onSuccess`) for `invalidateQueries` — it fires for both success and error, keeping the cache consistent even after rollback.
+Always use `onSettled` (not `onSuccess`) for `invalidateQueries` - it fires for both success and error, keeping the cache consistent even after rollback.
 
 ### All Hooks Summary
 
@@ -297,7 +297,7 @@ Always use `onSettled` (not `onSuccess`) for `invalidateQueries` — it fires fo
 | `useMarkPaid(leaseId)`                 | mutation | optimistic on `["payments", leaseId]`             | Manager mark-paid with rollback                |
 | `usePayRent(tenantId, leaseId)`        | mutation | optimistic on `["tenant", "dashboard", tenantId]` | Tenant pay rent with rollback                  |
 | `useSendReminder(leaseId)`             | mutation | patches `["payments", leaseId]` cache             | Send email reminder                            |
-| `useSendAllReminders()`                | mutation | —                                                 | Bulk send reminders to all at-risk leases      |
+| `useSendAllReminders()`                | mutation | -                                                 | Bulk send reminders to all at-risk leases      |
 | `useAddPaymentMethod(tenantId)`        | mutation | appends to `["paymentMethods", tenantId]`         | Add payment method                             |
 | `useCreateProperty()`                  | mutation | invalidates `["manager", "dashboard"]`            | Create a new property                          |
 | `useCreateLease(propertyId)`           | mutation | invalidates property + dashboard + tenants        | Create a new lease; also calls useCreateTenant inline if needed |
@@ -307,7 +307,7 @@ Always use `onSettled` (not `onSuccess`) for `invalidateQueries` — it fires fo
 
 ## 5. API Client Layer (`packages/data/src/apiClient/`)
 
-### client.ts — Typed Async Methods
+### client.ts - Typed Async Methods
 
 ```ts
 // All methods return camelCase types from packages/data/src/types
@@ -328,7 +328,7 @@ export const api = {
 };
 ```
 
-### mappers.ts — Conversion Boundary
+### mappers.ts - Conversion Boundary
 
 The only file that imports snake_case types from `@repo/platform-types`. Every mapper follows:
 
@@ -356,14 +356,14 @@ export function mapPayment(raw: P.Payment): Payment {
 
 ### DataTable
 
-`DataTable` is a generic sortable table. Callers construct `TableColumn[]` and `TableRow[]` and pass them as props — no render-prop or children API.
+`DataTable` is a generic sortable table. Callers construct `TableColumn[]` and `TableRow[]` and pass them as props - no render-prop or children API.
 
 ```ts
 // Column definition
 interface TableColumn {
   label: string;
   align?: "left" | "right";  // defaults to "left"
-  className?: string;         // e.g. "w-48" — works because table uses table-auto, not table-fixed
+  className?: string;         // e.g. "w-48" - works because table uses table-auto, not table-fixed
   sortable?: boolean;
 }
 
@@ -382,9 +382,9 @@ interface TableRow {
 }
 ```
 
-`w-*` column widths only take effect because the table uses `table-auto`. Switching to `table-fixed` breaks explicit widths — don't change it.
+`w-*` column widths only take effect because the table uses `table-auto`. Switching to `table-fixed` breaks explicit widths - don't change it.
 
-To right-align a `<Pill>` (which is `inline-flex`) inside a cell, wrap it in a flex container — `text-right` on the `<td>` has no effect on `inline-flex` children:
+To right-align a `<Pill>` (which is `inline-flex`) inside a cell, wrap it in a flex container - `text-right` on the `<td>` has no effect on `inline-flex` children:
 
 ```tsx
 // ✅
@@ -398,7 +398,7 @@ content: <div className="flex justify-end"><Pill status={row.status} /></div>
 `RowMenu` renders a portal-based dropdown anchored to a trigger button. Because it mounts outside the table DOM, two refs are required for the outside-click handler, and menu items must call `stopPropagation` to prevent the portal from unmounting before the click fires:
 
 ```tsx
-// Inside RowMenu.tsx — callers don't touch refs, but need to understand the constraint
+// Inside RowMenu.tsx - callers don't touch refs, but need to understand the constraint
 const buttonRef = useRef<HTMLButtonElement>(null);
 const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -412,9 +412,9 @@ const insideDropdown = dropdownRef.current?.contains(target);
 </button>
 ```
 
-Callers pass an `items` array — each item needs `label` and `onClick`. The positioning is computed from `buttonRef.current.getBoundingClientRect()` at open time.
+Callers pass an `items` array - each item needs `label` and `onClick`. The positioning is computed from `buttonRef.current.getBoundingClientRect()` at open time.
 
-### Toast — `useToast()` hook
+### Toast - `useToast()` hook
 
 Views use the `useToast()` hook from `@repo/ui`, not Sonner's `toast()` directly:
 
@@ -430,9 +430,9 @@ import { toast } from "sonner";
 
 `Providers.tsx` mounts `<Toaster position="top-right" richColors />` once at the app root. Toasts auto-dismiss after 4 seconds.
 
-### Button — shadcn pattern
+### Button - shadcn pattern
 
-`Button` uses `@base-ui/react/button` as the accessible primitive and `class-variance-authority` for variant composition. Variants map to project token classes — no CSS variables required (Tailwind v3 compatible):
+`Button` uses `@base-ui/react/button` as the accessible primitive and `class-variance-authority` for variant composition. Variants map to project token classes - no CSS variables required (Tailwind v3 compatible):
 
 ```ts
 const buttonVariants = cva("inline-flex ... focus-visible:ring-brand-500 disabled:opacity-50", {
@@ -494,12 +494,12 @@ if (!data) return <EmptyState title={s.emptyTitle} description={s.emptyDescripti
 ### Pages vs Views
 
 ```tsx
-// apps/web/src/app/manager/properties/[id]/page.tsx — thin server component
+// apps/web/src/app/manager/properties/[id]/page.tsx - thin server component
 export default function Page({ params }: { params: { id: string } }) {
   return <PropertyDetail propertyId={params.id} />;
 }
 
-// apps/web/src/client/views/properties/PropertyDetail.tsx — "use client" view
+// apps/web/src/client/views/properties/PropertyDetail.tsx - "use client" view
 export const PropertyDetail = ({ propertyId }: Props) => {
   const { data, isLoading, isError, error, refetch } = usePropertyDetail(propertyId);
   // ... guards + render
@@ -508,15 +508,15 @@ export const PropertyDetail = ({ propertyId }: Props) => {
 
 ### Component Decomposition
 
-Views that would exceed a single screen of JSX are split into co-located sub-components. Sub-components receive plain props (not hooks) — only the root view component calls hooks.
+Views that would exceed a single screen of JSX are split into co-located sub-components. Sub-components receive plain props (not hooks) - only the root view component calls hooks.
 
 ```
-UnitDetail (root — calls usePropertyDetail, usePayments, useMarkPaid, useSendReminder)
+UnitDetail (root - calls usePropertyDetail, usePayments, useMarkPaid, useSendReminder)
 ├── TenantInfoCard        (props: tenant)
 ├── ManagerLeaseCard      (props: lease, unit)
 └── PaymentHistoryTable   (props: payments, actions)
 
-TenantDashboard (root — calls useTenantDashboard)
+TenantDashboard (root - calls useTenantDashboard)
 ├── PropertyInfoCard      (props: property, unit)
 ├── ManagerInfoCard       (props: property)
 ├── LeaseDetailsCard      (props: lease)
@@ -524,7 +524,7 @@ TenantDashboard (root — calls useTenantDashboard)
 └── PayRentModal          (props: tenantId, leaseId, periodMonth, amountDue, onClose)
        └── calls usePaymentMethods, usePayRent, useAddPaymentMethod
 
-TenantProfile (root — calls useTenantProfile)
+TenantProfile (root - calls useTenantProfile)
 ├── TenantHeader          (props: tenant)
 ├── TenantCard            (props: tenant, standing)
 │   └── RiskScore         (props: standing)
@@ -538,13 +538,13 @@ TenantProfile (root — calls useTenantProfile)
 Modal open/close state and the selected item live in the **parent view**, not inside the modal. This keeps the modal stateless with respect to which row triggered it:
 
 ```tsx
-// TenantDashboard — parent owns the state
+// TenantDashboard - parent owns the state
 const [payingPeriodMonth, setPayingPeriodMonth] = useState<string | null>(null);
 const pendingPayment = payingPeriodMonth
   ? (payments.find((p) => p.periodMonth === payingPeriodMonth) ?? null)
   : null;
 
-// Modal only renders when both conditions hold — it never has to handle "no payment" internally
+// Modal only renders when both conditions hold - it never has to handle "no payment" internally
 {payingPeriodMonth && pendingPayment && lease && (
   <PayRentModal
     tenantId={tenantId}
@@ -574,7 +574,7 @@ const pendingPayment = payingPeriodMonth
 
 ## 8. Per-Row Loading State
 
-For payment table rows with in-flight actions, loading state is tracked with local component `useState` — not a global store, not `mutation.isPending` alone (which is global across all rows):
+For payment table rows with in-flight actions, loading state is tracked with local component `useState` - not a global store, not `mutation.isPending` alone (which is global across all rows):
 
 ```tsx
 const [processingPeriodMonth, setProcessingPeriodMonth] = useState<string | null>(null);
@@ -601,7 +601,7 @@ Multiple rows can be independently in-flight. `sendingReminderPeriodMonth` follo
 
 ## 9. Design System (`packages/tokens/src/`)
 
-### strings.ts — Copy Management
+### strings.ts - Copy Management
 
 All user-visible copy is stored in a single typed object, imported as `@repo/tokens`:
 
@@ -628,7 +628,7 @@ const s = strings.manager.unitDetail;
 // then: s.loading, s.emptyTitle, etc.
 ```
 
-### colors.ts — Semantic Color Map
+### colors.ts - Semantic Color Map
 
 ```ts
 export const colors = {
@@ -648,7 +648,7 @@ Components use Tailwind class names for static colors (`text-neutral-900`, `bg-b
 
 ### Why a shared `@repo/platform-types` package instead of duplicating types?
 
-Both `apps/web` route handlers and `packages/data/apiClient` need the snake_case wire types. Keeping a copy in each location means they drift silently — a field added to one is missed in the other until a runtime mismatch surfaces. A shared `@repo/platform-types` package makes the type the only source of truth; both consumers declare `"@repo/platform-types": "workspace:*"` and import directly.
+Both `apps/web` route handlers and `packages/data/apiClient` need the snake_case wire types. Keeping a copy in each location means they drift silently - a field added to one is missed in the other until a runtime mismatch surfaces. A shared `@repo/platform-types` package makes the type the only source of truth; both consumers declare `"@repo/platform-types": "workspace:*"` and import directly.
 
 ### Why `transpilePackages` instead of a build pipeline?
 
@@ -656,11 +656,11 @@ Packages ship TypeScript source directly. Next.js compiles them in-process via `
 
 ### Why `onSettled` (not `onSuccess`) for `invalidateQueries`?
 
-`onSettled` fires for both success and error. This ensures the cache stays consistent even after a failure — any optimistic update rolled back in `onError` still triggers a re-fetch to confirm server state. Using `onSuccess` alone would leave the cache stale after certain error scenarios.
+`onSettled` fires for both success and error. This ensures the cache stays consistent even after a failure - any optimistic update rolled back in `onError` still triggers a re-fetch to confirm server state. Using `onSuccess` alone would leave the cache stale after certain error scenarios.
 
 ### Why per-row loading state over `mutation.isPending`?
 
-`mutation.isPending` is `true` for any in-flight mutation on that hook instance — it cannot distinguish which row triggered it. `processingPeriodMonth: string | null` costs one `useState` and gives per-row isolation with no shared state overhead.
+`mutation.isPending` is `true` for any in-flight mutation on that hook instance - it cannot distinguish which row triggered it. `processingPeriodMonth: string | null` costs one `useState` and gives per-row isolation with no shared state overhead.
 
 ### Why `staleTime: 5 * 60 * 1000` on read queries?
 
@@ -668,4 +668,4 @@ Navigating between property detail and unit detail (and back) would trigger unne
 
 ### Why shadcn variants are mapped to token classes (not CSS variables)?
 
-shadcn's default "base-nova" style uses `@theme inline` and CSS variable-based tokens — a Tailwind v4 feature. This project uses Tailwind v3. Rather than upgrading or introducing a CSS variable layer, Button variants are written directly with token classes (`bg-brand-600`, `bg-danger-500`). The shadcn architecture (accessible primitive + `cva` + `cn`) is preserved while staying within the existing Tailwind v3 token conventions.
+shadcn's default "base-nova" style uses `@theme inline` and CSS variable-based tokens - a Tailwind v4 feature. This project uses Tailwind v3. Rather than upgrading or introducing a CSS variable layer, Button variants are written directly with token classes (`bg-brand-600`, `bg-danger-500`). The shadcn architecture (accessible primitive + `cva` + `cn`) is preserved while staying within the existing Tailwind v3 token conventions.

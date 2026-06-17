@@ -15,7 +15,7 @@ export function formatPeriod(m: string) {
 }
 
 export function formatDate(iso: string | null) {
-  if (!iso) return "—";
+  if (!iso) return "-";
   return new Date(iso).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -64,7 +64,7 @@ export const getTableRow = (row: PropertySummary): TableCell[] => {
       className: "whitespace-nowrap px-5 py-4 text-right text-sm text-neutral-600",
     },
     {
-      content: row.totalRent > 0 ? `$${row.totalRent.toLocaleString()}/mo` : "—",
+      content: row.totalRent > 0 ? `$${row.totalRent.toLocaleString()}/mo` : "-",
       className: "whitespace-nowrap px-5 py-4 text-right text-sm font-semibold text-neutral-900",
     },
     {

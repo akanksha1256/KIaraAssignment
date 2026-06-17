@@ -125,7 +125,7 @@ export const Nav = () => {
 
       {/* Bottom */}
       <div className="border-t border-sand-400 pt-3 mt-3 flex flex-col gap-3">
-        {/* Role switch — full only on md+ */}
+        {/* Role switch - full only on md+ */}
         <div className="hidden md:flex bg-sand-200 rounded-full p-[3px]">
           <button
             onClick={() => router.push("/manager")}
@@ -140,7 +140,7 @@ export const Nav = () => {
             Tenant
           </button>
         </div>
-        {/* Role switch — icon-only on small */}
+        {/* Role switch - icon-only on small */}
         <button
           onClick={() => router.push("/tenant")}
           title="Switch to Tenant"

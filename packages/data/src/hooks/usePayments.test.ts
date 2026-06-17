@@ -83,7 +83,7 @@ describe("usePayments", () => {
     await waitFor(() => expect(r1.current.isSuccess).toBe(true));
     await waitFor(() => expect(r2.current.isSuccess).toBe(true));
 
-    // Both hooks share one cache entry — API called exactly once
+    // Both hooks share one cache entry - API called exactly once
     expect(vi.mocked(api.getPayments)).toHaveBeenCalledTimes(1);
   });
 });

@@ -8,7 +8,7 @@ const GRACE_DAYS = 4;
 const startOfDay = (date: Date): Date =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-/** Last day of the grace window (inclusive) for a period month — the 20th. */
+/** Last day of the grace window (inclusive) for a period month - the 20th. */
 export const getDueWindowEnd = (periodMonth: string): Date => {
   const [year, month] = periodMonth.split("-").map(Number);
   return new Date(year, month - 1, DUE_DATE + GRACE_DAYS);

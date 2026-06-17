@@ -25,7 +25,7 @@ export const TenantProfileSkeleton = () => (
     {/* Info cards */}
     <div className="grid gap-5 lg:grid-cols-5 mb-8">
 
-      {/* TenantInfoCard — col-span-3 */}
+      {/* TenantInfoCard - col-span-3 */}
       <div className="lg:col-span-3 rounded-xl border border-sand-400 bg-white">
         <div className="flex items-center gap-2 p-6">
           <Skeleton className="w-8 h-8 rounded-full flex-none" />
@@ -54,7 +54,7 @@ export const TenantProfileSkeleton = () => (
         </div>
       </div>
 
-      {/* TenantCurrentLeaseCard — col-span-2 */}
+      {/* TenantCurrentLeaseCard - col-span-2 */}
       <div className="lg:col-span-2 rounded-xl border border-sand-400 bg-white">
         <div className="flex items-center gap-2 p-6">
           <Skeleton className="w-8 h-8 rounded-full flex-none" />

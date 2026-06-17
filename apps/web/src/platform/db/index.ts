@@ -297,7 +297,7 @@ const leases: Lease[] = [
     terms: "12-month lease. Pets allowed. Tenant pays utilities. $700 security deposit.",
     lease_document: "/documents/lease-sample.pdf",
   },
-  // Sunset Villas — Villa 1 & 2 occupied, Villa 3 vacant
+  // Sunset Villas - Villa 1 & 2 occupied, Villa 3 vacant
   {
     id: "lease-6",
     unit_id: "unit-8",
@@ -318,8 +318,8 @@ const leases: Lease[] = [
     terms: "12-month lease. Pets allowed with deposit. Tenant pays utilities.",
     lease_document: "/documents/lease-sample.pdf",
   },
-  // unit-10 (Villa 3) is vacant — no lease
-  // Parkview Terrace — Unit 1A & 2B occupied, 1B & 2A vacant
+  // unit-10 (Villa 3) is vacant - no lease
+  // Parkview Terrace - Unit 1A & 2B occupied, 1B & 2A vacant
   {
     id: "lease-8",
     unit_id: "unit-11",
@@ -340,8 +340,8 @@ const leases: Lease[] = [
     terms: "12-month lease. No subletting. Covered parking included. $700 security deposit.",
     lease_document: "/documents/lease-sample.pdf",
   },
-  // unit-12 (Unit 1B) & unit-13 (Unit 2A) are vacant — no lease
-  // Harbor View — Suite 01 & 02 occupied, Suite 03 vacant
+  // unit-12 (Unit 1B) & unit-13 (Unit 2A) are vacant - no lease
+  // Harbor View - Suite 01 & 02 occupied, Suite 03 vacant
   {
     id: "lease-10",
     unit_id: "unit-15",
@@ -372,7 +372,7 @@ const leases: Lease[] = [
     terms: "12-month lease. No pets. Concierge service included. $1,100 security deposit.",
     lease_document: "/documents/lease-sample.pdf",
   },
-  // The Grand — Studio A & B occupied, Studio C & D vacant
+  // The Grand - Studio A & B occupied, Studio C & D vacant
   {
     id: "lease-12",
     unit_id: "unit-18",
@@ -736,7 +736,7 @@ const payments: Payment[] = [
     method: null,
     last_reminded_on: null,
   },
-  // Leo – lease-12 (The Grand, Studio A) — May overdue, June outstanding
+  // Leo – lease-12 (The Grand, Studio A) - May overdue, June outstanding
   {
     id: "pay-50",
     lease_id: "lease-12",
@@ -781,7 +781,7 @@ const payments: Payment[] = [
     method: null,
     last_reminded_on: null,
   },
-  // Maya – lease-13 (The Grand, Studio B) — May overdue, June outstanding
+  // Maya – lease-13 (The Grand, Studio B) - May overdue, June outstanding
   {
     id: "pay-54",
     lease_id: "lease-13",
@@ -838,7 +838,7 @@ const payments: Payment[] = [
     method: "Bank Transfer",
     last_reminded_on: null,
   },
-  // Nina – lease-15 (Riverside Lofts, Loft D) — May overdue, June outstanding
+  // Nina – lease-15 (Riverside Lofts, Loft D) - May overdue, June outstanding
   {
     id: "pay-60",
     lease_id: "lease-15",
@@ -894,7 +894,7 @@ const payments: Payment[] = [
     method: null,
     last_reminded_on: null,
   },
-  // Omar – lease-14 (Maple Heights, Apt 103) — May overdue, June outstanding
+  // Omar – lease-14 (Maple Heights, Apt 103) - May overdue, June outstanding
   {
     id: "pay-65",
     lease_id: "lease-14",
@@ -939,7 +939,7 @@ const payments: Payment[] = [
     method: null,
     last_reminded_on: null,
   },
-  // Priya – lease-16 (Harbor View, Suite 03) — May overdue, June outstanding
+  // Priya – lease-16 (Harbor View, Suite 03) - May overdue, June outstanding
   {
     id: "pay-70",
     lease_id: "lease-16",

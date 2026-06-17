@@ -30,7 +30,7 @@ export const ScoreRing = ({ score, size = 120, innerRadius = 38, outerRadius = 5
     return (
       <div className="relative" style={{ width: size, height: size }}>
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <LeadText className="font-semibold text-espresso-300">—</LeadText>
+          <LeadText className="font-semibold text-espresso-300">-</LeadText>
         </div>
         <PieChart width={size} height={size}>
           <Pie

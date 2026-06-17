@@ -46,7 +46,7 @@ export const ManagerDashboard = () => {
         </div>
       </div>
 
-      {/* Attention hero — only show when there's something to act on */}
+      {/* Attention hero - only show when there's something to act on */}
       {totalAtRisk > 0 && (
         <AttentionHero
           totalAmount={totalAtRisk}

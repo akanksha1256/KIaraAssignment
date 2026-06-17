@@ -59,7 +59,7 @@ const { POST } = await import("@/app/api/leases/[id]/pay/route");
 
 // ── Tests ────────────────────────────────────────────────────────────────────
 
-describe("POST /api/leases/[id]/pay — mark existing payment as paid", () => {
+describe("POST /api/leases/[id]/pay - mark existing payment as paid", () => {
   it("marks an existing outstanding payment as paid and returns it", async () => {
     const req = new NextRequest("http://localhost/api/leases/lease-1/pay", {
       method: "POST",
@@ -104,7 +104,7 @@ describe("POST /api/leases/[id]/pay — mark existing payment as paid", () => {
   });
 });
 
-describe("POST /api/leases/[id]/pay — create new payment", () => {
+describe("POST /api/leases/[id]/pay - create new payment", () => {
   it("creates a new paid payment when no record exists for that period", async () => {
     // No existing record for 2024-07
     const req = new NextRequest("http://localhost/api/leases/lease-1/pay", {
@@ -127,7 +127,7 @@ describe("POST /api/leases/[id]/pay — create new payment", () => {
   });
 });
 
-describe("POST /api/leases/[id]/pay — error cases", () => {
+describe("POST /api/leases/[id]/pay - error cases", () => {
   it("returns 404 when the lease does not exist", async () => {
     const req = new NextRequest("http://localhost/api/leases/bad-lease/pay", {
       method: "POST",

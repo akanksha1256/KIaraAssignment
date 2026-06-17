@@ -1,4 +1,4 @@
-# CLAUDE.md — Project Conventions & Best Practices
+# CLAUDE.md - Project Conventions & Best Practices
 
 This file guides Claude in all sessions for this project. Follow every rule here without being asked. These were established through the development of this codebase and reflect deliberate architectural decisions.
 
@@ -8,34 +8,34 @@ This file guides Claude in all sessions for this project. Follow every rule here
 
 A two-sided rent management portal:
 
-- **Manager view** at `/manager` — property/unit/lease/tenant management, payment actions
-- **Tenant view** at `/tenant` — read-only dashboard + pay rent (tenant-1 / Alice Johnson by default)
+- **Manager view** at `/manager` - property/unit/lease/tenant management, payment actions
+- **Tenant view** at `/tenant` - read-only dashboard + pay rent (tenant-1 / Alice Johnson by default)
 
 Stack: Next.js 14 App Router · TypeScript · TanStack Query v5 · Tailwind CSS · Recharts · pnpm + Turborepo
 
 ---
 
-## 1. Data Fetching — TanStack Query
+## 1. Data Fetching - TanStack Query
 
 ### Query hooks live in `src/client/hooks/`
 
 Every async read is a `useQuery` hook, every write is a `useMutation` hook. There is no global Redux store.
 
 ```ts
-// Query key factory — always export so mutations can reference it
+// Query key factory - always export so mutations can reference it
 export const propertyDetailKey = (id: string) => ["property", "detail", id] as const;
 
 export function usePropertyDetail(propertyId: string) {
   return useQuery({
     queryKey: propertyDetailKey(propertyId),
     queryFn: () => api.getPropertyDetail(propertyId),
-    staleTime: 5 * 60 * 1000, // 5 min — prevents re-fetch on tab revisit
+    staleTime: 5 * 60 * 1000, // 5 min - prevents re-fetch on tab revisit
     enabled: !!propertyId,
   });
 }
 ```
 
-### Mutation hooks — optimistic update pattern
+### Mutation hooks - optimistic update pattern
 
 ```ts
 export function useMarkPaid(leaseId: string) {
@@ -69,11 +69,11 @@ export function useMarkPaid(leaseId: string) {
 }
 ```
 
-Always use `onSettled` (not `onSuccess`) for `invalidateQueries` — it fires for both success and error, keeping the cache consistent even after rollback.
+Always use `onSettled` (not `onSuccess`) for `invalidateQueries` - it fires for both success and error, keeping the cache consistent even after rollback.
 
 ### Per-row loading state
 
-Use `processingPeriodMonth: string | null` in local `useState` — not a global or boolean — so each row independently tracks whether it is in-flight:
+Use `processingPeriodMonth: string | null` in local `useState` - not a global or boolean - so each row independently tracks whether it is in-flight:
 
 ```ts
 const [processingPeriodMonth, setProcessingPeriodMonth] = useState<string | null>(null);
@@ -98,7 +98,7 @@ const handleMarkPaid = (periodMonth: string) => {
 | `["manager", "dashboard"]`     | Manager dashboard (stats, charts, property list)        |
 | `["property", "detail", id]`   | Property + all units                                    |
 | `["tenant", "profile", id]`    | Tenant profile (manager view)                           |
-| `["tenant", "dashboard", id]`  | Tenant dashboard (tenant view — lease + payments)       |
+| `["tenant", "dashboard", id]`  | Tenant dashboard (tenant view - lease + payments)       |
 | `["payments", leaseId]`        | Payment list for a lease                                |
 | `["paymentMethods", tenantId]` | Saved payment methods                                   |
 | `["payments", "all"]`          | Cross-portfolio payment list (manager payments page)    |
@@ -108,7 +108,7 @@ const handleMarkPaid = (periodMonth: string) => {
 
 ## 2. Import Path Rules
 
-### Types — single source of truth
+### Types - single source of truth
 
 All camelCase client types live in `src/client/types/index.ts`. Import from there:
 
@@ -116,13 +116,13 @@ All camelCase client types live in `src/client/types/index.ts`. Import from ther
 import type { Payment, Lease, TenantProfile } from "@/client/types";
 ```
 
-**Never** import `@/platform/types` in components, views, or hooks — only in `apiClient/client.ts` and `apiClient/mappers.ts`.
+**Never** import `@/platform/types` in components, views, or hooks - only in `apiClient/client.ts` and `apiClient/mappers.ts`.
 
 ### snake_case / camelCase boundary
 
-- `src/platform/types/` — snake_case wire format (matches API/DB)
-- `src/client/types/index.ts` — camelCase client types
-- `src/client/apiClient/mappers.ts` — the **only** place that converts between them
+- `src/platform/types/` - snake_case wire format (matches API/DB)
+- `src/client/types/index.ts` - camelCase client types
+- `src/client/apiClient/mappers.ts` - the **only** place that converts between them
 
 ### Path aliases
 
@@ -192,7 +192,7 @@ All logic lives in the view component (`"use client"`). Pages never contain hook
 
 ### All components are arrow functions
 
-Every React component — views, sub-components, helpers — must be defined as an arrow function and exported with `const`:
+Every React component - views, sub-components, helpers - must be defined as an arrow function and exported with `const`:
 
 ```tsx
 // ✅ correct
@@ -218,7 +218,7 @@ const s = strings.manager.unitDetail; // pick the relevant section
 // then use s.loading, s.emptyTitle, etc.
 ```
 
-If a string doesn't exist yet, add it to `strings.ts` first — never write the literal inline in JSX.
+If a string doesn't exist yet, add it to `strings.ts` first - never write the literal inline in JSX.
 
 ### Use Typography components for all text
 
@@ -242,7 +242,7 @@ Current palette:
 | `StatusLabel` | 11.5px | medium | destructive or warning |
 | `MetricValue` | 22px | semibold | espresso-900 |
 | `MetricCount` | 20px | semibold | espresso-900 |
-| `MoneyText` | 44px (t-money) | — | — |
+| `MoneyText` | 44px (t-money) | - | - |
 
 Use `className` to override color or weight when needed (e.g. `<MutedText className="text-destructive font-medium">`).
 
@@ -285,11 +285,11 @@ content: <div className="flex justify-end">
 
 `text-right` on the `<td>` does not move `inline-flex` children.
 
-### RowMenu — always use `dropdownRef` and `stopPropagation`
+### RowMenu - always use `dropdownRef` and `stopPropagation`
 
 The portal-based dropdown needs both `buttonRef` and `dropdownRef` in the outside-click handler. Menu items must call `onMouseDown={e => e.stopPropagation()}` to prevent the portal from unmounting before the click fires.
 
-### Toast — always use `useToast()` hook
+### Toast - always use `useToast()` hook
 
 ```ts
 const { showToast } = useToast();
@@ -298,7 +298,7 @@ showToast("Message here", "success"); // or "error"
 
 Toasts are fixed top-right and auto-dismiss after 4 seconds.
 
-### PillTabs — tab filter component
+### PillTabs - tab filter component
 
 `PillTabs` (`src/client/components/PillTabs.tsx`) renders pill-shaped tab buttons with optional count badges and status color schemes. Use it for filter tab groups (e.g. All / Overdue / Outstanding / Paid):
 
@@ -315,48 +315,48 @@ const tabs: PillTab<"all" | "overdue">[] = [
 
 Color schemes: `"default"` | `"overdue"` | `"outstanding"` | `"paid"` | `"vacant"`.
 
-### ScoreRing — tenant payment score ring
+### ScoreRing - tenant payment score ring
 
 `ScoreRing` (`src/client/components/ScoreRing.tsx`) renders a Recharts donut ring showing a tenant's on-time payment score. Accepts `score` (0–100 or null for no data) and optional `size`, `innerRadius`, `outerRadius`. Color is derived automatically from the score range.
 
-### FilterAndSearchSection + FilterPopup — reusable filter bar
+### FilterAndSearchSection + FilterPopup - reusable filter bar
 
 `FilterAndSearchSection` (`src/client/components/FilterAndSearchSection.tsx`) composes the filter toggle button, `FilterPopup`, applied-filter chips, search input, and result count into a single bar. Pass `colLabels`, `getOptions`, and state setters to wire it up. The popup supports multi-row filters where each row picks a column and a value.
 
 ---
 
-## 6. Adding a New Feature — Checklist
+## 6. Adding a New Feature - Checklist
 
 When adding a new data-driven feature, follow this order:
 
-1. **Platform type** — add to `src/platform/types/index.ts` (snake_case)
-2. **DB seed** — add data to `src/platform/db/index.ts`
-3. **API route** — add route handler under `src/app/api/`
-4. **Client type** — add to `src/client/types/index.ts` (camelCase)
-5. **Mapper** — add mapping function in `src/client/apiClient/mappers.ts`
-6. **API client method** — add to `src/client/apiClient/client.ts`
-7. **Query/mutation hook** — add to `src/client/hooks/` with exported key factory
-8. **View** — build view component with three-guard loading pattern, using the new hook
-9. **Page** — add thin server component under `src/app/`
-10. **Strings** — add all copy to `strings.ts`
+1. **Platform type** - add to `src/platform/types/index.ts` (snake_case)
+2. **DB seed** - add data to `src/platform/db/index.ts`
+3. **API route** - add route handler under `src/app/api/`
+4. **Client type** - add to `src/client/types/index.ts` (camelCase)
+5. **Mapper** - add mapping function in `src/client/apiClient/mappers.ts`
+6. **API client method** - add to `src/client/apiClient/client.ts`
+7. **Query/mutation hook** - add to `src/client/hooks/` with exported key factory
+8. **View** - build view component with three-guard loading pattern, using the new hook
+9. **Page** - add thin server component under `src/app/`
+10. **Strings** - add all copy to `strings.ts`
 
 ---
 
 ## 7. What NOT to Do
 
-- Do not use Redux, `createSlice`, `createAction`, `extraReducers`, epics, or RxJS — the project uses TanStack Query
+- Do not use Redux, `createSlice`, `createAction`, `extraReducers`, epics, or RxJS - the project uses TanStack Query
 - Do not import `@/platform/types` in components, views, or hooks
 - Do not import types from anywhere other than `@/client/types` in client code
-- Do not define React components as `function Foo()` — always use `export const Foo = () =>`
-- Do not hardcode copy strings in components — add them to `strings.ts` first, then import via `@repo/tokens`
-- Do not use raw `text-[Xpx]` Tailwind classes — use a component from `Typography.tsx`; add one if missing
-- Do not hardcode colors — use the design token classes or `colors.ts` from `@repo/tokens`
-- Do not define skeleton loaders inline — put them in a `*LoadingScreen.tsx` file next to the view
-- Do not name icon imports without the `Icon` suffix — use `import { Building2 as Building2Icon } from "lucide-react"`
+- Do not define React components as `function Foo()` - always use `export const Foo = () =>`
+- Do not hardcode copy strings in components - add them to `strings.ts` first, then import via `@repo/tokens`
+- Do not use raw `text-[Xpx]` Tailwind classes - use a component from `Typography.tsx`; add one if missing
+- Do not hardcode colors - use the design token classes or `colors.ts` from `@repo/tokens`
+- Do not define skeleton loaders inline - put them in a `*LoadingScreen.tsx` file next to the view
+- Do not name icon imports without the `Icon` suffix - use `import { Building2 as Building2Icon } from "lucide-react"`
 - Do not use `table-fixed` in DataTable (breaks explicit column widths)
-- Do not use `text-right` to align `inline-flex` pill elements — use `flex justify-end` wrapper
+- Do not use `text-right` to align `inline-flex` pill elements - use `flex justify-end` wrapper
 - Do not add `$` or currency formatting to count-based charts (payment status donut)
-- Do not use `animate-in` / `slide-in-from-*` Tailwind classes — `tailwindcss-animate` is not installed
-- Do not store JS `Date` objects in the DB or state — always use ISO UTC strings
+- Do not use `animate-in` / `slide-in-from-*` Tailwind classes - `tailwindcss-animate` is not installed
+- Do not store JS `Date` objects in the DB or state - always use ISO UTC strings
 - Do not skip `last_reminded_on: null` when creating new payment records
-- Do not use `onSuccess` alone for `invalidateQueries` — always use `onSettled` so the cache stays consistent after errors too
+- Do not use `onSuccess` alone for `invalidateQueries` - always use `onSettled` so the cache stays consistent after errors too

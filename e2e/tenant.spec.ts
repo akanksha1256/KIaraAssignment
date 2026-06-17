@@ -40,8 +40,8 @@ test.describe("Pay Rent modal", () => {
     await expect(payBtn).toBeVisible();
     await payBtn.click();
 
-    // Modal title includes "Pay Rent —"
-    await expect(page.getByText(/Pay Rent —/)).toBeVisible();
+    // Modal title includes "Pay Rent -"
+    await expect(page.getByText(/Pay Rent -/)).toBeVisible();
   });
 
   test("modal shows the Payment Method selector", async ({ page }) => {
@@ -65,11 +65,11 @@ test.describe("Pay Rent modal", () => {
     await page.goto("/tenant");
 
     await page.getByRole("button", { name: "Pay Rent" }).first().click();
-    await expect(page.getByText(/Pay Rent —/)).toBeVisible();
+    await expect(page.getByText(/Pay Rent -/)).toBeVisible();
 
     await page.getByRole("button", { name: "Cancel" }).click();
 
-    await expect(page.getByText(/Pay Rent —/)).not.toBeVisible();
+    await expect(page.getByText(/Pay Rent -/)).not.toBeVisible();
   });
 
   test("paying with a saved method shows a success toast", async ({ page }) => {
@@ -82,7 +82,7 @@ test.describe("Pay Rent modal", () => {
     if (await methodOption.isVisible()) {
       await methodOption.click();
     } else {
-      // Methods may render as clickable rows — click the first one
+      // Methods may render as clickable rows - click the first one
       await page.locator("[data-testid='payment-method']").first().click();
     }
 

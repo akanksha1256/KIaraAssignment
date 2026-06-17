@@ -66,7 +66,7 @@ function makeWrapper() {
 
 afterEach(() => vi.clearAllMocks());
 
-describe("usePayRent — optimistic update", () => {
+describe("usePayRent - optimistic update", () => {
   it("optimistically marks the payment as paid in the tenant dashboard cache", async () => {
     vi.mocked(api.payRent).mockImplementationOnce(
       () =>
@@ -102,7 +102,7 @@ describe("usePayRent — optimistic update", () => {
     });
   });
 
-  it("preserves the dashboard shape — only the payments array is mutated", async () => {
+  it("preserves the dashboard shape - only the payments array is mutated", async () => {
     vi.mocked(api.payRent).mockImplementationOnce(
       () =>
         new Promise<Payment>((resolve) => {
@@ -126,7 +126,7 @@ describe("usePayRent — optimistic update", () => {
   });
 });
 
-describe("usePayRent — rollback on failure", () => {
+describe("usePayRent - rollback on failure", () => {
   it("restores the full dashboard cache state when the API call fails", async () => {
     vi.mocked(api.payRent).mockRejectedValueOnce(new Error("Payment declined"));
 
@@ -150,7 +150,7 @@ describe("usePayRent — rollback on failure", () => {
     vi.mocked(api.payRent).mockRejectedValueOnce(new Error("Payment declined"));
 
     const { queryClient, wrapper } = makeWrapper();
-    // No data in cache — onMutate returns undefined for previous
+    // No data in cache - onMutate returns undefined for previous
 
     const { result } = renderHook(() => usePayRent("tenant-1", "lease-1"), { wrapper });
 
@@ -164,7 +164,7 @@ describe("usePayRent — rollback on failure", () => {
   });
 });
 
-describe("usePayRent — cache invalidation", () => {
+describe("usePayRent - cache invalidation", () => {
   it("invalidates the tenant dashboard query on settle", async () => {
     vi.mocked(api.payRent).mockResolvedValueOnce({
       ...outstandingPayment,

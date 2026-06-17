@@ -21,8 +21,8 @@ export interface TableRow {
   key: string;
   onClick?: () => void;
   cells: TableCell[];
-  urgent?: boolean; // overdue row — gets left-edge accent
-  vacant?: boolean; // vacant row — gets subtle stripe
+  urgent?: boolean; // overdue row - gets left-edge accent
+  vacant?: boolean; // vacant row - gets subtle stripe
   flashState?: "success" | "error" | null;
 }
 

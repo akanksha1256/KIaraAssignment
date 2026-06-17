@@ -279,7 +279,7 @@ const TenantRow = ({ item }: { item: TenantListItem }) => {
             <span className="text-muted-foreground font-normal text-[11px]">/mo</span>
           </span>
         ) : (
-          <span className="text-espresso-300 text-[13px]">—</span>
+          <span className="text-espresso-300 text-[13px]">-</span>
         )}
       </td>
 

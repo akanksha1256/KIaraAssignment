@@ -43,7 +43,7 @@ export const strings = {
     colDate: "Paid Date",
     colMethod: "Method",
     colStatus: "Status",
-    notPaid: "—",
+    notPaid: "-",
     emptyTitle: "No payments recorded",
     emptyDescription: "Payments will appear here once a lease is active.",
     statusPill: {
@@ -65,7 +65,7 @@ export const strings = {
       title: "Manager Dashboard",
       subtitle: "Overview of your portfolio performance.",
       pageTitle: "Dashboard",
-      pageSubtitlePrefix: "Your portfolio at a glance —",
+      pageSubtitlePrefix: "Your portfolio at a glance -",
 
       loading: "Loading dashboard…",
       error: "Could not load dashboard data.",
@@ -134,7 +134,7 @@ export const strings = {
         outstandingPrefix: "outstanding across",
         outstandingCycleSuffix: "leases this cycle.",
         overdueWarning: (count: number) =>
-          `${count} are now overdue — clear these first to protect collection rate.`,
+          `${count} are now overdue - clear these first to protect collection rate.`,
         overdueLabel: (count: number) => `Overdue · ${count} lease${count !== 1 ? "s" : ""}`,
         outstandingLabel: (count: number) =>
           `Outstanding · ${count} lease${count !== 1 ? "s" : ""}`,
@@ -170,7 +170,7 @@ export const strings = {
       },
 
       overdueAlert: (count: number) =>
-        `${count} unit${count !== 1 ? "s" : ""} overdue — action needed`,
+        `${count} unit${count !== 1 ? "s" : ""} overdue - action needed`,
 
       unitMixBar: {
         heading: "Unit status breakdown",
@@ -200,7 +200,7 @@ export const strings = {
     },
 
     addLease: {
-      title: (unitLabel: string) => `Add Lease — ${unitLabel}`,
+      title: (unitLabel: string) => `Add Lease - ${unitLabel}`,
       subtitle: "Assign a tenant and set lease terms for this unit.",
       fieldTenant: "Tenant",
       fieldTenantPlaceholder: "Select a tenant",
@@ -460,7 +460,7 @@ export const strings = {
         colDate: "Paid Date",
         colMethod: "Method",
         colStatus: "Status",
-        notPaid: "—",
+        notPaid: "-",
       },
 
       statusPill: {
@@ -510,7 +510,7 @@ export const strings = {
         colMethod: "Method",
         colStatus: "Status",
         colActions: "",
-        notPaid: "—",
+        notPaid: "-",
         sendReminder: "Send Reminder",
         markPaid: "Mark as Paid",
         reminderSent: "Reminder sent",
@@ -562,7 +562,7 @@ export const strings = {
         outstanding: "Payment outstanding",
         payNow: "Pay rent now",
         dueFor: (period: string) => `Due for ${period}`,
-        pastDue: " — this payment is past due.",
+        pastDue: " - this payment is past due.",
         allClearTitle: "All payments up to date",
         allClearDescription: "You have no outstanding or overdue payments.",
       },
@@ -575,7 +575,7 @@ export const strings = {
       },
     },
     payRentModal: {
-      title: (period: string) => `Pay Rent — ${period}`,
+      title: (period: string) => `Pay Rent - ${period}`,
       amount: "Amount Due",
       selectMethod: "Payment Method",
       noMethods: "No payment methods saved.",

@@ -60,7 +60,7 @@ export const UnitRows = ({
                 <span className="text-muted-foreground font-normal text-[11px]">/mo</span>
               </span>
             ) : (
-              <span className="text-espresso-300 text-[13px]">—</span>
+              <span className="text-espresso-300 text-[13px]">-</span>
             )}
           </td>
           <td className="px-4 py-2.5 text-right">

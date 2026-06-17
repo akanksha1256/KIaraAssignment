@@ -1,13 +1,13 @@
-# High-Level Design — Rent Management Portal
+# High-Level Design - Rent Management Portal
 
 ## 1. Overview
 
 The Rent Management Portal is a two-sided web application serving two distinct user personas over a single shared data model:
 
-- **Property Manager** — oversees properties, units, leases, tenants, and rent collection
-- **Tenant** — views their own lease, property details, payment history, and can pay rent
+- **Property Manager** - oversees properties, units, leases, tenants, and rent collection
+- **Tenant** - views their own lease, property details, payment history, and can pay rent
 
-The application is built as a pnpm + Turborepo monorepo. The Next.js app is a thin shell that consumes three shared workspace packages. There is no authentication — the manager view and tenant view are separated by route namespace (`/manager` vs `/tenant`).
+The application is built as a pnpm + Turborepo monorepo. The Next.js app is a thin shell that consumes three shared workspace packages. There is no authentication - the manager view and tenant view are separated by route namespace (`/manager` vs `/tenant`).
 
 ---
 
@@ -62,7 +62,7 @@ The application is built as a pnpm + Turborepo monorepo. The Next.js app is a th
 | Styling           | Tailwind CSS v3 + design token preset    | Utility-first with a single semantic color/spacing token source (`@repo/tokens`)                                                        |
 | Data fetching     | TanStack Query v5                        | Declarative async state, automatic caching, `staleTime` deduplication, and first-class optimistic mutation support                      |
 | Component library | shadcn/ui                                | Accessible primitives (`@base-ui/react`) + `class-variance-authority` for variant composition; variants mapped to project token classes |
-| Toast             | Sonner                                   | shadcn's recommended toast solution — `<Toaster />` in `Providers`, imperative `toast()` / `toast.error()` at call sites                |
+| Toast             | Sonner                                   | shadcn's recommended toast solution - `<Toaster />` in `Providers`, imperative `toast()` / `toast.error()` at call sites                |
 | Charts            | Recharts                                 | Composable, React-native charting for revenue and payment status                                                                        |
 | Icons             | Lucide React                             | Consistent icon set, also used for the shadcn-style `Spinner` (`Loader2 + animate-spin`)                                                |
 | Mock backend      | Next.js route handlers + in-memory store | No real DB needed; artificial delay and forced-failure flags for testability                                                            |
@@ -100,7 +100,7 @@ The application is built as a pnpm + Turborepo monorepo. The Next.js app is a th
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-Packages ship TypeScript source directly. `apps/web/next.config.mjs` declares `transpilePackages: ["@repo/tokens", "@repo/ui", "@repo/data"]` — no build step or `dist/` folder required.
+Packages ship TypeScript source directly. `apps/web/next.config.mjs` declares `transpilePackages: ["@repo/tokens", "@repo/ui", "@repo/data"]` - no build step or `dist/` folder required.
 
 ---
 
@@ -113,16 +113,16 @@ The manager has full visibility into the portfolio and can take actions on payme
 ```
 Manager Dashboard (/manager)
 │
-├── AttentionHero panel (conditional — shown only when overdue/outstanding amounts exist)
+├── AttentionHero panel (conditional - shown only when overdue/outstanding amounts exist)
 │   ├── Total at-risk amount, overdue vs outstanding breakdown
 │   ├── "Send All Reminders" bulk action
-│   └── AtRiskLeasesSection — scrollable at-risk lease rows
+│   └── AtRiskLeasesSection - scrollable at-risk lease rows
 │
 ├── Portfolio stats (with month-over-month trend deltas)
 │   ├── Properties / occupancy / monthly rent / collection rate
 │   └── Trend badges: new leases this month, rent added, collection rate delta vs prior period
 │
-├── Monthly Revenue chart (expected vs collected — last 12 months)
+├── Monthly Revenue chart (expected vs collected - last 12 months)
 └── Payment Status donut (paid / outstanding / overdue counts + amounts)
 
 Manager Payments (/manager/payments)
@@ -151,7 +151,7 @@ Tenant List (/manager/tenants)
 
 Tenant Profile (/manager/tenants/[id])
 ├── Tenant info + KYC status
-├── ScoreRing — on-time payment score (donut ring, 0–100)
+├── ScoreRing - on-time payment score (donut ring, 0–100)
 ├── Current lease card
 └── Payment history (read-only)
 ```
@@ -182,7 +182,7 @@ Tenant Dashboard (/tenant)
 
 ```
 1. Component renders
-   → usePropertyDetail(propertyId) from @repo/data — TanStack useQuery
+   → usePropertyDetail(propertyId) from @repo/data - TanStack useQuery
 
 2. On first call: status = "pending"
    → component renders <LoadingState />
@@ -200,7 +200,7 @@ Tenant Dashboard (/tenant)
    → component renders <ErrorState onRetry={refetch} />
 ```
 
-### Write Flow — Mark as Paid (optimistic update)
+### Write Flow - Mark as Paid (optimistic update)
 
 ```
 1. Manager clicks "Mark as Paid"
@@ -279,8 +279,8 @@ TanStack Query uses structured array keys for cache targeting and invalidation:
 | ------------------------------------ | ---------------------------------------------------------- |
 | `["manager", "dashboard"]`           | Manager dashboard (stats, charts, property list)           |
 | `["property", "detail", propertyId]` | Property detail + units                                    |
-| `["tenant", "profile", tenantId]`    | Tenant profile (manager view — KYC, standing, payments)    |
-| `["tenant", "dashboard", tenantId]`  | Tenant dashboard (lease, property, payments — tenant view) |
+| `["tenant", "profile", tenantId]`    | Tenant profile (manager view - KYC, standing, payments)    |
+| `["tenant", "dashboard", tenantId]`  | Tenant dashboard (lease, property, payments - tenant view) |
 | `["payments", leaseId]`              | Payment list for a lease (manager unit detail view)        |
 | `["paymentMethods", tenantId]`       | Saved payment methods for a tenant                         |
 
@@ -316,7 +316,7 @@ Several fields returned by the API are derived at query time rather than stored:
 | `MonthlyRevenue`                 | Aggregated from payments, last 12 months (always 12 slots, zeros for empty months)   |
 | `StatsTrend`                     | New leases this month, rent added this month, prior period's collection rate          |
 | `PaymentBreakdown.overdue_amount`| Sum of `amount_due` across all overdue payments                                      |
-| `AtRiskLease`                    | Denormalized row: tenant, property, unit, amount due, days overdue — sorted overdue-first |
+| `AtRiskLease`                    | Denormalized row: tenant, property, unit, amount due, days overdue - sorted overdue-first |
 
 ---
 
@@ -329,7 +329,7 @@ packages/tokens/src/
 ├── colors.ts          Semantic palette: brand, neutral, success, warning, danger, chart
 ├── fonts.ts           Font family definitions
 ├── spaces.ts          Spacing scale
-├── strings.ts         All UI copy — manager.*, tenant.*, paymentTable.*
+├── strings.ts         All UI copy - manager.*, tenant.*, paymentTable.*
 └── tailwindPreset.js  Extends Tailwind with design tokens (consumed by apps/web)
 ```
 
@@ -382,7 +382,7 @@ All pages are thin Next.js server components that simply render their correspond
 
 | Area                   | Current State                                        | With More Time                                                                            |
 | ---------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| Authentication         | None — views are separated by route only             | JWT-based auth with role-based routing                                                    |
+| Authentication         | None - views are separated by route only             | JWT-based auth with role-based routing                                                    |
 | Real-time / sync       | Not implemented                                      | WebSocket or SSE for multi-tab sync                                                       |
 | Test coverage          | Platform unit tests (21), hook tests, API route tests, E2E | Expand to cover new hooks (useAllPayments, useCreateLease) and create-flow mutations |
 | Pagination             | All data loaded at once                              | Cursor-based pagination with TanStack Query's `useInfiniteQuery`                          |

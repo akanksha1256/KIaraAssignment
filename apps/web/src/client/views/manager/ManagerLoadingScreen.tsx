@@ -1,6 +1,6 @@
 import { Skeleton } from "@repo/ui";
 
-// Dashboard skeleton — mirrors the actual layout
+// Dashboard skeleton - mirrors the actual layout
 export const ManagerDashboardSkeleton = () => {
   return (
     <div className="space-y-6 p-8">

@@ -1,4 +1,4 @@
-// Platform types — snake_case to match API/DB wire format
+// Platform types - snake_case to match API/DB wire format
 
 export interface Property {
   id: string;

@@ -1,4 +1,4 @@
-// Kiara type scale — Albert Sans primary, Sentient for display/editorial
+// Kiara type scale - Albert Sans primary, Sentient for display/editorial
 export const fontFamilies = {
   sans: "'Albert Sans', system-ui, sans-serif",
   serif: "'Sentient', Georgia, serif",
@@ -24,7 +24,7 @@ export const typeScale = {
   },
 } as const;
 
-// Legacy — kept for any remaining references, map to new scale
+// Legacy - kept for any remaining references, map to new scale
 export const fontSizes = {
   extraSmall: "12px",
   small: "13px",

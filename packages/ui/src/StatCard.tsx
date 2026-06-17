@@ -11,7 +11,7 @@ function TrendPill({ direction, label }: { direction: "up" | "down" | "flat"; la
       : direction === "down"
       ? "text-destructive bg-destructive-bg"
       : "text-muted-foreground bg-sand-100";
-  const arrow = direction === "up" ? "▲" : direction === "down" ? "▼" : "—";
+  const arrow = direction === "up" ? "▲" : direction === "down" ? "▼" : "-";
   return (
     <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[12px] font-semibold ${cls}`}>
       {arrow} {label}

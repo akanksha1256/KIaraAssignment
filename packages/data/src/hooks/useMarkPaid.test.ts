@@ -46,7 +46,7 @@ function makeWrapper() {
 
 afterEach(() => vi.clearAllMocks());
 
-describe("useMarkPaid — optimistic update", () => {
+describe("useMarkPaid - optimistic update", () => {
   it("applies the optimistic update to the cache immediately on mutate", async () => {
     // Delay the API response so we can observe the optimistic state
     vi.mocked(api.payRent).mockImplementationOnce(
@@ -97,7 +97,7 @@ describe("useMarkPaid — optimistic update", () => {
   });
 });
 
-describe("useMarkPaid — rollback on failure", () => {
+describe("useMarkPaid - rollback on failure", () => {
   it("restores the previous cache state when the API call fails", async () => {
     vi.mocked(api.payRent).mockRejectedValueOnce(new Error("Payment failed"));
 
@@ -119,11 +119,11 @@ describe("useMarkPaid — rollback on failure", () => {
     expect(cached?.[0].amountPaid).toBe(0);
   });
 
-  it("does not throw when onMutate has no prior data — isError is true and mutation settles", async () => {
+  it("does not throw when onMutate has no prior data - isError is true and mutation settles", async () => {
     vi.mocked(api.payRent).mockRejectedValueOnce(new Error("Payment failed"));
 
     const { queryClient, wrapper } = makeWrapper();
-    // No prior data — previous will be undefined; rollback guard skips setQueryData
+    // No prior data - previous will be undefined; rollback guard skips setQueryData
 
     const { result } = renderHook(() => useMarkPaid("lease-1"), { wrapper });
 
@@ -140,7 +140,7 @@ describe("useMarkPaid — rollback on failure", () => {
   });
 });
 
-describe("useMarkPaid — cache invalidation", () => {
+describe("useMarkPaid - cache invalidation", () => {
   it("calls invalidateQueries for the payments key on success", async () => {
     vi.mocked(api.payRent).mockResolvedValueOnce(paidPayment);
 
