@@ -51,21 +51,12 @@ function PaymentIcon() {
   );
 }
 
-function BellIcon() {
-  return (
-    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-    </svg>
-  );
-}
 
 const managerNav = [
   { href: "/manager", label: "Dashboard", icon: <HomeIcon /> },
   { href: "/manager/properties", label: "Properties", icon: <BuildingIcon /> },
   { href: "/manager/tenants", label: "Tenants", icon: <UsersIcon /> },
   { href: "/manager/payments", label: "Payments", icon: <PaymentIcon /> },
-  { href: "/manager/notifications", label: "Notifications", icon: <BellIcon />, badge: 3 },
 ];
 
 export function Nav() {
@@ -97,19 +88,19 @@ export function Nav() {
   }
 
   return (
-    <aside className="w-[250px] flex-none bg-cream border-r border-sand-400 sticky top-0 h-screen flex flex-col py-5 px-4">
+    <aside className="w-[56px] md:w-[250px] flex-none bg-cream border-r border-sand-400 sticky top-0 h-screen flex flex-col py-5 px-2 md:px-4 transition-all duration-200">
       {/* Brand */}
-      <div className="flex items-center gap-3 px-3 pb-6">
+      <div className="flex items-center gap-3 px-1 md:px-3 pb-6 justify-center md:justify-start">
         <PinwheelIcon />
-        <span className="font-semibold tracking-[0.12em] text-espresso-900 text-[16px]">KIARA</span>
+        <span className="hidden md:inline font-semibold tracking-[0.12em] text-espresso-900 text-[16px]">KIARA</span>
       </div>
 
       {/* Nav items */}
       <nav className="flex flex-col gap-0.5 flex-1" aria-label="Main navigation">
-        <p className="text-[11px] font-semibold tracking-[0.09em] uppercase text-espresso-300 px-3 py-2 mt-2">
+        <p className="hidden md:block text-[11px] font-semibold tracking-[0.09em] uppercase text-espresso-300 px-3 py-2 mt-2">
           Management
         </p>
-        {managerNav.map(({ href, label, icon, badge }) => {
+        {managerNav.map(({ href, label, icon }) => {
           const active = href === "/manager"
             ? pathname === "/manager"
             : pathname.startsWith(href);
@@ -117,8 +108,9 @@ export function Nav() {
             <Link
               key={href}
               href={href}
+              title={label}
               className={[
-                "relative flex items-center gap-3 rounded-md px-3 py-2 font-medium text-[14.5px] transition-colors duration-fast",
+                "relative flex items-center gap-3 rounded-md px-2 md:px-3 py-2 font-medium text-[14.5px] transition-colors duration-fast justify-center md:justify-start",
                 active
                   ? "bg-coral-50 text-coral-600"
                   : "text-espresso-700 hover:bg-sand-200",
@@ -128,12 +120,7 @@ export function Nav() {
                 <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-[3px] bg-coral-500" />
               )}
               <span className="w-5 h-5 flex items-center justify-center flex-none">{icon}</span>
-              <span className="flex-1">{label}</span>
-              {badge && (
-                <span className="min-w-[18px] h-[18px] rounded-full bg-coral-500 text-white text-[11px] font-semibold grid place-items-center px-[5px]">
-                  {badge}
-                </span>
-              )}
+              <span className="hidden md:flex flex-1">{label}</span>
             </Link>
           );
         })}
@@ -141,8 +128,8 @@ export function Nav() {
 
       {/* Bottom */}
       <div className="border-t border-sand-400 pt-3 mt-3 flex flex-col gap-3">
-        {/* Role switch */}
-        <div className="flex bg-sand-200 rounded-full p-[3px]">
+        {/* Role switch — full only on md+ */}
+        <div className="hidden md:flex bg-sand-200 rounded-full p-[3px]">
           <button
             onClick={() => router.push("/manager")}
             className="flex-1 text-[12.5px] font-medium rounded-full py-1.5 bg-white text-espresso-900 shadow-sm transition-all duration-normal"
@@ -156,12 +143,20 @@ export function Nav() {
             Tenant
           </button>
         </div>
+        {/* Role switch — icon-only on small */}
+        <button
+          onClick={() => router.push("/tenant")}
+          title="Switch to Tenant"
+          className="md:hidden w-9 h-9 mx-auto rounded-full bg-sand-200 text-espresso-700 hover:bg-sand-400 text-[11px] font-semibold grid place-items-center transition-colors"
+        >
+          T
+        </button>
         {/* Profile */}
-        <div className="flex items-center gap-3 px-2.5 py-1.5 rounded-md hover:bg-sand-200 cursor-pointer transition-colors duration-fast">
+        <div className="flex items-center gap-3 px-0.5 md:px-2.5 py-1.5 rounded-md hover:bg-sand-200 cursor-pointer transition-colors duration-fast justify-center md:justify-start">
           <div className="w-[34px] h-[34px] rounded-full bg-gradient-to-br from-coral-500 to-maroon-600 text-white grid place-items-center text-[13px] font-semibold flex-none">
             JC
           </div>
-          <div className="flex-1 leading-tight">
+          <div className="hidden md:block flex-1 leading-tight">
             <div className="text-[13.5px] font-semibold text-espresso-900">James Carter</div>
             <div className="text-[11.5px] text-muted-foreground">Manager</div>
           </div>

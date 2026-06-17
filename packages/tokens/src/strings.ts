@@ -170,6 +170,9 @@ export const strings = {
       subtitle: "Assign a tenant and set lease terms for this unit.",
       fieldTenant: "Tenant",
       fieldTenantPlaceholder: "Select a tenant",
+      fieldTenantHasLease: "(has lease)",
+      createNewTenant: "Create new tenant",
+      selectExistingTenant: "Select existing tenant",
       fieldRent: "Monthly Rent ($)",
       fieldRentPlaceholder: "e.g. 2500",
       fieldStartDate: "Start Date",
@@ -180,6 +183,15 @@ export const strings = {
       submitting: "Creating…",
       cancel: "Cancel",
       successToast: (unitLabel: string) => `Lease created for ${unitLabel}.`,
+      newTenant: {
+        heading: "New Tenant",
+        fieldName: "Full Name",
+        fieldNamePlaceholder: "e.g. Alice Johnson",
+        fieldEmail: "Email",
+        fieldEmailPlaceholder: "e.g. alice@example.com",
+        fieldContact: "Contact (optional)",
+        fieldContactPlaceholder: "e.g. +1 512-555-0101",
+      },
     },
 
     addProperty: {
@@ -309,6 +321,22 @@ export const strings = {
       emptyTitle: "No tenants yet",
       emptyDescription: "Tenants will appear here once leases are created.",
       noActiveLease: "No active lease",
+      addTenantButton: "Add Tenant",
+      addTenant: {
+        title: "Add Tenant",
+        subtitle: "Create a new tenant profile. You can assign a lease later.",
+        fieldName: "Full Name",
+        fieldNamePlaceholder: "e.g. Alice Johnson",
+        fieldEmail: "Email",
+        fieldEmailPlaceholder: "e.g. alice@example.com",
+        fieldContact: "Contact (optional)",
+        fieldContactPlaceholder: "e.g. +1 512-555-0101",
+        submit: "Add Tenant",
+        submitting: "Adding…",
+        cancel: "Cancel",
+        successToast: (name: string) => `"${name}" added successfully.`,
+        failedToast: "Failed to add tenant.",
+      },
     },
 
     tenantProfile: {

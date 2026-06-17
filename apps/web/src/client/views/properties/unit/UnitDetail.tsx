@@ -118,13 +118,9 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
       </div>
 
       {/* Info cards */}
-      <div className="flex items-stretch gap-5 mb-8">
-        <div className="w-[35%]">
-          <TenantCard tenant={unit.tenant} />
-        </div>
-        <div className="flex-1">
-          <ManagerLeaseCard lease={unit.lease} />
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
+        <TenantCard tenant={unit.tenant} />
+        <ManagerLeaseCard lease={unit.lease} />
       </div>
 
       {/* Payment history */}
@@ -134,9 +130,11 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
             <CreditCard className="h-4 w-4 text-muted-foreground" />
             <h2 className="text-[18px] font-semibold text-espresso-900">
               Payment history
-              <span className="ml-2 text-[14px] font-normal text-muted-foreground">
-                ({payments.length})
-              </span>
+              {!paymentsLoading && (
+                <span className="ml-2 text-[14px] font-normal text-muted-foreground">
+                  ({payments.length})
+                </span>
+              )}
             </h2>
           </div>
           <PaymentHistoryTable

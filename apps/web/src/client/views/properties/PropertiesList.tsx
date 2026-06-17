@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useManagerDashboard, usePropertyDetail, useMarkPaid, useSendReminder, useCreateProperty, useCreateLease, useAllTenants, MANAGER_DASHBOARD_KEY, propertyDetailKey } from "@repo/data";
+import { useManagerDashboard, usePropertyDetail, useMarkPaid, useSendReminder, useCreateProperty, useCreateLease, useCreateTenant, useAllTenants, MANAGER_DASHBOARD_KEY, propertyDetailKey } from "@repo/data";
 import { useQueryClient } from "@tanstack/react-query";
 import type { PropertyDetailData } from "@repo/data";
 import { ErrorState } from "@/client/views/ErrorScreen";
@@ -67,10 +67,15 @@ const AddLeaseModal = ({
 }) => {
   const { showToast } = useToast();
   const createLease = useCreateLease(propertyId);
+  const createTenant = useCreateTenant();
   const { data: tenants, isLoading: tenantsLoading } = useAllTenants();
   const overlayRef = useRef<HTMLDivElement>(null);
 
+  const [tenantMode, setTenantMode] = useState<"select" | "new">("select");
   const [tenantId, setTenantId] = useState("");
+  const [newName, setNewName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newContact, setNewContact] = useState("");
   const [rent, setRent] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -83,9 +88,16 @@ const AddLeaseModal = ({
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose]);
 
+  const isPending = createLease.isPending || createTenant.isPending;
+
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!tenantId)         e.tenantId = sc.validation.required;
+    if (tenantMode === "select") {
+      if (!tenantId) e.tenantId = sc.validation.required;
+    } else {
+      if (!newName.trim()) e.newName = sc.validation.required;
+      if (!newEmail.trim()) e.newEmail = sc.validation.required;
+    }
     if (!rent || Number(rent) <= 0) e.rent = sc.validation.invalidAmount;
     if (!startDate)        e.startDate = sc.validation.required;
     if (!endDate)          e.endDate = sc.validation.required;
@@ -93,15 +105,11 @@ const AddLeaseModal = ({
     return e;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const errs = validate();
-    if (Object.keys(errs).length) { setErrors(errs); return; }
-
+  const doCreateLease = (resolvedTenantId: string) => {
     createLease.mutate(
       {
         unitId: unit.id,
-        tenantId,
+        tenantId: resolvedTenantId,
         monthlyRent: Number(rent),
         startDate: new Date(startDate).toISOString(),
         endDate: new Date(endDate).toISOString(),
@@ -118,16 +126,32 @@ const AddLeaseModal = ({
     );
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+
+    if (tenantMode === "new") {
+      createTenant.mutate(
+        { name: newName.trim(), email: newEmail.trim(), contact: newContact.trim() },
+        {
+          onSuccess: (t) => doCreateLease(t.id),
+          onError: (err) => showToast((err as Error).message ?? "Failed to create tenant.", "error"),
+        },
+      );
+    } else {
+      doCreateLease(tenantId);
+    }
+  };
+
   const inputCls = (field: string) =>
     `h-10 w-full rounded-lg border px-3 text-[13.5px] text-espresso-900 bg-white placeholder:text-espresso-300 focus:outline-none focus:ring-2 focus:ring-coral-500/30 transition-colors ${
       errors[field] ? "border-destructive" : "border-sand-400"
     }`;
 
-  // Only show tenants who don't already have an active lease
-  const activeTenantIds = new Set(
+  const tenantsWithLease = new Set(
     (tenants ?? []).filter((t) => t.lease !== null).map((t) => t.tenant.id)
   );
-  const availableTenants = (tenants ?? []).filter((t) => !activeTenantIds.has(t.tenant.id) || t.paymentStatus === "vacant");
 
   return (
     <div
@@ -149,25 +173,77 @@ const AddLeaseModal = ({
 
         {/* Body */}
         <form id="add-lease-form" onSubmit={handleSubmit} className="overflow-y-auto px-6 py-5 flex-1 space-y-4">
-          {/* Tenant */}
+          {/* Tenant section */}
           <div className="space-y-1.5">
-            <label className="block text-[12.5px] font-semibold text-espresso-700">{sl.fieldTenant}</label>
-            {tenantsLoading ? (
-              <Skeleton className="h-10 w-full rounded-lg" />
-            ) : (
-              <select
-                value={tenantId}
-                onChange={(e) => { setTenantId(e.target.value); setErrors((er) => ({ ...er, tenantId: "" })); }}
-                className={`${inputCls("tenantId")} cursor-pointer`}
-                disabled={createLease.isPending}
+            <div className="flex items-center justify-between">
+              <label className="block text-[12.5px] font-semibold text-espresso-700">{sl.fieldTenant}</label>
+              <button
+                type="button"
+                onClick={() => {
+                  setTenantMode((m) => m === "select" ? "new" : "select");
+                  setErrors((er) => ({ ...er, tenantId: "", newName: "", newEmail: "" }));
+                }}
+                className="text-[12px] font-medium text-coral-500 hover:text-coral-600 transition-colors"
               >
-                <option value="">{sl.fieldTenantPlaceholder}</option>
-                {availableTenants.map((t) => (
-                  <option key={t.tenant.id} value={t.tenant.id}>{t.tenant.name}</option>
-                ))}
-              </select>
+                {tenantMode === "select" ? sl.createNewTenant : sl.selectExistingTenant}
+              </button>
+            </div>
+
+            {tenantMode === "select" ? (
+              <>
+                {tenantsLoading ? (
+                  <Skeleton className="h-10 w-full rounded-lg" />
+                ) : (
+                  <select
+                    value={tenantId}
+                    onChange={(e) => { setTenantId(e.target.value); setErrors((er) => ({ ...er, tenantId: "" })); }}
+                    className={`${inputCls("tenantId")} cursor-pointer`}
+                    disabled={isPending}
+                  >
+                    <option value="">{sl.fieldTenantPlaceholder}</option>
+                    {(tenants ?? []).map((t) => (
+                      <option key={t.tenant.id} value={t.tenant.id}>
+                        {t.tenant.name}{tenantsWithLease.has(t.tenant.id) ? ` ${sl.fieldTenantHasLease}` : ""}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                {errors.tenantId && <p className="text-[11.5px] text-destructive">{errors.tenantId}</p>}
+              </>
+            ) : (
+              <div className="rounded-xl border border-sand-300 bg-sand-50 p-4 space-y-3">
+                <p className="text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">{sl.newTenant.heading}</p>
+                <div className="space-y-1.5">
+                  <label className="block text-[12px] font-medium text-espresso-700">{sl.newTenant.fieldName}</label>
+                  <input
+                    type="text" value={newName}
+                    onChange={(e) => { setNewName(e.target.value); setErrors((er) => ({ ...er, newName: "" })); }}
+                    placeholder={sl.newTenant.fieldNamePlaceholder}
+                    className={inputCls("newName")} disabled={isPending}
+                  />
+                  {errors.newName && <p className="text-[11.5px] text-destructive">{errors.newName}</p>}
+                </div>
+                <div className="space-y-1.5">
+                  <label className="block text-[12px] font-medium text-espresso-700">{sl.newTenant.fieldEmail}</label>
+                  <input
+                    type="email" value={newEmail}
+                    onChange={(e) => { setNewEmail(e.target.value); setErrors((er) => ({ ...er, newEmail: "" })); }}
+                    placeholder={sl.newTenant.fieldEmailPlaceholder}
+                    className={inputCls("newEmail")} disabled={isPending}
+                  />
+                  {errors.newEmail && <p className="text-[11.5px] text-destructive">{errors.newEmail}</p>}
+                </div>
+                <div className="space-y-1.5">
+                  <label className="block text-[12px] font-medium text-espresso-700">{sl.newTenant.fieldContact}</label>
+                  <input
+                    type="text" value={newContact}
+                    onChange={(e) => setNewContact(e.target.value)}
+                    placeholder={sl.newTenant.fieldContactPlaceholder}
+                    className={inputCls("newContact")} disabled={isPending}
+                  />
+                </div>
+              </div>
             )}
-            {errors.tenantId && <p className="text-[11.5px] text-destructive">{errors.tenantId}</p>}
           </div>
 
           {/* Monthly rent */}
@@ -180,7 +256,7 @@ const AddLeaseModal = ({
                 onChange={(e) => { setRent(e.target.value); setErrors((er) => ({ ...er, rent: "" })); }}
                 placeholder={sl.fieldRentPlaceholder}
                 className={`${inputCls("rent")} pl-6`}
-                disabled={createLease.isPending}
+                disabled={isPending}
               />
             </div>
             {errors.rent && <p className="text-[11.5px] text-destructive">{errors.rent}</p>}
@@ -194,7 +270,7 @@ const AddLeaseModal = ({
                 type="date" value={startDate}
                 onChange={(e) => { setStartDate(e.target.value); setErrors((er) => ({ ...er, startDate: "" })); }}
                 className={inputCls("startDate")}
-                disabled={createLease.isPending}
+                disabled={isPending}
               />
               {errors.startDate && <p className="text-[11.5px] text-destructive">{errors.startDate}</p>}
             </div>
@@ -204,7 +280,7 @@ const AddLeaseModal = ({
                 type="date" value={endDate} min={startDate}
                 onChange={(e) => { setEndDate(e.target.value); setErrors((er) => ({ ...er, endDate: "" })); }}
                 className={inputCls("endDate")}
-                disabled={createLease.isPending}
+                disabled={isPending}
               />
               {errors.endDate && <p className="text-[11.5px] text-destructive">{errors.endDate}</p>}
             </div>
@@ -219,20 +295,20 @@ const AddLeaseModal = ({
               placeholder={sl.fieldTermsPlaceholder}
               rows={3}
               className="w-full rounded-lg border border-sand-400 px-3 py-2.5 text-[13.5px] text-espresso-900 bg-white placeholder:text-espresso-300 focus:outline-none focus:ring-2 focus:ring-coral-500/30 transition-colors resize-none"
-              disabled={createLease.isPending}
+              disabled={isPending}
             />
           </div>
         </form>
 
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-sand-200 flex-none">
-          <button type="button" onClick={onClose} disabled={createLease.isPending}
+          <button type="button" onClick={onClose} disabled={isPending}
             className="h-9 px-4 rounded-lg border border-sand-400 text-[13px] font-medium text-espresso-700 hover:bg-sand-100 transition-colors disabled:opacity-50">
             {sl.cancel}
           </button>
-          <button type="submit" form="add-lease-form" disabled={createLease.isPending}
+          <button type="submit" form="add-lease-form" disabled={isPending}
             className="h-9 px-5 rounded-lg bg-coral-500 hover:bg-coral-600 text-white text-[13px] font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
-            {createLease.isPending ? sl.submitting : sl.submit}
+            {isPending ? sl.submitting : sl.submit}
           </button>
         </div>
       </div>

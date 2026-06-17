@@ -7,9 +7,9 @@ import { formatDate } from "@repo/ui";
 const s = strings.manager.unitDetail.lease;
 
 const DetailRow = ({ label, value }: { label: string; value: string }) => (
-  <div className="flex justify-between py-3 border-b border-sand-200 last:border-0">
-    <MutedText>{label}</MutedText>
-    <MutedText className="font-medium text-espresso-900">{value}</MutedText>
+  <div className="flex justify-between gap-3 py-3 border-b border-sand-200 last:border-0">
+    <MutedText className="shrink-0">{label}</MutedText>
+    <MutedText className="font-medium text-espresso-900 text-right">{value}</MutedText>
   </div>
 );
 

@@ -1,7 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/platform/db";
+import { db, generateId } from "@/platform/db";
 import { withDelay, errorResponse } from "@/platform/utils";
 import type { TenantListItem } from "@repo/platform-types";
+
+export async function POST(req: NextRequest) {
+  try {
+    await withDelay(req);
+    const { name, email, contact } = await req.json();
+
+    if (!name?.trim()) return NextResponse.json({ message: "Name is required" }, { status: 400 });
+    if (!email?.trim()) return NextResponse.json({ message: "Email is required" }, { status: 400 });
+
+    const tenant = {
+      id: generateId("tenant"),
+      name: name.trim(),
+      email: email.trim(),
+      contact: contact?.trim() ?? "",
+      kyc_status: "pending" as const,
+      kyc_verified_on: null,
+      kyc_document: null,
+    };
+    db.tenants.push(tenant);
+
+    return NextResponse.json({ tenant }, { status: 201 });
+  } catch (e: any) {
+    return errorResponse(e.message);
+  }
+}
 
 export async function GET(req: NextRequest) {
   try {

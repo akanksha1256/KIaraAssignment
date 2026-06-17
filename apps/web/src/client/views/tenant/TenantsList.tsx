@@ -1,16 +1,19 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAllTenants } from "@repo/data";
+import { useAllTenants, useCreateTenant } from "@repo/data";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
-import { Badge, SectionTitle, MutedText } from "@repo/ui";
+import { Badge, SectionTitle, MutedText, useToast } from "@repo/ui";
 import { TenantsListSkeleton } from "./TenantsListLoadingScreen";
 import { strings } from "@repo/tokens";
 import type { TenantListItem } from "@repo/data";
-import { ShieldCheck, Clock, ShieldOff, ChevronRight } from "lucide-react";
+import { ShieldCheck, Clock, ShieldOff, ChevronRight, Plus, X } from "lucide-react";
 
 const s = strings.manager.tenantsList;
+const sa = strings.manager.tenantsList.addTenant;
+const sc = strings.common;
 
 const KYC_ICON: Record<string, React.ReactNode> = {
   verified: <ShieldCheck className="h-3.5 w-3.5" />,
@@ -30,6 +33,124 @@ const KYC_LABEL: Record<string, string> = {
   not_submitted: "Not submitted",
 };
 
+// ── Add tenant modal ─────────────────────────────────────────────────────────
+const AddTenantModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+  const { showToast } = useToast();
+  const createTenant = useCreateTenant();
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [contact, setContact] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (open) { setName(""); setEmail(""); setContact(""); setErrors({}); }
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  const inputCls = (field: string) =>
+    `h-10 w-full rounded-lg border px-3 text-[13.5px] text-espresso-900 bg-white placeholder:text-espresso-300 focus:outline-none focus:ring-2 focus:ring-coral-500/30 transition-colors ${
+      errors[field] ? "border-destructive" : "border-sand-400"
+    }`;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const errs: Record<string, string> = {};
+    if (!name.trim()) errs.name = sc.validation.required;
+    if (!email.trim()) errs.email = sc.validation.required;
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+
+    createTenant.mutate(
+      { name: name.trim(), email: email.trim(), contact: contact.trim() },
+      {
+        onSuccess: () => {
+          showToast(sa.successToast(name.trim()), "success");
+          onClose();
+        },
+        onError: (err) => showToast((err as Error).message ?? sa.failedToast, "error"),
+      },
+    );
+  };
+
+  return (
+    <div
+      ref={overlayRef}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]"
+      onMouseDown={(e) => { if (e.target === overlayRef.current) onClose(); }}
+    >
+      <div className="relative w-full max-w-[440px] mx-4 bg-white rounded-2xl shadow-2xl border border-sand-300 flex flex-col max-h-[90vh]">
+        {/* Header */}
+        <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-sand-200 flex-none">
+          <div>
+            <p className="font-serif text-[20px] font-semibold text-maroon-600">{sa.title}</p>
+            <MutedText className="mt-0.5">{sa.subtitle}</MutedText>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-muted-foreground hover:text-espresso-900 hover:bg-sand-100 transition-colors mt-0.5">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        {/* Body */}
+        <form id="add-tenant-form" onSubmit={handleSubmit} className="overflow-y-auto px-6 py-5 flex-1 space-y-4">
+          <div className="space-y-1.5">
+            <label className="block text-[12.5px] font-semibold text-espresso-700">{sa.fieldName}</label>
+            <input
+              type="text" value={name}
+              onChange={(e) => { setName(e.target.value); setErrors((er) => ({ ...er, name: "" })); }}
+              placeholder={sa.fieldNamePlaceholder}
+              className={inputCls("name")} disabled={createTenant.isPending}
+            />
+            {errors.name && <p className="text-[11.5px] text-destructive">{errors.name}</p>}
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="block text-[12.5px] font-semibold text-espresso-700">{sa.fieldEmail}</label>
+            <input
+              type="email" value={email}
+              onChange={(e) => { setEmail(e.target.value); setErrors((er) => ({ ...er, email: "" })); }}
+              placeholder={sa.fieldEmailPlaceholder}
+              className={inputCls("email")} disabled={createTenant.isPending}
+            />
+            {errors.email && <p className="text-[11.5px] text-destructive">{errors.email}</p>}
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="block text-[12.5px] font-semibold text-espresso-700">{sa.fieldContact}</label>
+            <input
+              type="text" value={contact}
+              onChange={(e) => setContact(e.target.value)}
+              placeholder={sa.fieldContactPlaceholder}
+              className={inputCls("contact")} disabled={createTenant.isPending}
+            />
+          </div>
+        </form>
+
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-sand-200 flex-none">
+          <button type="button" onClick={onClose} disabled={createTenant.isPending}
+            className="h-9 px-4 rounded-lg border border-sand-400 text-[13px] font-medium text-espresso-700 hover:bg-sand-100 transition-colors disabled:opacity-50">
+            {sa.cancel}
+          </button>
+          <button type="submit" form="add-tenant-form" disabled={createTenant.isPending}
+            className="h-9 px-5 rounded-lg bg-coral-500 hover:bg-coral-600 text-white text-[13px] font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+            {createTenant.isPending ? sa.submitting : sa.submit}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── Tenant row ────────────────────────────────────────────────────────────────
 const TenantRow = ({ item }: { item: TenantListItem }) => {
   const router = useRouter();
   const { tenant, lease, unit, property, paymentStatus } = item;
@@ -133,6 +254,7 @@ const TenantRow = ({ item }: { item: TenantListItem }) => {
 
 export const TenantsList = () => {
   const { data, isLoading, isError, error, refetch } = useAllTenants();
+  const [addOpen, setAddOpen] = useState(false);
 
   if (isLoading) return <TenantsListSkeleton />;
   if (isError)
@@ -144,19 +266,30 @@ export const TenantsList = () => {
   const pendingKyc = data.filter((t) => t.tenant.kycStatus !== "verified").length;
 
   return (
+    <>
+      <AddTenantModal open={addOpen} onClose={() => setAddOpen(false)} />
     <div className="p-8 max-w-[1180px]">
-      <div className="mb-8">
-        <SectionTitle>{s.title}</SectionTitle>
-        <MutedText className="mt-1">
-          {data.length} tenant{data.length !== 1 ? "s" : ""}
-          {overdueCount > 0 && (
-            <>
-              {" "}
-              · <span className="text-destructive font-medium">{overdueCount} overdue</span>
-            </>
-          )}
-          {pendingKyc > 0 && <> · {pendingKyc} KYC pending</>}
-        </MutedText>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <SectionTitle>{s.title}</SectionTitle>
+          <MutedText className="mt-1">
+            {data.length} tenant{data.length !== 1 ? "s" : ""}
+            {overdueCount > 0 && (
+              <>
+                {" "}
+                · <span className="text-destructive font-medium">{overdueCount} overdue</span>
+              </>
+            )}
+            {pendingKyc > 0 && <> · {pendingKyc} KYC pending</>}
+          </MutedText>
+        </div>
+        <button
+          onClick={() => setAddOpen(true)}
+          className="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-coral-500 hover:bg-coral-600 text-white text-[13px] font-semibold transition-colors"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          {s.addTenantButton}
+        </button>
       </div>
 
       {data.length === 0 ? (
@@ -201,5 +334,6 @@ export const TenantsList = () => {
         </div>
       )}
     </div>
+    </>
   );
 }
