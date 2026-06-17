@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAllTenants, useCreateTenant } from "@repo/data";
 import { ErrorState } from "@/client/views/ErrorScreen";
 import { EmptyState } from "@/client/views/EmptyScreen";
-import { Badge, SectionTitle, MutedText, useToast } from "@repo/ui";
+import { Badge, SectionTitle, MutedText, useToast, Select } from "@repo/ui";
 import { TenantsListSkeleton } from "./TenantsListLoadingScreen";
 import { strings } from "@repo/tokens";
 import type { TenantListItem } from "@repo/data";
@@ -19,6 +19,9 @@ import {
   ChevronUp,
   ChevronDown,
   ChevronsUpDown,
+  Search,
+  SlidersHorizontal,
+  Trash2,
 } from "lucide-react";
 
 const s = strings.manager.tenantsList;
@@ -208,6 +211,125 @@ const AddTenantModal = ({ open, onClose }: { open: boolean; onClose: () => void 
 type SortCol = "name" | "rent" | "payment" | "kyc";
 type SortDir = "asc" | "desc";
 
+type FilterColKey = "payment" | "kyc";
+
+interface FilterRow {
+  id: number;
+  col: FilterColKey;
+  value: string;
+}
+
+const FILTER_COL_LABELS: Record<FilterColKey, string> = {
+  payment: s.filterCols.payment,
+  kyc: s.filterCols.kyc,
+};
+
+const PAYMENT_OPTIONS = [
+  { value: "overdue", label: "Overdue" },
+  { value: "outstanding", label: "Outstanding" },
+  { value: "paid", label: "Paid" },
+  { value: "vacant", label: "No lease" },
+];
+
+const KYC_OPTIONS = [
+  { value: "verified", label: "Verified" },
+  { value: "pending", label: "Pending" },
+  { value: "not_submitted", label: "Not submitted" },
+];
+
+let nextFilterId = 1;
+
+const FilterPopup = ({
+  appliedRows,
+  onApply,
+  onClear,
+}: {
+  appliedRows: FilterRow[];
+  onApply: (rows: FilterRow[]) => void;
+  onClear: () => void;
+}) => {
+  const [draftRows, setDraftRows] = useState<FilterRow[]>(
+    appliedRows.length > 0 ? appliedRows : [{ id: nextFilterId++, col: "payment", value: "" }],
+  );
+
+  function optionsFor(col: FilterColKey) {
+    return col === "payment" ? PAYMENT_OPTIONS : KYC_OPTIONS;
+  }
+
+  const addRow = () =>
+    setDraftRows((prev) => [...prev, { id: nextFilterId++, col: "payment", value: "" }]);
+  const removeRow = (id: number) => setDraftRows((prev) => prev.filter((r) => r.id !== id));
+  const updateRow = (id: number, patch: Partial<FilterRow>) =>
+    setDraftRows((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, ...patch, ...(patch.col ? { value: "" } : {}) } : r)),
+    );
+
+  const hasAny = draftRows.length > 0 || appliedRows.length > 0;
+
+  return (
+    <div className="absolute left-0 top-full mt-1.5 z-50 w-[380px] bg-white rounded-xl border border-sand-400 shadow-xl flex flex-col overflow-hidden">
+      <div className="px-4 py-3 border-b border-sand-200">
+        <span className="text-[13.5px] font-semibold text-espresso-900">{s.filtersTitle}</span>
+      </div>
+
+      <div className="px-4 py-4 space-y-3 max-h-[360px] overflow-y-auto">
+        {draftRows.map((row) => (
+          <div key={row.id} className="flex gap-2 items-center">
+            <div className="flex-1">
+              <Select
+                value={row.col}
+                onChange={(val) => updateRow(row.id, { col: val as FilterColKey })}
+                options={(Object.keys(FILTER_COL_LABELS) as FilterColKey[]).map((k) => ({
+                  value: k,
+                  label: FILTER_COL_LABELS[k],
+                }))}
+              />
+            </div>
+            <div className="flex-1">
+              <Select
+                value={row.value}
+                onChange={(val) => updateRow(row.id, { value: val })}
+                options={optionsFor(row.col)}
+                placeholder={`Select ${FILTER_COL_LABELS[row.col].toLowerCase()}…`}
+              />
+            </div>
+            <button
+              onClick={() => removeRow(row.id)}
+              className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors flex-none"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        ))}
+
+        <button
+          onClick={addRow}
+          className="inline-flex items-center gap-1.5 text-[13px] font-medium text-coral-500 hover:text-coral-600 transition-colors"
+        >
+          <Plus className="h-3.5 w-3.5" /> {s.addFilter}
+        </button>
+      </div>
+
+      <div className="flex gap-2 px-4 py-3 border-t border-sand-200">
+        {hasAny && (
+          <button
+            onClick={() => { setDraftRows([]); onClear(); }}
+            className="flex-1 h-9 rounded-lg border border-sand-400 text-[13px] font-medium text-espresso-700 hover:bg-sand-100 transition-colors"
+          >
+            {s.clearAllFilters}
+          </button>
+        )}
+        <button
+          onClick={() => onApply(draftRows.filter((r) => r.value))}
+          className="flex-1 h-9 rounded-lg bg-coral-500 hover:bg-coral-600 text-white text-[13px] font-semibold transition-colors"
+        >
+          {s.applyFilter}
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const PAYMENT_RANK: Record<string, number> = { overdue: 0, outstanding: 1, paid: 2, vacant: 3 };
 const KYC_RANK: Record<string, number> = { not_submitted: 0, pending: 1, verified: 2 };
 
@@ -322,6 +444,20 @@ export const TenantsList = () => {
   const [addOpen, setAddOpen] = useState(false);
   const [sortCol, setSortCol] = useState<SortCol | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [appliedFilterRows, setAppliedFilterRows] = useState<FilterRow[]>([]);
+  const [search, setSearch] = useState("");
+  const filterContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!filterOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (filterContainerRef.current && !filterContainerRef.current.contains(e.target as Node))
+        setFilterOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [filterOpen]);
 
   const toggleSort = (col: SortCol) => {
     if (sortCol === col) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -331,10 +467,28 @@ export const TenantsList = () => {
     }
   };
 
-  const sorted = useMemo(() => {
+  const filtered = useMemo(() => {
     if (!data) return [];
-    if (!sortCol) return data;
-    return [...data].sort((a, b) => {
+    let base = [...data];
+
+    for (const row of appliedFilterRows) {
+      if (!row.value) continue;
+      if (row.col === "payment") base = base.filter((t) => t.paymentStatus === row.value);
+      if (row.col === "kyc") base = base.filter((t) => t.tenant.kycStatus === row.value);
+    }
+
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      base = base.filter(
+        (t) =>
+          t.tenant.name.toLowerCase().includes(q) ||
+          t.tenant.email.toLowerCase().includes(q) ||
+          (t.property?.name ?? "").toLowerCase().includes(q),
+      );
+    }
+
+    if (!sortCol) return base;
+    return [...base].sort((a, b) => {
       let cmp = 0;
       if (sortCol === "name") cmp = a.tenant.name.localeCompare(b.tenant.name);
       if (sortCol === "rent") cmp = (a.lease?.monthlyRent ?? 0) - (b.lease?.monthlyRent ?? 0);
@@ -344,7 +498,7 @@ export const TenantsList = () => {
         cmp = (KYC_RANK[a.tenant.kycStatus] ?? 0) - (KYC_RANK[b.tenant.kycStatus] ?? 0);
       return sortDir === "asc" ? cmp : -cmp;
     });
-  }, [data, sortCol, sortDir]);
+  }, [data, appliedFilterRows, search, sortCol, sortDir]);
 
   if (isLoading) return <TenantsListSkeleton />;
   if (isError)
@@ -354,6 +508,8 @@ export const TenantsList = () => {
 
   const overdueCount = data.filter((t) => t.paymentStatus === "overdue").length;
   const pendingKyc = data.filter((t) => t.tenant.kycStatus !== "verified").length;
+  const activeFilterCount = appliedFilterRows.filter((r) => r.value !== "").length;
+  const hasActiveFilters = activeFilterCount > 0 || search.trim() !== "";
 
   return (
     <>
@@ -383,12 +539,100 @@ export const TenantsList = () => {
               {s.addTenantButton}
             </button>
           </div>
+
+          {/* Toolbar: filter (left) + search (right) */}
+          <div className="flex items-center gap-3 mb-2">
+            <div className="relative flex-none" ref={filterContainerRef}>
+              <button
+                onClick={() => setFilterOpen((o) => !o)}
+                className={`inline-flex items-center gap-2 h-9 px-4 rounded-lg border text-[13px] font-medium transition-colors ${
+                  activeFilterCount > 0
+                    ? "border-coral-500 text-coral-500 bg-coral-50 hover:bg-coral-100"
+                    : "border-sand-400 text-espresso-700 bg-white hover:bg-sand-100"
+                }`}
+              >
+                <SlidersHorizontal className="h-3.5 w-3.5" />
+                {s.filterButton}
+                {activeFilterCount > 0 && (
+                  <span className="inline-flex items-center justify-center h-4 min-w-4 px-1 rounded-full bg-coral-500 text-white text-[10px] font-bold">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </button>
+
+              {filterOpen && (
+                <FilterPopup
+                  appliedRows={appliedFilterRows}
+                  onApply={(rows) => {
+                    setAppliedFilterRows(rows);
+                    setFilterOpen(false);
+                  }}
+                  onClear={() => {
+                    setAppliedFilterRows([]);
+                    setFilterOpen(false);
+                  }}
+                />
+              )}
+            </div>
+
+            <div className="flex-1" />
+
+            <div className="relative flex-none w-[260px]">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={s.searchPlaceholder}
+                className="h-9 w-full rounded-lg border border-sand-400 bg-white pl-8 pr-8 text-[13px] text-espresso-900 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-coral-500/30"
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch("")}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-espresso-700"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Applied filter chips row */}
+          {hasActiveFilters && (
+            <div className="flex items-center gap-2 flex-wrap mb-1">
+              {appliedFilterRows
+                .filter((r) => r.value)
+                .map((row) => {
+                  const opts = row.col === "payment" ? PAYMENT_OPTIONS : KYC_OPTIONS;
+                  const label = opts.find((o) => o.value === row.value)?.label ?? row.value;
+                  return (
+                    <span
+                      key={row.id}
+                      className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-coral-50 border border-coral-200 text-[12px] font-medium text-coral-700"
+                    >
+                      <span className="text-coral-400">{FILTER_COL_LABELS[row.col]}:</span> {label}
+                      <button
+                        onClick={() =>
+                          setAppliedFilterRows((rs) => rs.filter((r) => r.id !== row.id))
+                        }
+                        className="hover:text-coral-900"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  );
+                })}
+              <span className="text-[12px] text-muted-foreground">
+                {s.results(filtered.length, data.length)}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Scrollable table */}
         <div className="flex-1 min-h-0 flex flex-col px-8 pb-8">
-          {data.length === 0 ? (
-            <EmptyState title={s.emptyTitle} description={s.emptyDescription} icon="inbox" />
+          {filtered.length === 0 ? (
+            <EmptyState title={s.noMatch} description={s.noMatchDescription} icon="inbox" />
           ) : (
             <div className="flex-1 min-h-0 rounded-xl border border-sand-400 bg-white overflow-y-auto shadow-sm">
               <table className="w-full table-fixed min-w-[700px]">
@@ -402,7 +646,7 @@ export const TenantsList = () => {
                 </colgroup>
                 <thead className="sticky top-0 z-10">
                   <tr className="bg-sand-100 border-b border-sand-400">
-                    <th // sortable: name
+                    <th
                       onClick={() => toggleSort("name")}
                       className={`px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] cursor-pointer select-none transition-colors ${sortCol === "name" ? "text-espresso-900" : "text-muted-foreground hover:text-espresso-700"}`}
                     >
@@ -413,7 +657,7 @@ export const TenantsList = () => {
                     <th className="px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
                       Property / Unit
                     </th>
-                    <th // sortable: rent
+                    <th
                       onClick={() => toggleSort("rent")}
                       className={`px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] cursor-pointer select-none transition-colors ${sortCol === "rent" ? "text-espresso-900" : "text-muted-foreground hover:text-espresso-700"}`}
                     >
@@ -421,7 +665,7 @@ export const TenantsList = () => {
                         Rent/mo <SortIcon active={sortCol === "rent"} dir={sortDir} />
                       </span>
                     </th>
-                    <th // sortable: payment
+                    <th
                       onClick={() => toggleSort("payment")}
                       className={`px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] cursor-pointer select-none transition-colors ${sortCol === "payment" ? "text-espresso-900" : "text-muted-foreground hover:text-espresso-700"}`}
                     >
@@ -429,7 +673,7 @@ export const TenantsList = () => {
                         Payment <SortIcon active={sortCol === "payment"} dir={sortDir} />
                       </span>
                     </th>
-                    <th // sortable: kyc
+                    <th
                       onClick={() => toggleSort("kyc")}
                       className={`px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] cursor-pointer select-none transition-colors ${sortCol === "kyc" ? "text-espresso-900" : "text-muted-foreground hover:text-espresso-700"}`}
                     >
@@ -441,7 +685,7 @@ export const TenantsList = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {sorted.map((item) => (
+                  {filtered.map((item) => (
                     <TenantRow key={item.tenant.id} item={item} />
                   ))}
                 </tbody>

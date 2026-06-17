@@ -60,6 +60,8 @@ function buildRow(
     className: "whitespace-nowrap text-right",
   };
 
+  const STATUS_RANK: Record<string, number> = { overdue: 0, outstanding: 1, paid: 2 };
+
   const baseCells: TableCell[] = [
     {
       content: (
@@ -68,6 +70,7 @@ function buildRow(
         </span>
       ),
       className: "whitespace-nowrap",
+      sortValue: payment.periodMonth,
     },
     {
       content: (
@@ -76,6 +79,7 @@ function buildRow(
         </span>
       ),
       className: "whitespace-nowrap text-right",
+      sortValue: payment.amountDue,
     },
     {
       content: payment.amountPaid > 0 ? (
@@ -86,6 +90,7 @@ function buildRow(
         <span className="text-espresso-300 text-[14px]">{s.notPaid}</span>
       ),
       className: "whitespace-nowrap text-right",
+      sortValue: payment.amountPaid,
     },
     {
       content: payment.paidDate ? (
@@ -96,6 +101,7 @@ function buildRow(
         <span className="text-espresso-300 text-[13px]">{s.notPaid}</span>
       ),
       className: "whitespace-nowrap text-right",
+      sortValue: payment.paidDate ?? "",
     },
     {
       content: payment.method ? (
@@ -104,8 +110,9 @@ function buildRow(
         <span className="text-espresso-300 text-[13px]">{s.notPaid}</span>
       ),
       className: "whitespace-nowrap text-right",
+      sortValue: payment.method ?? "",
     },
-    statusCell,
+    { ...statusCell, sortValue: STATUS_RANK[payment.status] ?? 99 },
   ];
 
   if (!actions && tenantActions) {
@@ -205,12 +212,12 @@ export const PaymentHistoryTable = ({
   const hasExtraCol = hasActions || hasTenantActions;
 
   const columns = [
-    { label: s.colPeriod,  align: "left"  as const },
-    { label: s.colDue,     align: "right" as const },
-    { label: s.colPaid,    align: "right" as const },
-    { label: s.colDate,    align: "right" as const },
-    { label: s.colMethod,  align: "right" as const },
-    { label: s.colStatus,  align: "right" as const },
+    { label: s.colPeriod,  align: "left"  as const, sortable: true },
+    { label: s.colDue,     align: "right" as const, sortable: true },
+    { label: s.colPaid,    align: "right" as const, sortable: true },
+    { label: s.colDate,    align: "right" as const, sortable: true },
+    { label: s.colMethod,  align: "right" as const, sortable: true },
+    { label: s.colStatus,  align: "right" as const, sortable: true },
     ...(hasExtraCol ? [{ label: "", align: "right" as const }] : []),
   ];
 
