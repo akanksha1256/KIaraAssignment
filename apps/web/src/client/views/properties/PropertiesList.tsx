@@ -111,7 +111,7 @@ export const PropertiesList = () => {
           onClose={() => setLeaseTarget(null)}
         />
       )}
-      <div className="h-screen flex flex-col overflow-hidden">
+      <div className="h-[calc(100vh-4rem)] md:h-screen flex flex-col overflow-hidden">
         <div className="px-4 pt-4 pb-4 md:px-8 md:pt-8 flex-none">
           <PropertiesListHeader
             count={properties.length}

@@ -131,7 +131,7 @@ export const PaymentsPage = () => {
   const unpaidCount = data.filter((p) => p.payment.status !== "paid").length;
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="h-[calc(100vh-4rem)] md:h-screen flex flex-col overflow-hidden">
       {/* Static top section */}
       <div className="px-4 pt-4 pb-4 md:px-8 md:pt-8 flex-none">
         <PaymentsListHeader count={data.length} />

@@ -70,7 +70,7 @@ export const PaymentsTable = ({
   }
 
   return (
-    <div className="flex-1 min-h-0 rounded-xl border border-sand-400 bg-white shadow-sm">
+    <div className="flex-1 min-h-0 rounded-xl border border-sand-400 bg-white shadow-sm overflow-hidden">
       {/* Mobile: card view */}
       <div className="sm:hidden divide-y divide-sand-200">
         {items.map((item) => (

@@ -8,7 +8,7 @@ const TwoLineCell = ({ topCls, bottomCls }: { topCls: string; bottomCls: string 
 );
 
 export const PaymentsListSkeleton = () => (
-  <div className="h-screen flex flex-col overflow-hidden">
+  <div className="h-[calc(100vh-4rem)] md:h-screen flex flex-col overflow-hidden">
     {/* Static top section */}
     <div className="px-8 pt-8 pb-4 flex-none">
       {/* Header */}

@@ -333,6 +333,75 @@ const TenantRow = ({ item }: { item: TenantListItem }) => {
   );
 };
 
+// ── Mobile tenant card ────────────────────────────────────────────────────────
+const TenantCard = ({ item }: { item: TenantListItem }) => {
+  const router = useRouter();
+  const { tenant, lease, unit, property, paymentStatus } = item;
+  const kycClass = KYC_CLASS[tenant.kycStatus] ?? KYC_CLASS.not_submitted;
+  const initials = tenant.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+
+  const payBadgeVariant =
+    paymentStatus === "overdue" ? "overdue"
+    : paymentStatus === "outstanding" ? "outstanding"
+    : paymentStatus === "paid" ? "paid"
+    : paymentStatus === "upcoming" ? "upcoming"
+    : "vacant" as const;
+
+  const payBadgeLabel =
+    paymentStatus === "vacant" ? "No lease"
+    : paymentStatus === "overdue" ? "Overdue"
+    : paymentStatus === "outstanding" ? "Outstanding"
+    : paymentStatus === "upcoming" ? "Upcoming"
+    : "Paid";
+
+  return (
+    <div
+      onClick={() => router.push(`/manager/tenants/${tenant.id}`)}
+      className="px-4 py-4 border-b border-sand-200 last:border-0 cursor-pointer active:bg-coral-50 transition-colors"
+    >
+      {/* Name + payment badge */}
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <div className="flex items-center gap-2.5 flex-1 min-w-0">
+          <div className="w-8 h-8 rounded-full bg-maroon-600 text-white grid place-items-center text-[12px] font-semibold flex-none select-none">
+            {initials}
+          </div>
+          <div className="min-w-0">
+            <div className="text-[13.5px] font-semibold text-espresso-900 leading-tight truncate">
+              {tenant.name}
+            </div>
+            <div className="text-[12px] text-muted-foreground truncate">{tenant.email}</div>
+          </div>
+        </div>
+        <Badge variant={payBadgeVariant} size="sm">{payBadgeLabel}</Badge>
+      </div>
+
+      {/* Property + rent */}
+      <div className="flex items-center justify-between gap-2 mb-2">
+        {property && unit ? (
+          <div className="text-[12.5px] text-espresso-700 min-w-0">
+            <span className="truncate block">{property.name}</span>
+            <span className="font-mono text-muted-foreground">{unit.label}</span>
+          </div>
+        ) : (
+          <span className="text-[12.5px] text-muted-foreground italic">{s.noActiveLease}</span>
+        )}
+        {lease && (
+          <span className="text-[13px] font-semibold tabular-nums text-espresso-900 shrink-0">
+            ${lease.monthlyRent.toLocaleString()}
+            <span className="text-muted-foreground font-normal text-[11px]">/mo</span>
+          </span>
+        )}
+      </div>
+
+      {/* KYC pill */}
+      <span className={`inline-flex items-center gap-1.5 text-[12px] font-medium px-2.5 py-1 rounded-full ${kycClass}`}>
+        {KYC_ICON[tenant.kycStatus]}
+        {KYC_LABEL[tenant.kycStatus]}
+      </span>
+    </div>
+  );
+};
+
 export const TenantsList = () => {
   const { data, isLoading, isError, error, refetch } = useAllTenants();
   const [addOpen, setAddOpen] = useState(false);
@@ -405,7 +474,7 @@ export const TenantsList = () => {
   return (
     <>
       {addOpen && <AddTenantModal onClose={() => setAddOpen(false)} />}
-      <div className="h-screen flex flex-col overflow-hidden">
+      <div className="h-[calc(100vh-4rem)] md:h-screen flex flex-col overflow-hidden">
         {/* Static top section */}
         <div className="px-4 pt-4 pb-4 md:px-8 md:pt-8 flex-none">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-6">
@@ -456,7 +525,16 @@ export const TenantsList = () => {
           {filtered.length === 0 ? (
             <EmptyState title={s.noMatch} description={s.noMatchDescription} icon="inbox" />
           ) : (
-            <div className="flex-1 min-h-0 rounded-xl border border-sand-400 bg-white overflow-y-auto shadow-sm">
+            <>
+            {/* Mobile: card view */}
+            <div className="sm:hidden rounded-xl border border-sand-400 bg-white shadow-sm overflow-hidden">
+              {filtered.map((item) => (
+                <TenantCard key={item.tenant.id} item={item} />
+              ))}
+            </div>
+
+            {/* Desktop: table view */}
+            <div className="hidden sm:flex flex-col flex-1 min-h-0 rounded-xl border border-sand-400 bg-white overflow-y-auto shadow-sm">
               <table className="w-full table-fixed min-w-[700px]">
                 <colgroup>
                   <col style={{ width: "28%" }} />
@@ -513,6 +591,7 @@ export const TenantsList = () => {
                 </tbody>
               </table>
             </div>
+            </>
           )}
         </div>
       </div>
