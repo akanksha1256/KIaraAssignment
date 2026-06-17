@@ -274,6 +274,7 @@ export const strings = {
       filterButton: "Filter",
       addFilter: "Add filter",
       clearAllFilters: "Clear all filters",
+      applyFilter: "Apply filter",
       noMatch: "No payments match",
       noMatchDescription: "Try adjusting or clearing your filters.",
       results: (shown: number, total: number) => `${shown} of ${total} results`,

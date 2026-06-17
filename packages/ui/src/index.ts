@@ -46,3 +46,5 @@ export {
 export { ToastProvider, useToast } from "./Toast";
 export type { ToastVariant } from "./Toast";
 export { CommonTooltip } from "./Tooltip";
+export { Select } from "./Select";
+export type { SelectOption } from "./Select";
