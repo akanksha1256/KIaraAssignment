@@ -83,11 +83,10 @@ export const ManagerDashboardSkeleton = () => {
   );
 };
 
-export const LoadingState = ({ message = "Loading..." }: { message?: string }) => {
-  return (
-    <div className="flex flex-col items-center justify-center gap-3 py-16 text-muted-foreground">
-      <div className="w-6 h-6 rounded-full border-2 border-coral-500 border-t-transparent animate-spin" />
-      <p className="text-[14px]">{message}</p>
-    </div>
-  );
-};
+export const LoadingState = ({ message: _message }: { message?: string }) => (
+  <div className="flex flex-col gap-3 py-10 px-6 max-w-xs mx-auto">
+    <Skeleton className="h-4 w-48" />
+    <Skeleton className="h-3 w-64" />
+    <Skeleton className="h-3 w-40" />
+  </div>
+);

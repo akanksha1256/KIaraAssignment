@@ -11,6 +11,7 @@ export interface StatCardProps {
   trend?: { direction: "up" | "down" | "flat"; label: string };
   alert?: boolean;
   progress?: number; // 0-100
+  sparkline?: number[];
 }
 
 export const accentMap: Record<AccentType, { bg: string; text: string }> = {

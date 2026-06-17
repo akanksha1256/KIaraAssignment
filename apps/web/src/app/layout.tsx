@@ -19,8 +19,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        {/* Sentient serif via Fontshare (not on Google Fonts) */}
-        <link rel="preconnect" href="https://api.fontshare.com" />
+        {/* Sentient is not on Google Fonts so next/font can't manage it.
+            preconnect + stylesheet with display=swap gives font-display:swap
+            on the @font-face Fontshare generates, matching Next.js behaviour. */}
+        <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="anonymous" />
+        <link
+          rel="preload"
+          as="style"
+          href="https://api.fontshare.com/v2/css?f[]=sentient@500,600&display=swap"
+        />
         <link
           href="https://api.fontshare.com/v2/css?f[]=sentient@500,600&display=swap"
           rel="stylesheet"

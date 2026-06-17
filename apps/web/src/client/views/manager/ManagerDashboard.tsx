@@ -59,7 +59,7 @@ export const ManagerDashboard = () => {
       )}
 
       {/* Secondary KPI row */}
-      <StatusSection stats={stats} trend={statsTrend} />
+      <StatusSection stats={stats} trend={statsTrend} monthlyRevenue={monthlyRevenue} />
 
       {/* Charts */}
       <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-4 mb-6">

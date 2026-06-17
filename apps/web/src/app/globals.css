@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Sentient serif via Fontshare */
-@import url("https://api.fontshare.com/v2/css?f[]=sentient@500,600&display=swap");
 
 @layer base {
   :root {
@@ -23,7 +21,7 @@
     --teal-600: #5E8E90;
     --teal-700: #467173;
     --espresso-300: #B9A7A4;
-    --espresso-500: #8B716E;
+    --espresso-500: #7A625F;
     --espresso-700: #5A3F3C;
     --espresso-900: #371F1D;
     --sand-100: #F3F4E9;

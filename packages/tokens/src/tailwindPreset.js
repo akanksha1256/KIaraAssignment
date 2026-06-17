@@ -25,7 +25,7 @@ module.exports = {
         },
         espresso: {
           300: "#B9A7A4",
-          500: "#8B716E",
+          500: "#7A625F",
           700: "#5A3F3C",
           900: "#371F1D",
         },
@@ -54,7 +54,7 @@ module.exports = {
         border: "#D9DAC4",
         ring: "#FF6139",
         muted: "#EBECDC",
-        "muted-foreground": "#8B716E",
+        "muted-foreground": "#7A625F",
         primary: {
           DEFAULT: "#FF6139",
           foreground: "#FFFFFF",

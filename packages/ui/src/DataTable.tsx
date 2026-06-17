@@ -48,6 +48,54 @@ const groupDotColor: Record<RowGroup["urgency"], string> = {
   vacant: "bg-espresso-300",
 };
 
+// ── Mobile card row ───────────────────────────────────────────────────────────
+
+const CardRow = ({ row, columns }: { row: TableRow; columns: TableColumn[] }) => {
+  const { onClick, cells, urgent, flashState } = row;
+  const labeled = cells
+    .map((cell, i) => ({ cell, col: columns[i] }))
+    .filter(({ col }) => !!col?.label);
+  const unlabeled = cells
+    .map((cell, i) => ({ cell, col: columns[i] }))
+    .filter(({ col }) => !col?.label && !!col);
+
+  return (
+    <div
+      onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => { if (e.key === "Enter" || e.key === " ") onClick(); } : undefined}
+      className={[
+        "px-4 py-3 border-b border-sand-200 last:border-0 transition-colors",
+        onClick ? "cursor-pointer active:bg-coral-50" : "",
+        urgent ? "border-l-[3px] border-l-destructive pl-[calc(16px-3px)]" : "",
+        flashState === "success" ? "flash-success" : "",
+        flashState === "error" ? "flash-error" : "",
+      ].filter(Boolean).join(" ")}
+    >
+      <div className="space-y-1.5">
+        {labeled.map(({ cell, col }, i) => (
+          <div key={i} className="flex items-start justify-between gap-4">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.05em] text-muted-foreground shrink-0 mt-[2px]">
+              {col.label}
+            </span>
+            <div className="text-right text-[13px]">{cell.content}</div>
+          </div>
+        ))}
+      </div>
+      {unlabeled.some(({ cell }) => cell.content) && (
+        <div className="mt-2.5 flex justify-end gap-2">
+          {unlabeled.map(({ cell }, i) => (
+            <React.Fragment key={i}>{cell.content}</React.Fragment>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── Table row renderer (desktop) ─────────────────────────────────────────────
+
 function renderRows(rows: TableRow[]) {
   return rows.map(({ key, onClick, cells, urgent, vacant, flashState }) => (
     <tr
@@ -85,6 +133,8 @@ function renderRows(rows: TableRow[]) {
   ));
 }
 
+// ── Main export ───────────────────────────────────────────────────────────────
+
 export function DataTable({ columns, rows = [], groups }: DataTableProps) {
   const [sortCol, setSortCol] = useState<number | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("asc");
@@ -110,67 +160,96 @@ export function DataTable({ columns, rows = [], groups }: DataTableProps) {
     });
   }, [rows, groups, sortCol, sortDir]);
 
+  const allRows = groups ? groups.flatMap((g) => g.rows) : sortedRows;
+
   return (
-    <div className="rounded-xl border border-sand-400 bg-white overflow-x-auto shadow-sm">
-      <table className="w-full table-auto min-w-[600px]">
-        <thead>
-          <tr className="bg-sand-100 border-b border-sand-400">
-            {columns.map(({ label, align = "left", className, sortable }, i) => (
-              <th
-                key={label || i}
-                onClick={sortable ? () => handleSort(i) : undefined}
-                className={[
-                  "px-5 py-3 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground",
-                  align === "right" ? "text-right" : "text-left",
-                  sortable ? "cursor-pointer select-none hover:text-espresso-700" : "",
-                  className ?? "",
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
-              >
-                {sortable ? (
-                  <span className="inline-flex items-center gap-1">
-                    {label}
-                    {sortCol === i ? (
-                      sortDir === "asc" ? (
-                        <ChevronUp className="h-3 w-3" />
-                      ) : (
-                        <ChevronDown className="h-3 w-3" />
-                      )
-                    ) : (
-                      <ChevronsUpDown className="h-3 w-3 opacity-40" />
-                    )}
+    <>
+      {/* Mobile: card layout (<sm) */}
+      <div className="sm:hidden rounded-xl border border-sand-400 bg-white shadow-sm overflow-hidden">
+        {groups ? (
+          groups.map((group) => (
+            <React.Fragment key={group.label}>
+              <div className="px-4 py-2 bg-sand-100 border-b border-sand-400 sticky top-0">
+                <span className="inline-flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-maroon-600">
+                  <span className={`w-2 h-2 rounded-full flex-none ${groupDotColor[group.urgency]}`} />
+                  {group.label}
+                  <span className="text-muted-foreground font-medium normal-case tracking-normal">
+                    · {group.count}
                   </span>
-                ) : (
-                  label
-                )}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {groups
-            ? groups.map((group) => (
-                <React.Fragment key={group.label}>
-                  <tr className="bg-sand-100 border-b border-sand-400">
-                    <td colSpan={columns.length} className="px-5 py-2">
-                      <span className="inline-flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-maroon-600">
-                        <span
-                          className={`w-2 h-2 rounded-full flex-none ${groupDotColor[group.urgency]}`}
-                        />
-                        {group.label}
-                        <span className="text-muted-foreground font-medium normal-case tracking-normal">
-                          · {group.count}
+                </span>
+              </div>
+              {group.rows.map((row) => (
+                <CardRow key={row.key} row={row} columns={columns} />
+              ))}
+            </React.Fragment>
+          ))
+        ) : (
+          allRows.map((row) => <CardRow key={row.key} row={row} columns={columns} />)
+        )}
+      </div>
+
+      {/* Desktop: table layout (sm+) */}
+      <div className="hidden sm:block rounded-xl border border-sand-400 bg-white overflow-x-auto shadow-sm">
+        <table className="w-full table-auto min-w-[600px]">
+          <thead>
+            <tr className="bg-sand-100 border-b border-sand-400">
+              {columns.map(({ label, align = "left", className, sortable }, i) => (
+                <th
+                  key={label || i}
+                  onClick={sortable ? () => handleSort(i) : undefined}
+                  className={[
+                    "px-5 py-3 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground",
+                    align === "right" ? "text-right" : "text-left",
+                    sortable ? "cursor-pointer select-none hover:text-espresso-700" : "",
+                    className ?? "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                >
+                  {sortable ? (
+                    <span className="inline-flex items-center gap-1">
+                      {label}
+                      {sortCol === i ? (
+                        sortDir === "asc" ? (
+                          <ChevronUp className="h-3 w-3" />
+                        ) : (
+                          <ChevronDown className="h-3 w-3" />
+                        )
+                      ) : (
+                        <ChevronsUpDown className="h-3 w-3 opacity-40" />
+                      )}
+                    </span>
+                  ) : (
+                    label
+                  )}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {groups
+              ? groups.map((group) => (
+                  <React.Fragment key={group.label}>
+                    <tr className="bg-sand-100 border-b border-sand-400">
+                      <td colSpan={columns.length} className="px-5 py-2">
+                        <span className="inline-flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-maroon-600">
+                          <span
+                            className={`w-2 h-2 rounded-full flex-none ${groupDotColor[group.urgency]}`}
+                          />
+                          {group.label}
+                          <span className="text-muted-foreground font-medium normal-case tracking-normal">
+                            · {group.count}
+                          </span>
                         </span>
-                      </span>
-                    </td>
-                  </tr>
-                  {renderRows(group.rows)}
-                </React.Fragment>
-              ))
-            : renderRows(sortedRows)}
-        </tbody>
-      </table>
-    </div>
+                      </td>
+                    </tr>
+                    {renderRows(group.rows)}
+                  </React.Fragment>
+                ))
+              : renderRows(sortedRows)}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }

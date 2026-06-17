@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
+import FocusTrap from "focus-trap-react";
 import { usePaymentMethods, usePayRent, useAddPaymentMethod } from "@repo/data";
 import {
   useToast,
@@ -11,6 +12,7 @@ import {
   ModalHeading,
   MutedText,
   CloseButton,
+  Skeleton,
   cn,
 } from "@repo/ui";
 import { strings } from "@repo/tokens";
@@ -47,19 +49,6 @@ export const PayRentModal = ({ tenantId, leaseId, periodMonth, amountDue, onClos
       setSelectedMethodId(methods[0].id);
     }
   }, [methods, selectedMethodId]);
-
-  // Escape key handler
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape" && modalState !== "processing") onClose();
-    },
-    [onClose, modalState],
-  );
-
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [handleKeyDown]);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === backdropRef.current && modalState !== "processing") onClose();
@@ -107,7 +96,14 @@ export const PayRentModal = ({ tenantId, leaseId, periodMonth, amountDue, onClos
       role="dialog"
       aria-labelledby="modal-title"
     >
-      <div className="w-full max-w-md rounded-2xl bg-white shadow-xl overflow-hidden">
+      <FocusTrap
+        focusTrapOptions={{
+          escapeDeactivates: () => modalState !== "processing",
+          onDeactivate: onClose,
+          allowOutsideClick: true,
+        }}
+      >
+        <div className="w-full max-w-md rounded-2xl bg-white shadow-xl overflow-hidden">
         {/* Success state */}
         {modalState === "success" ? (
           <div className="p-8 flex flex-col items-center text-center gap-4">
@@ -150,9 +146,13 @@ export const PayRentModal = ({ tenantId, leaseId, periodMonth, amountDue, onClos
               <Overline className="mb-3 text-espresso-700">{s.selectMethod}</Overline>
 
               {methodsLoading ? (
-                <div className="flex items-center gap-2 py-4">
-                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                  <MutedText>{s.methodsLoading}</MutedText>
+                <div className="space-y-2">
+                  {[1, 2].map((i) => (
+                    <div key={i} className="flex items-center gap-3 rounded-xl border border-sand-200 px-4 py-3">
+                      <Skeleton className="w-8 h-8 rounded-full flex-none" />
+                      <Skeleton className="h-3 w-32" />
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -262,7 +262,8 @@ export const PayRentModal = ({ tenantId, leaseId, periodMonth, amountDue, onClos
             </div>
           </>
         )}
-      </div>
+        </div>
+      </FocusTrap>
     </div>
   );
 };

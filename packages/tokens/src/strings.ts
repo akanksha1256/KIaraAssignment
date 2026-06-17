@@ -85,7 +85,7 @@ export const strings = {
         monthlyRentSubtitle: "across active leases",
         collectionRate: "Collection Rate",
         collectionRateLabel: "Collection rate",
-        collectionRateSubtitle: (amount: string) => `${amount} collected`,
+        collectionRateSubtitle: (collected: string, total: string) => `${collected} of ${total} collected`,
       },
 
       propertiesSummary: (count: number) => `${count} properties`,

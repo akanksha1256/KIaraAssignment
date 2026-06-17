@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -51,6 +52,25 @@ function PaymentIcon() {
   );
 }
 
+function MenuIcon() {
+  return (
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="18" x2="21" y2="18" />
+    </svg>
+  );
+}
+
+function XIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
 const managerNav = [
   { href: "/manager", label: "Dashboard", icon: <HomeIcon /> },
   { href: "/manager/properties", label: "Properties", icon: <BuildingIcon /> },
@@ -81,84 +101,175 @@ export const TenantNav = () => {
 export const Nav = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   if (pathname === "/") return null;
 
-  return (
-    <aside className="w-[56px] md:w-[250px] flex-none bg-cream border-r border-sand-400 sticky top-0 h-screen flex flex-col py-5 px-2 md:px-4 transition-all duration-200">
-      {/* Brand */}
-      <div className="flex items-center gap-3 px-1 md:px-3 pb-6 justify-center md:justify-start">
-        <PinwheelIcon />
-        <span className="hidden md:inline font-semibold tracking-[0.12em] text-espresso-900 text-[16px]">KIARA</span>
-      </div>
+  const isActive = (href: string) =>
+    href === "/manager" ? pathname === "/manager" : pathname.startsWith(href);
 
-      {/* Nav items */}
-      <nav className="flex flex-col gap-0.5 flex-1" aria-label="Main navigation">
-        <p className="hidden md:block text-[11px] font-semibold tracking-[0.09em] uppercase text-espresso-500 px-3 py-2 mt-2">
-          Management
-        </p>
+  const navLinks = (onNavigate?: () => void) =>
+    managerNav.map(({ href, label, icon }) => {
+      const active = isActive(href);
+      return (
+        <Link
+          key={href}
+          href={href}
+          title={label}
+          onClick={onNavigate}
+          className={[
+            "relative flex items-center gap-3 rounded-md px-3 py-2.5 font-medium text-[14.5px] transition-colors duration-fast",
+            active ? "bg-coral-50 text-coral-600" : "text-espresso-700 hover:bg-sand-200",
+          ].join(" ")}
+        >
+          {active && (
+            <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-[3px] bg-coral-500" />
+          )}
+          <span className="w-5 h-5 flex items-center justify-center flex-none">{icon}</span>
+          <span>{label}</span>
+        </Link>
+      );
+    });
+
+  return (
+    <>
+      {/* ── Desktop sidebar (md+) ───────────────────────────────────── */}
+      <aside className="hidden md:flex w-[250px] flex-none bg-cream border-r border-sand-400 sticky top-0 h-screen flex-col py-5 px-4">
+        <div className="flex items-center gap-3 px-3 pb-6">
+          <PinwheelIcon />
+          <span className="font-semibold tracking-[0.12em] text-espresso-900 text-[16px]">KIARA</span>
+        </div>
+
+        <nav className="flex flex-col gap-0.5 flex-1" aria-label="Main navigation">
+          <p className="text-[11px] font-semibold tracking-[0.09em] uppercase text-espresso-500 px-3 py-2 mt-2">
+            Management
+          </p>
+          {navLinks()}
+        </nav>
+
+        <div className="border-t border-sand-400 pt-3 mt-3 flex flex-col gap-3">
+          <div className="flex bg-sand-200 rounded-full p-[3px]">
+            <button
+              onClick={() => router.push("/manager")}
+              className="flex-1 text-[12.5px] font-medium rounded-full py-1.5 bg-white text-espresso-900 shadow-sm transition-all duration-normal"
+            >
+              Manager
+            </button>
+            <button
+              onClick={() => router.push("/tenant")}
+              className="flex-1 text-[12.5px] font-medium rounded-full py-1.5 text-espresso-700 hover:text-espresso-900 transition-all duration-normal"
+            >
+              Tenant
+            </button>
+          </div>
+          <div className="flex items-center gap-3 px-2.5 py-1.5 rounded-md hover:bg-sand-200 cursor-pointer transition-colors duration-fast">
+            <div className="w-[34px] h-[34px] rounded-full bg-gradient-to-br from-coral-500 to-maroon-600 text-white grid place-items-center text-[13px] font-semibold flex-none">
+              JC
+            </div>
+            <div className="flex-1 leading-tight">
+              <div className="text-[13.5px] font-semibold text-espresso-900">James Carter</div>
+              <div className="text-[11.5px] text-muted-foreground">Manager</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* ── Mobile: backdrop ────────────────────────────────────────── */}
+      <div
+        aria-hidden="true"
+        className={[
+          "md:hidden fixed inset-0 z-overlay bg-espresso-900/50 backdrop-blur-[2px] transition-opacity duration-300",
+          drawerOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
+        ].join(" ")}
+        onClick={() => setDrawerOpen(false)}
+      />
+
+      {/* ── Mobile: left drawer ─────────────────────────────────────── */}
+      <aside
+        aria-label="Navigation menu"
+        aria-hidden={!drawerOpen}
+        className="md:hidden fixed left-0 top-0 bottom-0 z-modal w-72 bg-cream border-r border-sand-400 flex flex-col py-5 px-4 transition-transform duration-300 ease-kiara"
+        style={{ transform: drawerOpen ? "translateX(0)" : "translateX(-100%)" }}
+      >
+        <div className="flex items-center justify-between px-1 pb-6">
+          <div className="flex items-center gap-3">
+            <PinwheelIcon />
+            <span className="font-semibold tracking-[0.12em] text-espresso-900 text-[16px]">KIARA</span>
+          </div>
+          <button
+            onClick={() => setDrawerOpen(false)}
+            aria-label="Close menu"
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-espresso-900 hover:bg-sand-100 transition-colors"
+          >
+            <XIcon />
+          </button>
+        </div>
+
+        <nav className="flex flex-col gap-0.5 flex-1" aria-label="Main navigation">
+          <p className="text-[11px] font-semibold tracking-[0.09em] uppercase text-espresso-500 px-3 py-2 mt-1">
+            Management
+          </p>
+          {navLinks(() => setDrawerOpen(false))}
+        </nav>
+
+        <div className="border-t border-sand-400 pt-3 mt-3 flex flex-col gap-3">
+          <div className="flex bg-sand-200 rounded-full p-[3px]">
+            <button
+              onClick={() => { router.push("/manager"); setDrawerOpen(false); }}
+              className="flex-1 text-[12.5px] font-medium rounded-full py-1.5 bg-white text-espresso-900 shadow-sm transition-all duration-normal"
+            >
+              Manager
+            </button>
+            <button
+              onClick={() => { router.push("/tenant"); setDrawerOpen(false); }}
+              className="flex-1 text-[12.5px] font-medium rounded-full py-1.5 text-espresso-700 hover:text-espresso-900 transition-all duration-normal"
+            >
+              Tenant
+            </button>
+          </div>
+          <div className="flex items-center gap-3 px-2.5 py-1.5 rounded-md">
+            <div className="w-[34px] h-[34px] rounded-full bg-gradient-to-br from-coral-500 to-maroon-600 text-white grid place-items-center text-[13px] font-semibold flex-none">
+              JC
+            </div>
+            <div className="flex-1 leading-tight">
+              <div className="text-[13.5px] font-semibold text-espresso-900">James Carter</div>
+              <div className="text-[11.5px] text-muted-foreground">Manager</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* ── Mobile: bottom nav bar ──────────────────────────────────── */}
+      <nav
+        aria-label="Main navigation"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-sticky bg-cream/95 backdrop-blur-sm border-t border-sand-400 flex items-stretch h-16"
+      >
         {managerNav.map(({ href, label, icon }) => {
-          const active = href === "/manager"
-            ? pathname === "/manager"
-            : pathname.startsWith(href);
+          const active = isActive(href);
           return (
             <Link
               key={href}
               href={href}
-              title={label}
               className={[
-                "relative flex items-center gap-3 rounded-md px-2 md:px-3 py-2 font-medium text-[14.5px] transition-colors duration-fast justify-center md:justify-start",
-                active
-                  ? "bg-coral-50 text-coral-600"
-                  : "text-espresso-700 hover:bg-sand-200",
+                "flex-1 flex flex-col items-center justify-center gap-0.5 py-1 transition-colors duration-fast",
+                active ? "text-coral-600" : "text-muted-foreground",
               ].join(" ")}
             >
-              {active && (
-                <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-[3px] bg-coral-500" />
-              )}
-              <span className="w-5 h-5 flex items-center justify-center flex-none">{icon}</span>
-              <span className="hidden md:flex flex-1">{label}</span>
+              <span className="w-5 h-5 flex items-center justify-center">{icon}</span>
+              <span className="text-[10px] font-medium">{label}</span>
             </Link>
           );
         })}
-      </nav>
-
-      {/* Bottom */}
-      <div className="border-t border-sand-400 pt-3 mt-3 flex flex-col gap-3">
-        {/* Role switch - full only on md+ */}
-        <div className="hidden md:flex bg-sand-200 rounded-full p-[3px]">
-          <button
-            onClick={() => router.push("/manager")}
-            className="flex-1 text-[12.5px] font-medium rounded-full py-1.5 bg-white text-espresso-900 shadow-sm transition-all duration-normal"
-          >
-            Manager
-          </button>
-          <button
-            onClick={() => router.push("/tenant")}
-            className="flex-1 text-[12.5px] font-medium rounded-full py-1.5 text-espresso-700 hover:text-espresso-900 transition-all duration-normal"
-          >
-            Tenant
-          </button>
-        </div>
-        {/* Role switch - icon-only on small */}
         <button
-          onClick={() => router.push("/tenant")}
-          title="Switch to Tenant"
-          className="md:hidden w-9 h-9 mx-auto rounded-full bg-sand-200 text-espresso-700 hover:bg-sand-400 text-[11px] font-semibold grid place-items-center transition-colors"
+          onClick={() => setDrawerOpen(true)}
+          aria-label="Open menu"
+          aria-expanded={drawerOpen}
+          className="flex-1 flex flex-col items-center justify-center gap-0.5 py-1 text-muted-foreground transition-colors duration-fast"
         >
-          T
+          <span className="w-5 h-5 flex items-center justify-center"><MenuIcon /></span>
+          <span className="text-[10px] font-medium">More</span>
         </button>
-        {/* Profile */}
-        <div className="flex items-center gap-3 px-0.5 md:px-2.5 py-1.5 rounded-md hover:bg-sand-200 cursor-pointer transition-colors duration-fast justify-center md:justify-start">
-          <div className="w-[34px] h-[34px] rounded-full bg-gradient-to-br from-coral-500 to-maroon-600 text-white grid place-items-center text-[13px] font-semibold flex-none">
-            JC
-          </div>
-          <div className="hidden md:block flex-1 leading-tight">
-            <div className="text-[13.5px] font-semibold text-espresso-900">James Carter</div>
-            <div className="text-[11.5px] text-muted-foreground">Manager</div>
-          </div>
-        </div>
-      </div>
-    </aside>
+      </nav>
+    </>
   );
 };

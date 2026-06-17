@@ -70,7 +70,47 @@ export const PaymentsTable = ({
   }
 
   return (
-    <div className="flex-1 min-h-0 rounded-xl border border-sand-400 bg-white overflow-y-auto shadow-sm">
+    <div className="flex-1 min-h-0 rounded-xl border border-sand-400 bg-white shadow-sm">
+      {/* Mobile: card view */}
+      <div className="sm:hidden divide-y divide-sand-200">
+        {items.map((item) => (
+          <div
+            key={item.payment.id}
+            onClick={() => onRowClick(item.tenant.id)}
+            className="px-4 py-4 cursor-pointer active:bg-coral-50 transition-colors"
+          >
+            <div className="flex items-start justify-between gap-2 mb-1.5">
+              <div className="flex-1 min-w-0">
+                <LinkText className="font-semibold text-espresso-900 block truncate">
+                  {item.tenant.name}
+                </LinkText>
+                <Caption className="truncate">{item.tenant.email}</Caption>
+              </div>
+              <Badge variant={getStatusVariant(item.payment.status)} size="sm">
+                {getStatusLabel(item.payment.status)}
+              </Badge>
+            </div>
+            <div className="text-[12.5px] text-espresso-700 mb-2">
+              {item.property.name}
+              <span className="text-muted-foreground font-mono ml-1">· {item.unit.label}</span>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <MutedText className="text-espresso-900 font-semibold tabular-nums text-[14px]">
+                ${item.payment.amountDue.toLocaleString()}
+              </MutedText>
+              <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+                <span>{formatPeriod(item.payment.periodMonth)}</span>
+                {item.payment.paidDate && (
+                  <span>· {formatDate(item.payment.paidDate)}</span>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop: table view */}
+      <div className="hidden sm:block overflow-y-auto h-full">
       <table className="w-full table-auto min-w-[700px]">
         <colgroup>
           <col style={{ width: "22%" }} />
@@ -140,6 +180,7 @@ export const PaymentsTable = ({
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 };

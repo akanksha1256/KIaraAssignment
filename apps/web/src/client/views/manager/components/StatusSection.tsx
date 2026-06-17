@@ -6,16 +6,27 @@ import {
 } from "lucide-react";
 import { strings } from "@repo/tokens";
 import { StatCard } from "@repo/ui";
-import type { DashboardStats, StatsTrend } from "@repo/data";
+import type { DashboardStats, StatsTrend, MonthlyRevenue } from "@repo/data";
 
 const s = strings.manager.dashboard;
+
+const fmtK = (n: number): string =>
+  n >= 1000 ? `$${(n / 1000).toFixed(1)}K` : `$${n.toLocaleString()}`;
 
 const formatRentChange = (amount: number): string => {
   if (amount >= 1000) return `+$${(amount / 1000).toFixed(1)}K`;
   return `+$${amount.toLocaleString()}`;
 };
 
-export const StatusSection = ({ stats, trend }: { stats: DashboardStats; trend: StatsTrend }) => {
+export const StatusSection = ({
+  stats,
+  trend,
+  monthlyRevenue,
+}: {
+  stats: DashboardStats;
+  trend: StatsTrend;
+  monthlyRevenue: MonthlyRevenue[];
+}) => {
   const collectionRate =
     stats.totalMonthlyRent > 0
       ? Math.round((stats.collectedThisMonth / stats.totalMonthlyRent) * 100)
@@ -30,6 +41,11 @@ export const StatusSection = ({ stats, trend }: { stats: DashboardStats; trend: 
         : `${collectionDelta}%`;
   const collectionTrendDir =
     collectionDelta > 0 ? "up" : collectionDelta < 0 ? "down" : "flat";
+
+  const collectedSparkline = monthlyRevenue.map((m) =>
+    m.expected > 0 ? Math.round((m.collected / m.expected) * 100) : 0,
+  );
+  const revenueSparkline = monthlyRevenue.map((m) => m.collected);
 
   return (
     <section aria-label="Portfolio metrics" className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -65,14 +81,20 @@ export const StatusSection = ({ stats, trend }: { stats: DashboardStats; trend: 
             ? { direction: "up", label: formatRentChange(trend.rentAddedThisMonth) }
             : { direction: "flat", label: "0" }
         }
+        sparkline={revenueSparkline}
       />
       <StatCard
         icon={TrendingUpIcon}
         label={s.stats.collectionRateLabel}
         value={`${collectionRate}%`}
+        sub={s.stats.collectionRateSubtitle(
+          fmtK(stats.collectedThisMonth),
+          fmtK(stats.totalMonthlyRent),
+        )}
         accent={collectionRate >= 80 ? "teal" : "warning"}
         trend={{ direction: collectionTrendDir, label: collectionTrendLabel }}
         alert={collectionRate < 60}
+        sparkline={collectedSparkline}
       />
     </section>
   );
