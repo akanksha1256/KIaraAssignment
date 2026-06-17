@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import type { AtRiskLease } from "@repo/data";
 import { strings } from "@repo/tokens";
 import {
@@ -31,11 +32,13 @@ const LeaseRow = ({ l }: { l: AtRiskLease }) => (
 );
 
 export const AtRiskLeasesSection = ({ atRiskLeases }: { atRiskLeases: AtRiskLease[] }) => {
+  const router = useRouter();
+
   return (
     <div className="bg-white p-6">
       <div className="flex items-center justify-between mb-4">
         <Overline>{s.atRiskTitle}</Overline>
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" onClick={() => router.push("/manager/payments")}>
           {s.viewAll}
         </Button>
       </div>

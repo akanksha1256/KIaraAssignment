@@ -99,12 +99,12 @@ export const UnitDetail = ({ propertyId, unitId }: UnitDetailProps) => {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <span className="font-mono text-[13px] font-medium text-muted-foreground bg-sand-200 px-2.5 py-1 rounded mb-2 inline-block">
+          <h1 className="font-serif text-[32px] font-semibold leading-[1.1] tracking-[-0.01em] text-maroon-600">
             {unit.label}
-          </span>
-          <h1 className="font-serif text-[32px] font-semibold leading-[1.1] tracking-[-0.01em] text-maroon-600 mt-1">
-            {unit.tenant?.name ?? "Vacant Unit"}
           </h1>
+          <span className="text-[14px] text-muted-foreground mt-1 inline-block">
+            {data.property.name}
+          </span>
         </div>
         <Badge variant={statusVariant} size="lg">
           {unit.paymentStatus === "vacant"

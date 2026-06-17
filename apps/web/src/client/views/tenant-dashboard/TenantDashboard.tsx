@@ -17,7 +17,6 @@ import { formatPeriodMonth } from "@repo/ui";
 
 const s = strings.tenant.dashboard;
 
-
 interface Props {
   tenantId: string;
 }
@@ -28,12 +27,7 @@ export const TenantDashboard = ({ tenantId }: Props) => {
 
   if (isLoading) return <TenantDashboardSkeleton />;
   if (isError)
-    return (
-      <ErrorState
-        message={(error as Error)?.message ?? s.error}
-        onRetry={() => refetch()}
-      />
-    );
+    return <ErrorState message={(error as Error)?.message ?? s.error} onRetry={() => refetch()} />;
   if (!data) return <EmptyState title={s.emptyTitle} description={s.emptyDescription} />;
 
   const { dashboard, payments } = data;
@@ -50,7 +44,7 @@ export const TenantDashboard = ({ tenantId }: Props) => {
   const allClear = payments.length > 0 && payments.every((p) => p.status === "paid");
 
   return (
-    <div className="p-8 max-w-[1180px]">
+    <div className="p-8 max-w-[1180px] mx-auto">
       {/* Page header */}
       <div className="mb-8">
         <SectionTitle>{s.heading(tenantName)}</SectionTitle>
@@ -69,23 +63,29 @@ export const TenantDashboard = ({ tenantId }: Props) => {
               : "border-warning/25 bg-gradient-to-br from-[#FBF1DD] to-white"
           }`}
         >
-          <div className="p-6">
-            <div className="flex items-center gap-2 mb-3">
-              <AlertCircle className={`h-4 w-4 ${heroPayment.status === "overdue" ? "text-destructive" : "text-warning"}`} />
-              <span className={`t-overline ${heroPayment.status === "overdue" ? "text-destructive" : "text-warning"}`}>
-                {heroPayment.status === "overdue" ? s.hero.overdue : s.hero.outstanding}
-              </span>
+          <div className="p-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <AlertCircle
+                  className={`h-4 w-4 ${heroPayment.status === "overdue" ? "text-destructive" : "text-warning"}`}
+                />
+                <span
+                  className={`t-overline ${heroPayment.status === "overdue" ? "text-destructive" : "text-warning"}`}
+                >
+                  {heroPayment.status === "overdue" ? s.hero.overdue : s.hero.outstanding}
+                </span>
+              </div>
+              <div className="t-money text-espresso-900">
+                ${heroPayment.amountDue.toLocaleString()}
+              </div>
+              <LeadText className="mt-2 text-espresso-700">
+                {s.hero.dueFor(formatPeriodMonth(heroPayment.periodMonth))}
+                {heroPayment.status === "overdue" && s.hero.pastDue}
+              </LeadText>
             </div>
-            <div className="t-money text-espresso-900">
-              ${heroPayment.amountDue.toLocaleString()}
-            </div>
-            <LeadText className="mt-2 text-espresso-700">
-              {s.hero.dueFor(formatPeriodMonth(heroPayment.periodMonth))}
-              {heroPayment.status === "overdue" && s.hero.pastDue}
-            </LeadText>
             <Button
               onClick={() => setPayingPeriodMonth(heroPayment.periodMonth)}
-              className="inline-flex items-center gap-2 h-10 px-6 rounded-full bg-coral-500 text-white text-[14px] font-medium hover:bg-coral-600 transition-colors shadow-sm mt-5"
+              className="inline-flex items-center gap-2 h-10 px-6 rounded-full bg-coral-500 text-white text-[14px] font-medium hover:bg-coral-600 transition-colors shadow-sm lg:flex-none"
             >
               <CreditCard className="h-4 w-4" />
               {s.hero.payNow}

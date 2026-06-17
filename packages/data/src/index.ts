@@ -46,6 +46,7 @@ export { paymentMethodsKey, usePaymentMethods } from "./hooks/usePaymentMethods"
 export { useMarkPaid } from "./hooks/useMarkPaid";
 export { usePayRent } from "./hooks/usePayRent";
 export { useSendReminder } from "./hooks/useSendReminder";
+export { useSendAllReminders } from "./hooks/useSendAllReminders";
 export { useAddPaymentMethod } from "./hooks/useAddPaymentMethod";
 export { allTenantsKey, useAllTenants } from "./hooks/useAllTenants";
 export { allPaymentsKey, useAllPayments } from "./hooks/useAllPayments";

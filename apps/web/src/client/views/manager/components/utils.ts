@@ -6,6 +6,7 @@ export type NeedsAttentionSectionProps = {
   overdueCount: number;
   outstandingAmount: number;
   outstandingCount: number;
+  atRiskLeases: AtRiskLease[];
 };
 
 export type AttentionHeroProps = NeedsAttentionSectionProps & {

@@ -107,6 +107,7 @@ export interface AtRiskLease {
   amount_due: number;
   days_overdue: number;
   lease_id: string;
+  period_month: string;
   status: "overdue" | "outstanding";
 }
 

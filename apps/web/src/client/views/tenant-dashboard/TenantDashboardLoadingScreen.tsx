@@ -1,7 +1,7 @@
 import { Skeleton } from "@repo/ui";
 
 export const TenantDashboardSkeleton = () => (
-  <div className="p-8 max-w-[1180px] space-y-8">
+  <div className="p-8 max-w-[1180px] mx-auto space-y-8">
     <div className="space-y-2">
       <Skeleton className="h-9 w-56" />
       <Skeleton className="h-4 w-36" />

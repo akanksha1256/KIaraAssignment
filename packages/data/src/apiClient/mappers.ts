@@ -101,6 +101,7 @@ const mapAtRiskLease = (l: P.AtRiskLease): AtRiskLease => ({
   amountDue: l.amount_due,
   daysOverdue: l.days_overdue,
   leaseId: l.lease_id,
+  periodMonth: l.period_month,
   status: l.status,
 });
 

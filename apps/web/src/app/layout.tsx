@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Albert_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@repo/ui";
-import { Nav } from "@repo/ui";
 
 const albertSans = Albert_Sans({
   subsets: ["latin"],
@@ -27,12 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className={`${albertSans.variable} font-sans`}>
-        <Providers>
-          <div className="flex min-h-screen">
-            <Nav />
-            <main className="flex-1 min-w-0">{children}</main>
-          </div>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

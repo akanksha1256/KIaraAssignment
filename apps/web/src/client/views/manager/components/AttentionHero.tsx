@@ -24,6 +24,7 @@ export const AttentionHero = ({
         overdueCount={overdueCount}
         outstandingAmount={outstandingAmount}
         outstandingCount={outstandingCount}
+        atRiskLeases={atRiskLeases}
       />
       <AtRiskLeasesSection atRiskLeases={atRiskLeases} />
     </section>

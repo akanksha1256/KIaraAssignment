@@ -51,7 +51,6 @@ function PaymentIcon() {
   );
 }
 
-
 const managerNav = [
   { href: "/manager", label: "Dashboard", icon: <HomeIcon /> },
   { href: "/manager/properties", label: "Properties", icon: <BuildingIcon /> },
@@ -59,33 +58,31 @@ const managerNav = [
   { href: "/manager/payments", label: "Payments", icon: <PaymentIcon /> },
 ];
 
-export function Nav() {
+export const TenantNav = () => {
+  const router = useRouter();
+  return (
+    <header className="sticky top-0 z-sticky border-b border-sand-400 bg-cream/80 backdrop-blur-sm">
+      <div className="mx-auto flex h-16 max-w-container-xl items-center justify-between px-6">
+        <div className="flex items-center gap-3">
+          <PinwheelIcon />
+          <span className="font-semibold tracking-[0.12em] text-espresso-900 text-[17px]">KIARA</span>
+        </div>
+        <button
+          onClick={() => router.push("/manager")}
+          className="flex items-center gap-2 rounded-full bg-sand-200 px-4 py-2 text-sm font-medium text-espresso-700 hover:bg-sand-400 transition-colors duration-normal"
+        >
+          Switch to Manager
+        </button>
+      </div>
+    </header>
+  );
+};
+
+export const Nav = () => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const isTenant = pathname.startsWith("/tenant");
-  const isManager = !isTenant && pathname !== "/";
-
   if (pathname === "/") return null;
-
-  if (isTenant) {
-    return (
-      <header className="sticky top-0 z-sticky border-b border-sand-400 bg-cream/80 backdrop-blur-sm">
-        <div className="mx-auto flex h-16 max-w-container-xl items-center justify-between px-6">
-          <div className="flex items-center gap-3">
-            <PinwheelIcon />
-            <span className="font-semibold tracking-[0.12em] text-espresso-900 text-[17px]">KIARA</span>
-          </div>
-          <button
-            onClick={() => router.push("/manager")}
-            className="flex items-center gap-2 rounded-full bg-sand-200 px-4 py-2 text-sm font-medium text-espresso-700 hover:bg-sand-400 transition-colors duration-normal"
-          >
-            Switch to Manager
-          </button>
-        </div>
-      </header>
-    );
-  }
 
   return (
     <aside className="w-[56px] md:w-[250px] flex-none bg-cream border-r border-sand-400 sticky top-0 h-screen flex flex-col py-5 px-2 md:px-4 transition-all duration-200">
@@ -164,4 +161,4 @@ export function Nav() {
       </div>
     </aside>
   );
-}
+};

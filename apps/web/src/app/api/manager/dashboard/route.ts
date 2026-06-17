@@ -102,6 +102,7 @@ export async function GET(req: NextRequest) {
           amount_due: p.amount_due,
           days_overdue: p.status === "overdue" ? daysOverdue(p.period_month) : 0,
           lease_id: lease.id,
+          period_month: p.period_month,
           status: p.status as "overdue" | "outstanding",
         };
       })

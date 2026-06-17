@@ -15,7 +15,7 @@ export { Card, CardHeader, CardDescription, CardContent } from "./Card";
 export { DataTable } from "./DataTable";
 export type { TableColumn, TableCell, TableRow, RowGroup } from "./DataTable";
 export { MainHeader } from "./MainHeader";
-export { Nav } from "./Nav";
+export { Nav, TenantNav } from "./Nav";
 export { Pill } from "./Pill";
 export { Providers } from "./Providers";
 export { RowMenu } from "./RowMenu";

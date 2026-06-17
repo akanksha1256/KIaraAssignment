@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAllTenants, useCreateTenant } from "@repo/data";
 import { ErrorState } from "@/client/views/ErrorScreen";
@@ -9,7 +9,7 @@ import { Badge, SectionTitle, MutedText, useToast } from "@repo/ui";
 import { TenantsListSkeleton } from "./TenantsListLoadingScreen";
 import { strings } from "@repo/tokens";
 import type { TenantListItem } from "@repo/data";
-import { ShieldCheck, Clock, ShieldOff, ChevronRight, Plus, X } from "lucide-react";
+import { ShieldCheck, Clock, ShieldOff, ChevronRight, Plus, X, ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 
 const s = strings.manager.tenantsList;
 const sa = strings.manager.tenantsList.addTenant;
@@ -150,6 +150,17 @@ const AddTenantModal = ({ open, onClose }: { open: boolean; onClose: () => void 
   );
 };
 
+type SortCol = "name" | "rent" | "payment" | "kyc";
+type SortDir = "asc" | "desc";
+
+const PAYMENT_RANK: Record<string, number> = { overdue: 0, outstanding: 1, paid: 2, vacant: 3 };
+const KYC_RANK: Record<string, number> = { not_submitted: 0, pending: 1, verified: 2 };
+
+const SortIcon = ({ active, dir }: { active: boolean; dir: SortDir }) => {
+  if (!active) return <ChevronsUpDown className="h-3 w-3 opacity-40" />;
+  return dir === "asc" ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />;
+};
+
 // ── Tenant row ────────────────────────────────────────────────────────────────
 const TenantRow = ({ item }: { item: TenantListItem }) => {
   const router = useRouter();
@@ -255,6 +266,13 @@ const TenantRow = ({ item }: { item: TenantListItem }) => {
 export const TenantsList = () => {
   const { data, isLoading, isError, error, refetch } = useAllTenants();
   const [addOpen, setAddOpen] = useState(false);
+  const [sortCol, setSortCol] = useState<SortCol | null>(null);
+  const [sortDir, setSortDir] = useState<SortDir>("asc");
+
+  const toggleSort = (col: SortCol) => {
+    if (sortCol === col) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else { setSortCol(col); setSortDir("asc"); }
+  };
 
   if (isLoading) return <TenantsListSkeleton />;
   if (isError)
@@ -268,72 +286,78 @@ export const TenantsList = () => {
   return (
     <>
       <AddTenantModal open={addOpen} onClose={() => setAddOpen(false)} />
-    <div className="p-8 max-w-[1180px]">
-      <div className="mb-8 flex items-start justify-between">
-        <div>
-          <SectionTitle>{s.title}</SectionTitle>
-          <MutedText className="mt-1">
-            {data.length} tenant{data.length !== 1 ? "s" : ""}
-            {overdueCount > 0 && (
-              <>
-                {" "}
-                · <span className="text-destructive font-medium">{overdueCount} overdue</span>
-              </>
-            )}
-            {pendingKyc > 0 && <> · {pendingKyc} KYC pending</>}
-          </MutedText>
+      <div className="h-screen flex flex-col overflow-hidden">
+        {/* Static top section */}
+        <div className="px-8 pt-8 pb-4 flex-none">
+          <div className="flex items-start justify-between mb-6">
+            <div>
+              <SectionTitle>{s.title}</SectionTitle>
+              <MutedText className="mt-1">
+                {data.length} tenant{data.length !== 1 ? "s" : ""}
+                {overdueCount > 0 && (
+                  <>
+                    {" "}
+                    · <span className="text-destructive font-medium">{overdueCount} overdue</span>
+                  </>
+                )}
+                {pendingKyc > 0 && <> · {pendingKyc} KYC pending</>}
+              </MutedText>
+            </div>
+            <button
+              onClick={() => setAddOpen(true)}
+              className="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-coral-500 hover:bg-coral-600 text-white text-[13px] font-semibold transition-colors"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              {s.addTenantButton}
+            </button>
+          </div>
         </div>
-        <button
-          onClick={() => setAddOpen(true)}
-          className="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-coral-500 hover:bg-coral-600 text-white text-[13px] font-semibold transition-colors"
-        >
-          <Plus className="h-3.5 w-3.5" />
-          {s.addTenantButton}
-        </button>
-      </div>
 
-      {data.length === 0 ? (
-        <EmptyState title={s.emptyTitle} description={s.emptyDescription} icon="inbox" />
-      ) : (
-        <div className="rounded-xl border border-sand-400 bg-white overflow-x-auto shadow-sm">
-          <table className="w-full table-fixed min-w-[700px]">
-            <colgroup>
-              <col style={{ width: "28%" }} />
-              <col style={{ width: "22%" }} />
-              <col style={{ width: "13%" }} />
-              <col style={{ width: "17%" }} />
-              <col style={{ width: "16%" }} />
-              <col style={{ width: "40px" }} />
-            </colgroup>
-            <thead>
-              <tr className="bg-sand-100 border-b border-sand-400">
-                <th className="px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
-                  Tenant
-                </th>
-                <th className="px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
-                  Property / Unit
-                </th>
-                <th className="px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
-                  Rent/mo
-                </th>
-                <th className="px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
-                  Payment
-                </th>
-                <th className="px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
-                  KYC
-                </th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((item) => (
-                <TenantRow key={item.tenant.id} item={item} />
-              ))}
-            </tbody>
-          </table>
+        {/* Scrollable table */}
+        <div className="flex-1 min-h-0 flex flex-col px-8 pb-8">
+          {data.length === 0 ? (
+            <EmptyState title={s.emptyTitle} description={s.emptyDescription} icon="inbox" />
+          ) : (
+            <div className="flex-1 min-h-0 rounded-xl border border-sand-400 bg-white overflow-y-auto shadow-sm">
+              <table className="w-full table-fixed min-w-[700px]">
+                <colgroup>
+                  <col style={{ width: "28%" }} />
+                  <col style={{ width: "22%" }} />
+                  <col style={{ width: "13%" }} />
+                  <col style={{ width: "17%" }} />
+                  <col style={{ width: "16%" }} />
+                  <col style={{ width: "40px" }} />
+                </colgroup>
+                <thead className="sticky top-0 z-10">
+                  <tr className="bg-sand-100 border-b border-sand-400">
+                    <th className="px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                      Tenant
+                    </th>
+                    <th className="px-5 py-3 text-left text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                      Property / Unit
+                    </th>
+                    <th className="px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                      Rent/mo
+                    </th>
+                    <th className="px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                      Payment
+                    </th>
+                    <th className="px-5 py-3 text-right text-[11.5px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                      KYC
+                    </th>
+                    <th />
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.map((item) => (
+                    <TenantRow key={item.tenant.id} item={item} />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </div>
     </>
   );
 }

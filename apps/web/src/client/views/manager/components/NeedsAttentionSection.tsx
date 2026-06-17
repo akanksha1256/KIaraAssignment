@@ -1,6 +1,8 @@
 import { ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { strings } from "@repo/tokens";
-import { Button, Overline, MoneyText, LeadText, StatTile } from "@repo/ui";
+import { Button, Overline, MoneyText, LeadText, StatTile, useToast } from "@repo/ui";
+import { useSendAllReminders } from "@repo/data";
 import type { NeedsAttentionSectionProps } from "./utils";
 
 const s = strings.manager.dashboard.attentionHero;
@@ -11,8 +13,20 @@ export const NeedsAttentionSection = ({
   overdueCount,
   outstandingAmount,
   outstandingCount,
+  atRiskLeases,
 }: NeedsAttentionSectionProps) => {
+  const router = useRouter();
+  const { showToast } = useToast();
+  const sendAllReminders = useSendAllReminders();
+
   const fmt = (n: number) => `$${n.toLocaleString()}`;
+
+  const handleSendAllReminders = () => {
+    sendAllReminders.mutate(atRiskLeases, {
+      onSuccess: () => showToast(s.sendAllRemindersSuccess(atRiskLeases.length), "success"),
+      onError: () => showToast(s.sendAllRemindersError, "error"),
+    });
+  };
 
   return (
     <div className="bg-white p-6 bg-gradient-to-br from-white to-coral-50">
@@ -43,10 +57,16 @@ export const NeedsAttentionSection = ({
       </div>
 
       <div className="flex gap-3 mt-6">
-        <Button variant="default">
+        <Button variant="default" onClick={() => router.push("/manager/payments")}>
           {s.reviewOverdue} <ArrowRight className="h-3.5 w-3.5" />
         </Button>
-        <Button variant="ghost">{s.sendAllReminders}</Button>
+        <Button
+          variant="ghost"
+          onClick={handleSendAllReminders}
+          disabled={sendAllReminders.isPending}
+        >
+          {sendAllReminders.isPending ? "Sending…" : s.sendAllReminders}
+        </Button>
       </div>
     </div>
   );

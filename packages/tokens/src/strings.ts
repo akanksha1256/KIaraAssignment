@@ -124,6 +124,9 @@ export const strings = {
           `Outstanding · ${count} lease${count !== 1 ? "s" : ""}`,
         reviewOverdue: "Review overdue",
         sendAllReminders: "Send all reminders",
+        sendAllRemindersSuccess: (n: number) =>
+          `Reminders sent to ${n} tenant${n !== 1 ? "s" : ""}.`,
+        sendAllRemindersError: "Failed to send some reminders. Please try again.",
         atRiskTitle: "At-risk leases",
         viewAll: "View all",
         daysOverdue: (days: number) => `${days} days overdue`,
